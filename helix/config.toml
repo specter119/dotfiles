@@ -1,0 +1,13 @@
+theme = 'onedark'
+
+[editor.file-picker]
+git-ignore = false
+hidden = false
+parents = false
+
+[editor.lsp]
+display-inlay-hints = true
+display-messages = true
+
+[editor.whitespace]
+render = 'all'

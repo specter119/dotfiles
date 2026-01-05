@@ -1,0 +1,31 @@
+# conda client config
+auto_activate_base: false
+shortcuts: false
+channels:
+  - conda-forge
+{{#if dotter.windows}}
+  - pytorch
+  - nvidia
+{{/if}}
+  # - paddle
+  # - pyg
+  # - fastchan
+pinned_packages:
+  - blas=*=mkl
+  - libblas=*=*_mkl
+{{#if dotter.windows}}
+  - pytorch=*=*_cuda*
+{{/if}}
+{{#if dotter.linux}}
+  - pytorch=*=cuda*
+{{/if}}
+  - torchvision=*=*_cu*
+  - nodejs<=22
+envs_dirs:
+  - ~/.local/share/mamba/envs
+pkgs_dirs:
+  - ~/.local/share/mamba/pkgs
+ssl_verify: false
+use_uv: true
+report_errors: false
+anaconda_upload: false

@@ -1,0 +1,33 @@
+# {{#if dotter.linux}}
+# [terminal.shell]
+# program = "/usr/bin/tmux"
+# args = ["new-session", "-A", "-D", "-s", "main"]
+# {{/if}}
+# {{#if dotter.windows}}
+# [env]
+# TERM = "alacritty"
+# WSLENV = "TERM/u"
+# [terminal.shell]
+# program = "wsl"
+# args = ["--cd ~", "--distribution archlinux", "-- tmux new-session -A -D -s main"]
+# [font]
+# size = 13.0
+# [font.normal]
+# family = "Sarasa Term SC Nerd"
+# style = "SemiBold"
+# [window.dimensions]
+# columns = 160
+# lines = 36
+# {{/if}}
+
+[general]
+import = ["~/.config/alacritty/rose-pine.toml"]
+
+[[keyboard.bindings]]
+action = "SpawnNewInstance"
+key = "T"
+mods = "Control|Alt"
+
+[window]
+opacity = 0.86
+resize_increments = true

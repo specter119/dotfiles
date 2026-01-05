@@ -1,0 +1,12 @@
+[Unit]
+Description=Daily cleanup of old VSCode stuffs
+Documentation=man:systemd.timer(8)
+
+[Timer]
+OnCalendar=*-*-* 10:00:00
+Persistent=true
+WakeSystem=false
+Unit=clean-vscode-stuffs.service
+
+[Install]
+WantedBy=timers.target

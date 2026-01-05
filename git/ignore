@@ -1,0 +1,72 @@
+# pikaur
+/last_installed.txt
+
+# llm ide
+**/.claude/settings.local.json
+/.cursor
+/.cursorrules
+/.cursorignore
+/.roo
+/.roorules
+/.rooignore
+/.augmentignore
+/.github/copilot-instructions.md
+/.serena
+
+# mcp
+/alembic
+/alembic.ini
+
+# emacs project
+.dir-locals.el
+
+# Folder view configuration files
+.DS_Store
+Desktop.ini
+
+# hive
+metastore_db
+
+# scala
+.metals
+
+# Thumbnail cache files
+._*
+Thumbs.db
+
+# Files that might appear on external disks
+.Spotlight-V100
+.Trashes
+
+# spacemacs history cache
+/transient
+
+# Compiled Python files
+__pycache__
+*.pyc
+
+# Compiled C++ files
+*.out
+
+# R
+.Rhistory
+.Rapp.history
+.RData
+.Rproj.user/
+vignettes/*.html
+vignettes/*.pdf
+.httr-oauth
+.cache
+/*_cache/
+/cache/
+*.utf8.md
+*.knit.md
+
+# Application specific files
+.vscode/settings.json
+.idea/
+.python-version
+venv
+node_modules
+.sass-cache
+.ipynb_checkpoints

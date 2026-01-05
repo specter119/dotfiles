@@ -1,0 +1,184 @@
+[helpers]
+
+[wsl-revise.files]
+'wsl-revise' = '~/.config'
+
+[alias.files]
+alias = '~/.config'
+
+[container.files]
+container = '~/.config'
+
+[mako.files]
+mako = '~/.config/mako'
+
+[waybar.files]
+waybar = '~/.config'
+
+[sov.files]
+sov = '~/.config/sov'
+
+[sway]
+depends = ['mako', 'waybar']
+
+[sway.files]
+sway = '~/.config'
+
+[fontconfig.files]
+fontconfig = '~/.config/fontconfig'
+
+[fcitx5.files]
+fcitx5 = '~/.config'
+
+[fish.files]
+fish = '~/.config/fish'
+
+[kitty.files]
+kitty = '~/.config/kitty'
+
+[alacritty.files]
+alacritty = '~/.config/alacritty'
+
+[tmux.files]
+tmux = '~/.config/tmux'
+
+[yazi.files]
+yazi = '~/.config/yazi'
+
+[git.files]
+git = '~/.config/git'
+
+[ssh.files]
+ssh = '~/.ssh'
+
+[neovim.files]
+LazyVim = '~/.config/nvim'
+
+[pip.files]
+pip = '~/.config/pip'
+
+[conda.files]
+conda = '~/.config/conda'
+
+[uv.files]
+uv = '~/.config/uv'
+
+[bun.files]
+bun = '~/.config'
+
+[go.files]
+go = '~/.config'
+
+[rust]
+depends = ['cargo']
+
+[rust.files]
+rust = '~/.config'
+
+[julia.files]
+julia = '~/.julia'
+
+[stylua.files]
+stylua = '~/.config/stylua'
+
+[claude-code.files]
+'claude-code' = '~/.config'
+
+[codex.files]
+codex = '~/.config'
+
+[opencode.files]
+'opencode/config' = '~/.config'
+'opencode/share' = '~/.local/share'
+
+[vscode.files]
+'vscode/config' = '~/.config'
+'vscode/share' = '~/.local/share'
+
+[atuin.files]
+atuin = '~/.config'
+
+[env.files]
+env = '~/.config'
+
+[ollama.files]
+ollama = '~/.config/fish/functions'
+
+[cargo.files]
+cargo = '~/.local/share/cargo'
+
+[zellij.files]
+zellij = '~/.config/zellij'
+
+[wezterm.files]
+wezterm = '~/.config/wezterm'
+
+[LazyVim.files]
+LazyVim = '~/.config/nvim'
+
+[marimo.files]
+marimo = '~/.config'
+
+[ipython.files]
+ipython = '~/.ipython'
+
+[weston.files]
+weston = '~/.config'
+
+[chromium.files]
+chromium = '~/.config'
+
+[zathura.files]
+zathura = '~/.config/zathura'
+
+[roo-code]
+depends = ['vscode']
+
+[roo-code.files]
+'roo-code/settings' = '~/.config/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings'
+
+[abaqus]
+depends = ['weston']
+
+[abaqus.files]
+'abaqus/xdg-desktop' = '~/.local/share'
+'abaqus/bwrap' = '~/.local/share/bwrap'
+
+[steam.files]
+steam = '~/.config'
+
+[yt-dlp.files]
+yt-dlp = '~/.config/yt-dlp'
+
+[pianobar.files]
+pianobar = '~/.config'
+
+[shell]
+depends = ['env', 'fish', 'yazi', 'atuin']
+
+[ui]
+depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
+
+[dev]
+depends = ['git', 'ssh', 'container', 'LazyVim']
+
+[copilot]
+depends = ['roo-code', 'claude-code', 'codex', 'opencode', 'ollama', 'zellij']
+
+[python]
+depends = ['uv', 'conda', 'marimo']
+
+[nodejs]
+depends = ['bun']
+
+[lua]
+depends = ['stylua']
+
+[game]
+depends = ['steam']
+
+[media]
+depends = ['yt-dlp']
+
+[fem]
+depends = ['abaqus']

@@ -1,0 +1,13 @@
+Include config.d/*
+
+Host *
+	TCPKeepAlive=yes
+	ServerAliveInterval=15
+	ServerAliveCountMax=6
+	ForwardAgent=yes
+	Compression=yes
+{{#if dotter.linux}}
+	ControlMaster auto
+	ControlPath /run/user/1000/ssh-%r@%h:%p
+	ControlPersist yes
+{{/if}}

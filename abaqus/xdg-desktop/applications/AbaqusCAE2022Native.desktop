@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Abaqus CAE 2022 (Native)
+Exec=bash -ic "rm -f $HOME/abaqus_2022.gpr; cd $HOME/.local/share/abaqus/2022; XLIB_SKIP_ARGB_VISUALS=1 /opt/DassaultSystemes/SIMULIA/Commands/abq2022 cae -mesa -noStartupDialog"
+Icon=/opt/DassaultSystemes/SIMULIA/EstProducts/2022/linux_a64/CAEresources/graphic/icons/icoR_application.png
+StartupWMClass=Abaqus

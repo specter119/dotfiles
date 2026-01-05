@@ -1,0 +1,79 @@
+[user]
+{{#if (and dotter.linux (not (command_success "uname -r | grep -qi wsl")))}}
+	name = specter119
+	email = specter119@gmail.com
+{{else if dotter.windows}}
+	name = {{to_lower_case (env_var "USERNAME")}}
+	email = {{to_lower_case (env_var "USERNAME")}}@{{replace (to_lower_case (env_var "USERDNSDOMAIN")) "corp." ""}}
+{{else}}
+	name = {{trim (command_output "powershell.exe -NoProfile -c '$env:USERNAME.ToLower()'")}}
+	email = {{trim (command_output "powershell.exe -NoProfile -c '$env:USERNAME.ToLower()'")}}@{{trim (command_output "powershell.exe -NoProfile -c '($env:USERDNSDOMAIN -replace \"^corp[.]\", \"\").ToLower()'")}}
+{{/if}}
+
+[core]
+	excludesfile = ~/.config/git/ignore
+{{#if dotter.linux}}
+	filemode = false
+	symlinks = true
+{{else}}
+	ignorecase = false
+  editor = nvim
+{{/if}}
+
+[init]
+	defaultBranch = master
+
+[pull]
+	rebase = false
+
+[push]
+	default = matching
+
+[url "ssh://git@ssh.github.com:443/"]
+	insteadOf = git@github.com:
+
+[pager]
+	diff = delta
+	log = delta
+	reflog = delta
+	show = delta
+
+[delta]
+	plus-style = "syntax #012800"
+	minus-style = "syntax #340001"
+	syntax-theme = Monokai Extended
+	navigate = true
+
+[interactive]
+	diffFilter = delta --color-only
+
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+
+[includeIf "gitdir:~/.cache/paru/clone"]
+	excludesfile = ~/.config/git/ignore-pkgbuild
+{{#if (command_success "uname -r | grep -qi wsl")}}
+
+[includeIf "gitdir:~/Documents/github.repos/"]
+	path = ~/.config/git/config-github
+
+[includeIf "gitdir:{{env_var "WSL_WIN_HOME"}}/scoop/"]
+	path = ~/.config/git/config-github
+
+[helper]
+	format = man
+
+[credential]
+	helper = {{env_var "WSL_WIN_HOME"}}/scoop/apps/mingit/current/mingw64/bin/git-credential-wincred.exe
+{{/if}}
+{{#if dotter.windows}}
+
+[includeIf "gitdir/i:{{env_var "WIN_HOME"}}/scoop/"]
+	path = ~/.config/git/config-github
+
+[helper]
+	format = man
+{{/if}}

@@ -1,0 +1,37 @@
+[helpers]
+
+[wsl.files]
+wsl = '~'
+
+[scoop.files]
+scoop = '~/.config/scoop'
+
+[powershell.files]
+powershell = '~/Documents'
+
+[windows-terminal.files]
+'windows-terminal/settings.json' = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json'
+
+[conda.files]
+conda = '~/.local/share/mamba'
+
+[pip.files]
+'pip/pip.conf' = '~/AppData/Roaming/pip/pip.ini'
+
+[alacritty.files]
+alacritty = '~/AppData/Roaming/alacritty'
+
+[helix.files]
+helix = '~/AppData/Roaming/helix'
+
+[roo-code.files]
+'roo-code/settings' = '~/AppData/Roaming/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings/'
+
+[python-windows]
+depends = ['conda', 'pip']
+
+[shell-windows]
+depends = ['powershell', 'windows-terminal', 'wezterm']
+
+[dev-windows]
+depends = ['wsl', 'scoop', 'shell-windows', 'git', 'ssh', 'roo-code']

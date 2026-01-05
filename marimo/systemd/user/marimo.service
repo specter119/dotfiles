@@ -1,0 +1,15 @@
+[Unit]
+Description=Marimo notebook server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Documents/Marimo
+ExecStart=uvx --with marimo[recommended,lsp,mcp],watchdog,httpx[http2] marimo edit --headless --no-token
+ExecStartPost=/bin/bash -c '(sleep 2 && PYPATH=$$(pgrep -af "marimo edit" | awk "/\.cache\/uv.*bin\/python/ {print \$$2; exit}") && V=$${PYPATH%%/bin/*} && [ -n "$$V" ] && echo "{\\"venv\\": \\"$$V\\"}" > pyrightconfig.json) &'
+Restart=on-failure
+RestartSec=5
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/usr/lib/wsl/lib:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0:/mnt/c/Windows/System32/OpenSSH
+
+[Install]
+WantedBy=default.target

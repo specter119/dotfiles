@@ -1,0 +1,23 @@
+# Lines starting with # are comments
+
+# Always extract audio
+# -x
+
+# extract cookie from browser
+--cookies-from-browser firefox
+
+# Do not copy the mtime
+--no-mtime
+
+# to specific dir
+--output ~/Videos/%(webpage_url_domain)s/%(title)s-%(id)s.%(ext)s
+
+# sub title
+--write-auto-sub
+--sub-format srt
+--sub-lang en
+
+# use aria2
+--downloader aria2c
+--downloader "dash,m3u8:native"
+--downloader-args "aria2c:-j 16 -x 16 -s 16 -k 1M --file-allocation=prealloc"

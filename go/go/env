@@ -1,0 +1,3 @@
+GO111MODULE=on
+GOPATH={{env_var "HOME"}}/.local/share/go
+GOPROXY=https://goproxy.cn,direct

@@ -1,0 +1,4 @@
+/.dotter/*
+!/.dotter/global.toml
+!/.dotter/windows.toml
+!/claude-code/claude/CLAUDE.md
