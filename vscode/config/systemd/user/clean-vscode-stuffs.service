@@ -1,0 +1,10 @@
+[Unit]
+Description=Clean up old VSCode stuffs
+Documentation=man:systemd.service(8)
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/share/vscode-utils/clean-vscode-stuffs.sh
+
+[Install]
+WantedBy=multi-user.target

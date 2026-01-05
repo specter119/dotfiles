@@ -1,0 +1,53 @@
+{
+  "alwaysThinkingEnabled": true,
+  "enabledPlugins": {
+    "claude-mem@thedotmack": true,
+    "feature-dev@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true
+  },
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "{{replace (command_output 'rbw get packy-api-key') '\n' ''}}",
+    "ANTHROPIC_BASE_URL": "https://www.packyapi.com",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "ENABLE_LSP_TOOL": "1"
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "command": "~/.local/bin/claude-hook-notifier.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ]
+  },
+  "model": "opus",
+  "permissions": {
+    "allow": [
+      "Read(**/CLAUDE.md)",
+      "Bash(ls:*)",
+      "Bash(fd:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(ruff:check,format)",
+      "Bash(mypy:*)",
+      "Bash(pytest:*)",
+      "Bash(uv:venv,sync)",
+      "Bash(pre-commit:*)"
+    ],
+    "deny": []
+  },
+  "statusLine": {
+    "command": "~/.local/bin/ccline",
+    "padding": 0,
+    "type": "command"
+  }
+}

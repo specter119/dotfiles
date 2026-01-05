@@ -1,0 +1,12 @@
+[wsl2]
+kernelCommandLine = cgroup_no_v1=all systemd.unified_cgroup_hierarchy=1
+# defaultVhdSize=240GB
+memory=80GB
+swap=0
+autoProxy=false
+dnsProxy=false
+guiApplications=true
+processors=8
+defaultVhdSize=68719476736
+[experimental]
+autoMemoryReclaim = gradual

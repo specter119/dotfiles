@@ -1,0 +1,4 @@
+[language-server.pyright]
+args = ["--stdio"]
+command = "pyright-langserver"
+config = {settings = {python = {analysis = {autoImportCompletions = true, typeCheckingMode = "off", autoSearchPaths = true, useLibraryCodeForTypes = true, diagnosticMode = "openFilesOnly"}}}}

@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "streamable-http",
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "git": {
+      "alwaysAllow": [
+        "git_diff_staged"
+      ],
+      "args": [
+        "mcp-server-git"
+      ],
+      "command": "uvx",
+      "disabled": false
+    },
+    "sequentialthinking": {
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "command": "npx"
+    }
+  }
+}

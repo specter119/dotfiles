@@ -1,0 +1,4 @@
+[allowlist]
+paths = [
+  "chromium/chromium-flags.conf"
+]

@@ -1,0 +1,13 @@
+# top-most EditorConfig file
+root = true
+
+# 4 space indentation
+[*.{py,pyx,pxi,pxd,c,cpp,h,hpp}]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+# Matches the exact files either package.json or .travis.yml
+[*.{json,yml,yaml}]
+indent_style = space
+indent_size = 2

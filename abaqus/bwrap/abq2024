@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -e
+ABAQUS_VERSION=2024
+ABAQUS_HOME="$HOME/.local/share/abaqus/$ABAQUS_VERSION"
+XLIB_SKIP_ARGB_VISUALS=1
+set +e
+source /opt/intel/oneapi/setvars.sh
+
+if ! screen -S weston_scale_abaqus -Q select .; then
+  screen -dmS weston_scale_abaqus weston --xwayland --socket=abqscale --scale=1
+fi
+
+set -e
+DISPLAY=:1
+WAYLAND_DISPLAY=abqscale
+set +e
+
+mkdir -p $ABAQUS_HOME
+
+exec bwrap \
+  --tmpfs /tmp \
+  --dev /dev \
+  --dev-bind /dev/dri /dev/dri \
+  --proc /proc \
+  --ro-bind /usr/lib /usr/lib \
+  --ro-bind /usr/lib64 /usr/lib64 \
+  --ro-bind /usr/bin /usr/bin \
+  --ro-bind /opt /opt \
+  --ro-bind /etc /etc \
+  --ro-bind /usr/share /usr/share \
+  --symlink /usr/lib /lib \
+  --symlink /usr/lib /lib64 \
+  --symlink /usr/bin /bin \
+  --symlink /usr/bin /sbin \
+  --symlink /run /var/run \
+  --bind "$ABAQUS_HOME" "$HOME" \
+  --dir "$HOME" \
+  --bind "$HOME/Downloads" "$HOME/Downloads" \
+  --perms 644 \
+  --tmpfs "$HOME/abaqus_$ABAQUS_VERSION.gpr" \
+  --unshare-all \
+  --share-net \
+  --setenv DISPLAY "$DISPLAY" \
+  --setenv LANG en_US.UTF-8 \
+/opt/DassaultSystemes/SIMULIA/Commands/abq2024 "$@"

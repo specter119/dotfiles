@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -e
+ABAQUS_VERSION=6.14
+ABAQUS_HOME="$HOME/.local/share/abaqus/$ABAQUS_VERSION"
+XLIB_SKIP_ARGB_VISUALS=1
+# source /opt/intel/oneapi/setvars.sh
+
+mkdir -p $ABAQUS_HOME
+
+exec bwrap \
+  --tmpfs /tmp \
+  --dev /dev \
+  --dev-bind /dev/dri /dev/dri \
+  --proc /proc \
+  --ro-bind /usr/lib /usr/lib \
+  --ro-bind /usr/lib64 /usr/lib64 \
+  --ro-bind /usr/bin /usr/bin \
+  --ro-bind /opt /opt \
+  --ro-bind /etc /etc \
+  --ro-bind /usr/share /usr/share \
+  --symlink /usr/lib /lib \
+  --symlink /usr/lib /lib64 \
+  --symlink /usr/bin /bin \
+  --symlink /usr/bin /sbin \
+  --symlink /run /var/run \
+  --ro-bind /tmp/.X11-unix/X0 /tmp/.X11-unix/X0 \
+  --bind "$ABAQUS_HOME" "$HOME" \
+  --dir "$HOME" \
+  --bind "$HOME/Downloads" "$HOME/Downloads" \
+  --unshare-all \
+  --share-net \
+  --setenv DISPLAY "$DISPLAY" \
+  --setenv LANG en_US.UTF-8 \
+/opt/DassaultSystemes/SIMULIA/Commands/abq6145 "$@"

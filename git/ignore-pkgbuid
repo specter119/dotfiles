@@ -1,0 +1,6 @@
+# PKGBUILD
+*.pkg.tar.*
+/src
+/pkg
+# pikaur
+/last_installed.txt

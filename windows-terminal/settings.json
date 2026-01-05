@@ -1,0 +1,127 @@
+{
+  "$help": "https://aka.ms/terminal-documentation",
+  "$schema": "https://aka.ms/terminal-profiles-schema",
+  "actions": [
+    {
+      "command": "find",
+      "id": "User.find"
+    },
+    {
+      "command": {
+        "action": "copy",
+        "singleLine": false
+      },
+      "id": "User.copy"
+    },
+    {
+      "command": "paste",
+      "id": "User.paste"
+    },
+    {
+      "command": {
+        "action": "splitPane",
+        "split": "auto",
+        "splitMode": "duplicate"
+      },
+      "id": "User.splitPane"
+    }
+  ],
+  "copyFormatting": "none",
+  "copyOnSelect": false,
+  "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+  "keybindings": [
+    {
+      "id": "User.copy",
+      "keys": "ctrl+shift+c"
+    },
+    {
+      "id": "User.paste",
+      "keys": "ctrl+shift+v"
+    },
+    {
+      "id": "User.splitPane",
+      "keys": "alt+shift+d"
+    },
+    {
+      "id": "User.find",
+      "keys": "ctrl+shift+f"
+    }
+  ],
+  "newTabMenu": [
+    {
+      "type": "remainingProfiles"
+    }
+  ],
+  "profiles": {
+    "defaults": {
+      "bellStyle": "none",
+      "font": {
+        "face": "CaskaydiaCove Nerd Font Mono"
+      }
+    },
+    "list": [
+      {
+        "commandline": "%scoop%\\apps\\pwsh\\current\\pwsh.exe -NoLogo",
+        "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+        "hidden": false,
+        "name": "PowerShell",
+        "source": "Windows.Terminal.PowershellCore"
+      },
+      {
+        "font": {
+          "face": "Sarasa Term SC Nerd",
+          "size": 12,
+          "weight": "medium"
+        },
+        "guid": "{84160838-d5a5-519c-a5f3-8b3df3bad345}",
+        "hidden": false,
+        "name": "Arch Linux",
+        "source": "Microsoft.WSL"
+      },
+      {
+        "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -nologo",
+        "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+        "hidden": false,
+        "name": "Windows PowerShell"
+      },
+      {
+        "commandline": "%SystemRoot%\\System32\\cmd.exe",
+        "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+        "hidden": false,
+        "name": "Command Prompt"
+      },
+      {
+        "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
+        "hidden": true,
+        "name": "Azure Cloud Shell",
+        "source": "Windows.Terminal.Azure"
+      },
+      {
+        "guid": "{97e774f5-115c-5834-8610-3df59309cb7c}",
+        "hidden": false,
+        "name": "Developer Command Prompt for VS 2019",
+        "source": "Windows.Terminal.VisualStudio"
+      },
+      {
+        "guid": "{04918fda-26a3-533f-8ce9-2c64fb7352f8}",
+        "hidden": false,
+        "name": "Developer PowerShell for VS 2019",
+        "source": "Windows.Terminal.VisualStudio"
+      },
+      {
+        "font": {
+          "face": "Sarasa Term SC Nerd",
+          "size": 12,
+          "weight": "medium"
+        },
+        "guid": "{261458f7-5e21-568e-b757-2eaf03fda650}",
+        "hidden": false,
+        "name": "Arch Linux Archived",
+        "source": "Microsoft.WSL"
+      }
+    ]
+  },
+  "schemes": [],
+  "themes": [],
+  "useAcrylicInTabRow": true
+}
