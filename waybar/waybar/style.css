@@ -264,19 +264,3 @@ label:focus {
   -gtk-icon-effect: highlight;
   background-color: #eb4d4b;
 }
-
-/*
-
-window#waybar.solo {
-background-color: #FFFFFF;
-}
-
-window#waybar.termite {
-background-color: #3F3F3F;
-}
-
-window#waybar.chromium {
-background-color: #000000;
-border: none;
-}
- */

@@ -71,7 +71,7 @@
 {{/if}}
 {{#if dotter.windows}}
 
-[includeIf "gitdir/i:{{env_var "WIN_HOME"}}/scoop/"]
+[includeIf "gitdir/i:{{env_var "USERPROFILE"}}/scoop/"]
 	path = ~/.config/git/config-github
 
 [helper]
