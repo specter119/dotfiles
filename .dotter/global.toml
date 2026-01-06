@@ -3,9 +3,6 @@
 [wsl-revise.files]
 'wsl-revise' = '~/.config'
 
-[alias.files]
-alias = '~/.config'
-
 [container.files]
 container = '~/.config'
 
@@ -146,9 +143,6 @@ steam = '~/.config'
 
 [yt-dlp.files]
 yt-dlp = '~/.config/yt-dlp'
-
-[pianobar.files]
-pianobar = '~/.config'
 
 [shell]
 depends = ['env', 'fish', 'yazi', 'atuin']

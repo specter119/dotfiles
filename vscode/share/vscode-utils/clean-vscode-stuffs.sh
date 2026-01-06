@@ -21,7 +21,7 @@ clean_bin_dir() {
   fi
 
   # Get directories sorted by modification time (newest first)
-  local dirs=($(ls -td "$bin_dir"/*/ 2>/dev/null))
+  readarray -t dirs < <(ls -td "$bin_dir"/*/ 2>/dev/null)
   if [ ${#dirs[@]} -eq 0 ]; then
     log "No directories found in $bin_dir"
     return
@@ -68,7 +68,7 @@ clean_server_tar_host() {
   fi
 
   # Get directories sorted by modification time (newest first)
-  local dirs=($(ls -td "$wsl_remote_dir"/*/ 2>/dev/null))
+  readarray -t dirs < <(ls -td "$wsl_remote_dir"/*/ 2>/dev/null)
   if [ ${#dirs[@]} -eq 0 ]; then
     log "No directories found in $wsl_remote_dir"
     return

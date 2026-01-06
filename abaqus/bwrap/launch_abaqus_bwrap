@@ -1,53 +1,52 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-extract_abaqus_version() {
-  ABAQUS_BINARY=$1
-  ABAQUS_VERSION=$(strings $ABAQUS_BINARY | grep -Eo '6\.[0-9]{2}-[0-9]|20[0-9]{2}hf[0-9]{1,2}' | head -1)
-  echo $ABAQUS_VERSION
-}
+# Usage: launch_abaqus_bwrap <version> <command> [args...]
+# Example: launch_abaqus_bwrap 2022 cae -mesa
 
-source_oneapi() {
-  source /opt/intel/oneapi/setvars.sh
-}
+set -e
+ABAQUS_VERSION=$1
+ABAQUS_CMD=$2
+shift 2
 
-launch_abaqus_bwrap() {
-  ABAQUS_VERSION=$(extract_abaqus_version $1)
-  ABAQUS_HOME="$HOME/.local/share/abaqus/$ABAQUS_VERSION"
-  XLIB_SKIP_ARGB_VISUALS=1
+ABAQUS_HOME="$HOME/.local/share/abaqus/$ABAQUS_VERSION"
+XLIB_SKIP_ARGB_VISUALS=1
 
-  source_oneapi
-  if ! screen -S weston_scale_abaqus -Q select .; then
-    screen -dmS weston_scale_abaqus weston --xwayland --socket=abqscale --scale=1
-  fi
-  DISPLAY=:1
-  WAYLAND_DISPLAY=abqscale
+set +e
+source /opt/intel/oneapi/setvars.sh
 
-  mkdir -p $ABAQUS_HOME
+if ! screen -S weston_scale_abaqus -Q select .; then
+  screen -dmS weston_scale_abaqus weston --xwayland --socket=abqscale --scale=1
+fi
 
-  exec bwrap \
-    --tmpfs /tmp \
-    --dev /dev \
-    --dev-bind /dev/dri /dev/dri \
-    --proc /proc \
-    --ro-bind /usr/lib /usr/lib \
-    --ro-bind /usr/lib64 /usr/lib64 \
-    --ro-bind /usr/bin /usr/bin \
-    --ro-bind /opt /opt \
-    --ro-bind /etc /etc \
-    --ro-bind /usr/share /usr/share \
-    --symlink /usr/lib /lib \
-    --symlink /usr/lib /lib64 \
-    --symlink /usr/bin /bin \
-    --symlink /usr/bin /sbin \
-    --symlink /run /var/run \
-    --bind "$ABAQUS_HOME" "$HOME" \
-    --dir "$HOME" \
-    --bind "$HOME/Downloads" "$HOME/Downloads" \
-    --unshare-all \
-    --share-net \
-    --setenv DISPLAY "$DISPLAY" \
-    --setenv LANG en_US.UTF-8 \
-    $1 "${@:2}"
-}
+set -e
+DISPLAY=:1
+WAYLAND_DISPLAY=abqscale
+set +e
 
-launch_abaqus_bwrap "$@"
+mkdir -p "$ABAQUS_HOME"
+rm -rf "$ABAQUS_HOME/abaqus_$ABAQUS_VERSION.gpr"
+
+exec bwrap \
+  --tmpfs /tmp \
+  --dev /dev \
+  --dev-bind /dev/dri /dev/dri \
+  --proc /proc \
+  --ro-bind /usr/lib /usr/lib \
+  --ro-bind /usr/lib64 /usr/lib64 \
+  --ro-bind /usr/bin /usr/bin \
+  --ro-bind /opt /opt \
+  --ro-bind /etc /etc \
+  --ro-bind /usr/share /usr/share \
+  --symlink /usr/lib /lib \
+  --symlink /usr/lib /lib64 \
+  --symlink /usr/bin /bin \
+  --symlink /usr/bin /sbin \
+  --symlink /run /var/run \
+  --bind "$ABAQUS_HOME" "$HOME" \
+  --dir "$HOME" \
+  --bind "$HOME/Downloads" "$HOME/Downloads" \
+  --setenv LANG en_US.UTF-8 \
+  --unshare-all \
+  --share-net \
+  --setenv DISPLAY "$DISPLAY" \
+  "/opt/DassaultSystemes/SIMULIA/Commands/$ABAQUS_CMD" "$@"

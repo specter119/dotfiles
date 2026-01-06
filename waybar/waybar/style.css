@@ -94,13 +94,9 @@ button:hover {
 
 /* 紧急状态的工作区 */
 #workspaces button.urgent {
-  background-color: rgba(243, 139, 168, 0.8);
+  background-color: #eb4d4b;
   color: #ffffff;
   animation: blink 1s linear infinite alternate;
-}
-
-#workspaces button.urgent {
-  background-color: #eb4d4b;
 }
 
 #mode {
