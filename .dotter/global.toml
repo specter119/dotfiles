@@ -82,8 +82,8 @@ stylua = '~/.config/stylua'
 codex = '~/.config'
 
 [opencode.files]
-'opencode/config' = '~/.config'
-'opencode/share' = '~/.local/share'
+'opencode/config' = '~/.config/opencode'
+'opencode/share' = '~/.local/share/opencode'
 
 [vscode.files]
 'vscode/config' = '~/.config'
