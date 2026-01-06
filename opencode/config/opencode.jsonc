@@ -33,5 +33,8 @@
         "EXA_API_KEY": "{{replace (command_output 'rbw get exa-api-key') '\n' ''}}"
       }
     }
-  }
+  },
+  "plugin": [
+    "oh-my-opencode"
+  ],
 }
