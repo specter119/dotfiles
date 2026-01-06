@@ -51,9 +51,6 @@ git = '~/.config/git'
 [ssh.files]
 ssh = '~/.ssh'
 
-[neovim.files]
-LazyVim = '~/.config/nvim'
-
 [pip.files]
 pip = '~/.config/pip'
 
@@ -135,7 +132,7 @@ zathura = '~/.config/zathura'
 depends = ['vscode']
 
 [roo-code.files]
-'roo-code/settings' = '~/.config/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings'
+'roo-code' = '~/.config/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings'
 
 [abaqus]
 depends = ['weston']

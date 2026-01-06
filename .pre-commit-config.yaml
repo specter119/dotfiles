@@ -6,6 +6,7 @@ repos:
   - id: check-case-conflict
   - id: check-symlinks
   - id: check-toml
+    exclude: ^alacritty/alacritty\.toml$
   - id: check-yaml
   - id: check-json
   - id: detect-aws-credentials
@@ -33,3 +34,4 @@ repos:
   hooks:
   - id: toml-sort-fix
     args: [--in-place, --no-sort-tables]
+    exclude: ^alacritty/alacritty\.toml$
