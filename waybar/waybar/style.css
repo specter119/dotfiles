@@ -1,6 +1,7 @@
 * {
-  /* `otf-font-awesome` is required to be installed for icons */
-  font-family: sans-serif;
+  border: none;
+  border-radius: 2px;
+  font-family: sans-serif, "IosevkaTerm Nerd Font";
   font-size: 13px;
   min-height: 0;
   font-weight: 500;
@@ -9,10 +10,8 @@
 window#waybar {
   background-color: rgba(16, 32, 48, 0.85);
   color: #ffffff;
-  margin: 0;
-  padding: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   transition: box-shadow 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
 }
 
 window#waybar.hidden {
@@ -23,123 +22,66 @@ window#waybar.hidden {
   background-color: transparent;
 }
 
-#workspaces {
-}
-
 #window {
   margin: 0;
   padding: 0;
   background: transparent;
-  border: none;
-  font-family: sans-serif;
-  font-size: 13px;
-  font-weight: 600;
   color: #89b4fa;
 }
 
 button {
-  /* Use box-shadow instead of border so the text isn't offset */
-  box-shadow: inset 0 -3px transparent;
-  /* Avoid rounded borders under each button name */
+  box-shadow: none;
   border: none;
-  border-radius: 6px;
-  background: rgba(69, 71, 90, 0.4);
+  border-radius: 0;
+  background: transparent;
   color: #a6adc8;
   transition: all 0.2s ease;
-  font-weight: 500;
+  text-shadow: none;
 }
 
-/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
 button:hover {
-  background: linear-gradient(135deg, rgba(137, 180, 250, 0.2), rgba(203, 166, 247, 0.2));
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(137, 180, 250, 0.3);
-  transition: all 0.2s ease;
-}
-
-#workspaces button {
-  padding: 4px 8px;
-  margin: 0 1px;
-  background-color: rgba(64, 96, 112, 0.2);
-  border-radius: 2px;
-  color: rgba(255, 255, 255, 0.5);
-  transition: all 0.2s ease;
-  font-weight: 500;
-  opacity: 0.6;
-}
-
-/* 有内容但未激活的工作区 */
-#workspaces button.visible {
-  background-color: rgba(96, 128, 144, 0.4);
-  color: rgba(255, 255, 255, 0.8);
-  opacity: 0.9;
-}
-
-#workspaces button:hover {
-  background-color: rgba(96, 128, 144, 0.5);
-  color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  opacity: 1;
-}
-
-/* 当前激活的工作区 */
-#workspaces button.focused {
-  background-color: rgba(96, 160, 176, 0.8);
-  color: #ffffff;
-  font-weight: 700;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease;
-  opacity: 1;
-}
-
-/* 紧急状态的工作区 */
-#workspaces button.urgent {
-  background-color: #eb4d4b;
-  color: #ffffff;
-  animation: blink 1s linear infinite alternate;
-}
-
-#mode {
-  background-color: #64727D;
-  border-bottom: 3px solid #ffffff;
-}
-
-/* 系统监控模块间距调整 - 固定宽度确保一致间距 */
-#cpu,
-#memory {
-  margin-left: 6px;
-  min-width: 25px;
-}
-
-#battery {
-  min-width: 30px;
+  background: rgba(255, 255, 255, 0.1);
   box-shadow: none;
 }
 
-#battery:hover {
-  background-color: rgba(96, 128, 144, 0.3);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-#custom-disk {
-  min-width: 18px;
-  margin-right: 6px;
-}
-
-
-/* 右侧状态栏模块统一样式 - 更紧凑的设计 */
-.modules-right {
-  background-color: rgba(32, 64, 80, 0.4);
+#workspaces button {
+  padding: 0 10px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  border-bottom: 2px solid transparent;
   border-radius: 0;
+  transition: all 0.2s ease;
+  box-shadow: none;
   margin: 0;
-  padding: 0 2px;
+}
+
+#workspaces button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+#workspaces button.visible {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#workspaces button.focused {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border-bottom: 2px solid #89b4fa;
+  box-shadow: none;
+}
+
+#workspaces button.urgent {
+  background-color: #eb4d4b;
+  color: #ffffff;
 }
 
 #clock,
 #battery,
 #cpu,
 #memory,
-#custom-disk,
+#disk,
 #temperature,
 #network,
 #pulseaudio,
@@ -149,24 +91,48 @@ button:hover {
 #mode,
 #idle_inhibitor,
 #scratchpad,
-#mpd {
-  margin: 0;
-  padding: 1px 3px;
-  background-color: transparent;
+#mpd,
+#custom-disk {
+  margin: 2px 1px;
+  padding: 0 6px;
+  background-color: rgba(255, 255, 255, 0.06);
   color: #ffffff;
   border-radius: 2px;
-  transition: background-color 0.2s ease;
-  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-/* If workspaces is the leftmost module, omit left margin */
-.modules-left > widget:first-child > #workspaces {
-  margin-left: 0;
+/* 功能性色块 - 冷色科技感 */
+#clock {
+  background-color: rgba(137, 180, 250, 0.25);
 }
 
-/* If workspaces is the rightmost module, omit right margin */
-.modules-right > widget:last-child > #workspaces {
-  margin-right: 0;
+#battery {
+  background-color: rgba(148, 226, 213, 0.22);
+}
+
+#cpu {
+  background-color: rgba(116, 199, 236, 0.22);
+}
+
+#memory {
+  background-color: rgba(180, 190, 254, 0.22);
+}
+
+#pulseaudio {
+  background-color: rgba(137, 220, 235, 0.22);
+}
+
+#custom-disk {
+  background-color: rgba(166, 173, 200, 0.22);
+  min-width: 20px;
+  padding: 0 8px;
+}
+
+#custom-power-menu {
+  min-width: 20px;
+  padding: 0 8px;
+  margin-right: 4px;
 }
 
 #clock:hover,
@@ -174,86 +140,83 @@ button:hover {
 #cpu:hover,
 #memory:hover,
 #disk:hover,
+#temperature:hover,
 #network:hover,
 #pulseaudio:hover,
-#idle_inhibitor:hover {
-  background-color: rgba(96, 128, 144, 0.3);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+#wireplumber:hover,
+#custom-media:hover,
+#tray:hover,
+#mode:hover,
+#idle_inhibitor:hover,
+#scratchpad:hover,
+#mpd:hover,
+#custom-disk:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-#clock {
-  font-size: 14px;
-  font-weight: 500;
+.modules-left > widget:first-child > #workspaces { margin-left: 0; }
+.modules-right > widget:last-child > #workspaces { margin-right: 0; }
+
+.modules-right {
+  background: transparent;
+  margin: 0;
+  padding: 0;
 }
 
-#battery icon {
-  color: red;
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
 }
 
 #battery.charging, #battery.plugged {
-  color: #a6e3a1;
-  background: linear-gradient(135deg, rgba(166, 227, 161, 0.2), rgba(148, 226, 213, 0.2));
-  border-color: rgba(166, 227, 161, 0.4);
-}
-
-@keyframes blink {
-  to {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(245, 245, 245, 0.9));
-    color: #1e1e2e;
-  }
+  background-color: #a6e3a1;
+  color: #1e1e2e;
 }
 
 #battery.warning:not(.charging) {
-  background: linear-gradient(135deg, rgba(250, 179, 135, 0.8), rgba(245, 169, 127, 0.8));
+  background-color: #fab387;
   color: #1e1e2e;
-  animation-name: blink;
-  animation-duration: 0.5s;
-  animation-timing-function: linear;
+  animation-name: pulse;
+  animation-duration: 2s;
   animation-iteration-count: infinite;
-  animation-direction: alternate;
-  border-color: #fab387;
 }
 
 #battery.critical:not(.charging) {
-  background: linear-gradient(135deg, rgba(243, 139, 168, 0.9), rgba(235, 160, 172, 0.9));
+  background-color: #f38ba8;
   color: #1e1e2e;
-  animation-name: blink;
-  animation-duration: 0.5s;
-  animation-timing-function: linear;
+  animation-name: pulse;
+  animation-duration: 1s;
   animation-iteration-count: infinite;
-  animation-direction: alternate;
-  border-color: #f38ba8;
-}
-
-label:focus {
-  background-color: #000000;
 }
 
 #cpu.high {
-  background: linear-gradient(135deg, rgba(250, 179, 135, 0.3), rgba(245, 224, 220, 0.3));
-  color: #fab387;
-  border-color: rgba(250, 179, 135, 0.5);
+  background-color: #fab387;
+  color: #1e1e2e;
 }
 
 #memory.high {
-  background: linear-gradient(135deg, rgba(203, 166, 247, 0.3), rgba(180, 190, 254, 0.3));
-  color: #cba6f7;
-  border-color: rgba(203, 166, 247, 0.5);
+  background-color: #cba6f7;
+  color: #1e1e2e;
 }
 
 #network.disconnected {
-  background: linear-gradient(135deg, rgba(243, 139, 168, 0.3), rgba(235, 160, 172, 0.3));
-  color: #f38ba8;
-  border-color: rgba(243, 139, 168, 0.5);
+  background-color: #f38ba8;
+  color: #1e1e2e;
 }
 
 #temperature.critical {
   background-color: #eb4d4b;
+  color: #ffffff;
+  animation-name: pulse;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
 }
 
 #idle_inhibitor.activated {
-  background-color: #ecf0f1;
-  color: #2d3436;
+  background-color: #ffffff;
+  color: #1e1e2e;
 }
 
 #tray > .passive {
@@ -263,4 +226,13 @@ label:focus {
 #tray > .needs-attention {
   -gtk-icon-effect: highlight;
   background-color: #eb4d4b;
+}
+
+#mode {
+  border-bottom: 2px solid #ffffff;
+  border-radius: 0;
+}
+
+#cpu, #memory {
+  min-width: 25px;
 }
