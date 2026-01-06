@@ -156,9 +156,8 @@
   },
   "cpu": {
     "interval": 5,
-    "format": " {usage}%",
-    "tooltip-format": " CPU Usage: {usage}%\n Load: {load}",
-    "on-click": "htop",
+    "format": " {usage}%",
+    "tooltip-format": " CPU Usage: {usage}%\n Load: {load}",
     "states": {
       "warning": 70,
       "critical": 90
@@ -166,9 +165,8 @@
   },
   "memory": {
     "interval": 5,
-    "format": " {percentage}%",
-    "tooltip-format": " Memory: {used:0.1f}G/{total:0.1f}G ({percentage}%)",
-    "on-click": "htop",
+    "format": " {percentage}%",
+    "tooltip-format": " Memory: {used:0.1f}G/{total:0.1f}G ({percentage}%)",
     "states": {
       "warning": 70,
       "critical": 90

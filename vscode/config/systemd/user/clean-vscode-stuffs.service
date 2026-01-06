@@ -7,4 +7,4 @@ Type=oneshot
 ExecStart=%h/.local/share/vscode-utils/clean-vscode-stuffs.sh
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target

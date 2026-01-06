@@ -2,6 +2,6 @@
 Version=1.0
 Type=Application
 Name=Abaqus CAE 2022
-Exec=/home/specter119/.local/share/bwrap/abq2022 cae -mesa -noStartupDialog
+Exec=%h/.local/share/bwrap/abq2022 cae -mesa -noStartupDialog
 Icon=/opt/DassaultSystemes/SIMULIA/EstProducts/2022/linux_a64/CAEresources/graphic/icons/icoR_application.png
 StartupWMClass=Abaqus

@@ -17,7 +17,7 @@
 	symlinks = true
 {{else}}
 	ignorecase = false
-  editor = nvim
+	editor = nvim
 {{/if}}
 
 [init]
