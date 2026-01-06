@@ -14,7 +14,7 @@ repos:
   - id: detect-private-key
   - id: double-quote-string-fixer
   - id: end-of-file-fixer
-    exclude: ^fcitx5/fcitx5/conf
+    exclude: ^fcitx5/fcitx5
   - id: forbid-new-submodules
   - id: mixed-line-ending
   - id: trailing-whitespace
