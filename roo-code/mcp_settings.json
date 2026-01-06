@@ -1,20 +1,17 @@
 {
   "mcpServers": {
     "context7": {
+      "alwaysAllow": [
+        "resolve-library-id",
+        "get-library-docs"
+      ],
       "type": "streamable-http",
       "url": "https://mcp.context7.com/mcp"
     },
-    "git": {
-      "alwaysAllow": [
-        "git_diff_staged"
-      ],
-      "args": [
-        "mcp-server-git"
-      ],
-      "command": "uvx",
-      "disabled": false
-    },
     "sequentialthinking": {
+      "alwaysAllow": [
+        "sequentialthinking"
+      ],
       "args": [
         "-y",
         "@modelcontextprotocol/server-sequential-thinking"

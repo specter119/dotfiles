@@ -25,7 +25,7 @@ alacritty = '~/AppData/Roaming/alacritty'
 helix = '~/AppData/Roaming/helix'
 
 [roo-code.files]
-'roo-code/settings' = '~/AppData/Roaming/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings/'
+'roo-code' = '~/AppData/Roaming/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings/'
 
 [python-windows]
 depends = ['conda', 'pip']

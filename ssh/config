@@ -8,6 +8,6 @@ Host *
 	Compression=yes
 {{#if dotter.linux}}
 	ControlMaster auto
-	ControlPath /run/user/1000/ssh-%r@%h:%p
+	ControlPath /run/user/%i/ssh-%r@%h:%p
 	ControlPersist yes
 {{/if}}
