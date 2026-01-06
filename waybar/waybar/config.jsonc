@@ -1,7 +1,5 @@
 {
-  "id": "top",
   "height": 24,
-  "name": "top",
   "layer": "top",
   "position": "top",
   "modules-right": [
@@ -36,14 +34,12 @@
     }
   },
   "sway/window": {
-    "format": "{}",
     "max-length": 50,
     "tooltip": false
   },
   "clock": {
-    "format": " {:L%a曜 %H:%M}",
+    "format": " {:L%a曜 %H:%M}",
     "locale": "ja_JP.UTF-8",
-    "tooltip": true,
     "tooltip-format": "<tt><span><small>{calendar}</small></span></tt>",
     "calendar": {
       "mode": "month",
@@ -59,9 +55,6 @@
         "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
       }
     }
-  },
-  "sway/mode": {
-    "format": "{}"
   },
   "battery": {
     "format": "{icon}{capacity}%",
@@ -102,11 +95,6 @@
     ],
     "tooltip-format": " Brightness: {percent}%",
     "scroll-step": 2,
-    "states": {
-      "low": 0,
-      "mid": 50,
-      "high": 75
-    },
     "smooth-scrolling-threshold": 1.0
   },
   "pulseaudio": {
@@ -127,11 +115,6 @@
     "tooltip-format": " Volume: {volume}%",
     "scroll-step": 2,
     "on-click": "pavucontrol",
-    "states": {
-      "low": 0,
-      "mid": 50,
-      "high": 80
-    },
     "smooth-scrolling-threshold": 1.0
   },
   "idle_inhibitor": {
@@ -147,16 +130,12 @@
     "format": "⏻",
     "tooltip": false,
     "on-click": "wlogout",
-    "on-click-right": "systemctl poweroff"
-  },
-  "sway/language": {
-    "format": " {short}",
-    "tooltip-format": " Language: {long}"
+"on-click-right": "systemctl poweroff"
   },
   "cpu": {
     "interval": 5,
-    "format": " {usage}%",
-    "tooltip-format": " CPU Usage: {usage}%\n Load: {load}",
+    "format": "󰻠 {usage}%",
+    "tooltip-format": "󰻠 CPU: {usage}% | Load: {load}",
     "states": {
       "warning": 70,
       "critical": 90
@@ -164,32 +143,31 @@
   },
   "memory": {
     "interval": 5,
-    "format": " {percentage}%",
-    "tooltip-format": " Memory: {used:0.1f}G/{total:0.1f}G ({percentage}%)",
+    "format": "󰘚 {percentage}%",
+    "tooltip-format": "󰘚 Memory: {used:0.1f}G/{total:0.1f}G ({percentage}%)",
     "states": {
       "warning": 70,
       "critical": 90
     }
   },
   "custom/disk": {
-    "format": "",
-    "format-alt": " {}%",
+    "format": "󰋊 {}%",
     "exec": "df -h | grep '/dev/mapper/cryptroot' | head -1 | awk '{print $5}' | sed 's/%//'",
     "interval": 60,
-    "tooltip-format": " Disk Usage: {}%",
+    "tooltip-format": "󰋊 Disk: {}%",
     "on-click": "htop"
   },
   "tray": {
     "icon-size": 16,
     "spacing": 8
   },
-  "sway/scratchpad": {
+"sway/scratchpad": {
     "format": "{icon} {count}",
     "show-empty": false,
     "format-icons": [
-      ""
+      ""
     ],
-    "tooltip": true,
-    "tooltip-format": " Scratchpad: {app} - {title}"
+    "tooltip-format": " Scratchpad: {app} - {title}"
   }
+}
 }
