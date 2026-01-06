@@ -98,7 +98,7 @@
     "smooth-scrolling-threshold": 1.0
   },
   "pulseaudio": {
-    "format": "{icon}",
+    "format": "{icon} ",
     "format-alt": "{icon} {volume}%",
     "format-alt-click": "click-right",
     "format-bluetooth": "",
@@ -118,7 +118,7 @@
     "smooth-scrolling-threshold": 1.0
   },
   "idle_inhibitor": {
-    "format": "{icon}",
+    "format": "{icon} ",
     "format-icons": {
       "activated": "",
       "deactivated": ""
@@ -134,7 +134,7 @@
   },
   "cpu": {
     "interval": 5,
-    "format": "󰻠 {usage:2}%",
+    "format": "󰻠  {usage:2}%",
     "tooltip-format": "󰻠 CPU: {usage}% | Load: {load}",
     "states": {
       "warning": 70,
@@ -143,7 +143,7 @@
   },
   "memory": {
     "interval": 5,
-    "format": "󰘚 {percentage:2}%",
+    "format": "󰘚  {percentage:2}%",
     "tooltip-format": "󰘚 Memory: {used:0.1f}G/{total:0.1f}G ({percentage}%)",
     "states": {
       "warning": 70,
@@ -151,7 +151,7 @@
     }
   },
   "custom/disk": {
-    "format": "󰋊 {}%",
+    "format": "󰋊  {}%",
     "exec": "df -h | grep '/dev/mapper/cryptroot' | head -1 | awk '{printf \"%2d\", $5}'",
     "interval": 60,
     "tooltip-format": "󰋊 Disk: {}%",
