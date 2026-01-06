@@ -91,7 +91,6 @@
     }
   },
   "backlight": {
-    "device": "amdgpu_bl1",
     "format": "{icon}",
     "format-alt": "{icon} {percent}%",
     "format-icons": [
