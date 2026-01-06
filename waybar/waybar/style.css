@@ -92,9 +92,10 @@ button:hover {
 #idle_inhibitor,
 #scratchpad,
 #mpd,
-#custom-disk {
+#custom-disk,
+#custom-power-menu {
   margin: 2px 1px;
-  padding: 0 6px;
+  padding: 0 8px;
   background-color: rgba(255, 255, 255, 0.06);
   color: #ffffff;
   border-radius: 2px;
@@ -113,10 +114,12 @@ button:hover {
 
 #cpu {
   background-color: rgba(116, 199, 236, 0.22);
+  padding: 0 5px;
 }
 
 #memory {
   background-color: rgba(180, 190, 254, 0.22);
+  padding: 0 5px;
 }
 
 #pulseaudio {
@@ -125,13 +128,10 @@ button:hover {
 
 #custom-disk {
   background-color: rgba(166, 173, 200, 0.22);
-  min-width: 20px;
-  padding: 0 8px;
+  padding: 0 5px;
 }
 
 #custom-power-menu {
-  min-width: 20px;
-  padding: 0 8px;
   margin-right: 4px;
 }
 
@@ -215,8 +215,8 @@ button:hover {
 }
 
 #idle_inhibitor.activated {
-  background-color: #ffffff;
-  color: #1e1e2e;
+  background-color: rgba(137, 180, 250, 0.4);
+  color: #ffffff;
 }
 
 #tray > .passive {
@@ -231,8 +231,4 @@ button:hover {
 #mode {
   border-bottom: 2px solid #ffffff;
   border-radius: 0;
-}
-
-#cpu, #memory {
-  min-width: 25px;
 }
