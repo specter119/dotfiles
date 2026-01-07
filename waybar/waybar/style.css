@@ -50,31 +50,37 @@ button:hover {
   color: rgba(255, 255, 255, 0.6);
   border-bottom: 2px solid transparent;
   border-radius: 0;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.682);
   box-shadow: none;
   margin: 0;
+  opacity: 0.6;
 }
 
 #workspaces button:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
   box-shadow: none;
+  opacity: 0.8;
 }
 
 #workspaces button.visible {
   color: rgba(255, 255, 255, 0.8);
+  opacity: 0.8;
 }
 
 #workspaces button.focused {
-  background: rgba(255, 255, 255, 0.05);
+  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.15);
   color: #ffffff;
   border-bottom: 2px solid #89b4fa;
-  box-shadow: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  opacity: 1;
 }
 
 #workspaces button.urgent {
   background-color: #eb4d4b;
   color: #ffffff;
+  opacity: 1;
 }
 
 #clock,
@@ -92,9 +98,10 @@ button:hover {
 #idle_inhibitor,
 #scratchpad,
 #mpd,
-#custom-disk {
+#custom-disk,
+#custom-power-menu {
   margin: 2px 1px;
-  padding: 0 6px;
+  padding: 0 8px;
   background-color: rgba(255, 255, 255, 0.06);
   color: #ffffff;
   border-radius: 2px;
@@ -105,6 +112,7 @@ button:hover {
 /* 功能性色块 - 冷色科技感 */
 #clock {
   background-color: rgba(137, 180, 250, 0.25);
+  padding: 0 5px 0 3px;
 }
 
 #battery {
@@ -113,10 +121,14 @@ button:hover {
 
 #cpu {
   background-color: rgba(116, 199, 236, 0.22);
+  padding: 0 5px;
+  min-width: 42px;
 }
 
 #memory {
   background-color: rgba(180, 190, 254, 0.22);
+  padding: 0 4px 0 6px;
+  min-width: 42px;
 }
 
 #pulseaudio {
@@ -125,13 +137,11 @@ button:hover {
 
 #custom-disk {
   background-color: rgba(166, 173, 200, 0.22);
-  min-width: 20px;
-  padding: 0 8px;
+  padding: 0 4px 0 6px;
+  min-width: 42px;
 }
 
 #custom-power-menu {
-  min-width: 20px;
-  padding: 0 8px;
   margin-right: 4px;
 }
 
@@ -215,8 +225,8 @@ button:hover {
 }
 
 #idle_inhibitor.activated {
-  background-color: #ffffff;
-  color: #1e1e2e;
+  background-color: rgba(137, 180, 250, 0.4);
+  color: #ffffff;
 }
 
 #tray > .passive {
@@ -233,6 +243,6 @@ button:hover {
   border-radius: 0;
 }
 
-#cpu, #memory {
-  min-width: 25px;
+#idle_inhibitor, #pulseaudio {
+  padding: 0 2px 0 3px;
 }
