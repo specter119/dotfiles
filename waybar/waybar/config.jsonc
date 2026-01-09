@@ -101,18 +101,18 @@
     "format": "{icon} ",
     "format-alt": "{icon} {volume}%",
     "format-alt-click": "click-right",
-    "format-bluetooth": "",
-    "format-bluetooth-alt": " {volume}%",
-    "format-muted": "",
+    "format-bluetooth": "󰂰",
+    "format-bluetooth-alt": "󰂰 {volume}%",
+    "format-muted": "󰖁",
     "format-icons": {
-      "headphone": "",
+      "headphone": "󰋋",
       "default": [
-        "",
-        "",
-        ""
+        "󰕿",
+        "󰖀",
+        "󰕾"
       ]
     },
-    "tooltip-format": " Volume: {volume}%",
+    "tooltip-format": "󰕾 Volume: {volume}%",
     "scroll-step": 2,
     "on-click": "pavucontrol",
     "smooth-scrolling-threshold": 1.0
