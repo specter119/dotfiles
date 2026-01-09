@@ -70,6 +70,10 @@
 - DNS 查询：`dig` > `nslookup`
 - 网络连接：`ss` > `netstat`
 - 语法搜索：`ast-grep`
+- PDF 转图片：`pdftoppm`（不要用 Playwright）
+
+> **注意**：PDF 截图 ≠ 浏览器截图。用 `pdftoppm -png -r 150 file.pdf out/page`。
+> 每次截图前清理输出目录，避免旧文件残留。
 
 ### MCP 工具
 
