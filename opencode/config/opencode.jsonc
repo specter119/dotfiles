@@ -5,7 +5,7 @@
     "morph-mcp": {
       "type": "local",
       "command": [
-        "npx",
+        "bunx",
         "-y",
         "@morphllm/morphmcp"
       ],
