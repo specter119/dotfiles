@@ -85,6 +85,7 @@ button:hover {
 
 #clock,
 #battery,
+#power-profiles-daemon,
 #cpu,
 #memory,
 #disk,
@@ -119,6 +120,10 @@ button:hover {
   background-color: rgba(148, 226, 213, 0.22);
 }
 
+#power-profiles-daemon {
+  background-color: rgba(148, 226, 213, 0.22);
+}
+
 #cpu {
   background-color: rgba(116, 199, 236, 0.22);
   padding: 0 5px;
@@ -147,6 +152,7 @@ button:hover {
 
 #clock:hover,
 #battery:hover,
+#power-profiles-daemon:hover,
 #cpu:hover,
 #memory:hover,
 #disk:hover,

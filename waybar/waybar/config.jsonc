@@ -7,6 +7,7 @@
     "backlight",
     "pulseaudio",
     "battery",
+    "power-profiles-daemon",
     "sway/scratchpad",
     "sway/mode",
     "tray",
@@ -120,11 +121,22 @@
   "idle_inhibitor": {
     "format": "{icon} ",
     "format-icons": {
-      "activated": "",
-      "deactivated": ""
+      "activated": "",
+      "deactivated": ""
     },
-    "tooltip-format-activated": " Sleep prevention: ON",
-    "tooltip-format-deactivated": " Sleep prevention: OFF"
+    "tooltip-format-activated": " Sleep prevention: ON",
+    "tooltip-format-deactivated": " Sleep prevention: OFF"
+  },
+  "power-profiles-daemon": {
+    "format": "{icon}",
+    "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+    "tooltip": true,
+    "format-icons": {
+      "default": "󰗑",
+      "performance": "󰓅",
+      "balanced": "󰾅",
+      "power-saver": "󰾆"
+    }
   },
   "custom/power-menu": {
     "format": "⏻",
@@ -169,5 +181,4 @@
     ],
     "tooltip-format": " Scratchpad: {app} - {title}"
   }
-}
 }
