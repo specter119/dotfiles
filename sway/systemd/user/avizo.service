@@ -4,6 +4,7 @@ PartOf=sway-session.target
 
 [Service]
 Type=simple
+Environment=GDK_BACKEND=wayland
 ExecStart=/usr/bin/avizo-service
 ExecStop=/bin/kill -2 $MAINPID
 Restart=on-failure

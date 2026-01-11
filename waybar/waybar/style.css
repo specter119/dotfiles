@@ -48,7 +48,7 @@ button:hover {
   background: transparent;
   color: rgba(255, 255, 255, 0.6);
   border-bottom: 2px solid transparent;
-  border-radius: 0;
+  border-radius: 4px;
   transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.682);
   box-shadow: none;
   margin: 0;
@@ -113,6 +113,7 @@ button:hover {
 /* Material 500 色彩 - 用于图标/文字 */
 #idle_inhibitor {
   color: #F48FB1;
+  padding: 0 11px 0 9px;
 }
 
 #backlight {
@@ -121,6 +122,7 @@ button:hover {
 
 #pulseaudio {
   color: #80DEEA;
+  padding: 0 11px 0 9px;
 }
 
 #clock {
@@ -151,13 +153,14 @@ button:hover {
   color: #81D4FA;
   min-width: 0;
   margin: 0;
-  padding: 0 6px;
+  padding: 0 7px 0 5px;
   border-radius: 0;
 }
 
 #custom-power-menu {
   color: #EF9A9A;
   margin-right: 4px;
+  padding: 0 11px 0 9px;
 }
 
 /* Hover - Material ripple effect */
@@ -257,6 +260,16 @@ button:hover {
 }
 
 #mode {
-  border-bottom: 2px solid #ffffff;
-  border-radius: 0;
+  background-color: #64727D;
+  border-bottom: 3px solid #ffffff;
+}
+
+tooltip {
+  background: rgba(38, 50, 56, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+tooltip label {
+  color: #ECEFF1;
 }
