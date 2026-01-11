@@ -1,7 +1,7 @@
 * {
   border: none;
   border-radius: 2px;
-  font-family: sans-serif, "IosevkaTerm Nerd Font";
+  font-family: "Sarasa UI SC", "IosevkaTerm Nerd Font", sans-serif;
   font-size: 13px;
   min-height: 0;
   font-weight: 500;
@@ -114,6 +114,7 @@ button:hover {
 /* 功能性色块 - 冷色科技感 */
 #idle_inhibitor {
   background-color: rgba(245, 194, 231, 0.22);
+  padding: 0 8px 0 6px;
 }
 
 #backlight {
@@ -124,48 +125,32 @@ button:hover {
   background-color: rgba(137, 220, 235, 0.22);
 }
 
-#power {
-  background-color: rgba(148, 226, 213, 0.22);
-  border-radius: 2px;
-  margin: 2px 1px;
-  padding: 0 4px;
-}
-
-#power > * {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-#power #battery,
-#power #power-profiles-daemon {
-  background: transparent;
-  box-shadow: none;
-  padding: 0 4px;
-  margin: 0;
-}
-
 #clock {
   background-color: rgba(137, 180, 250, 0.22);
 }
 
-#cpu {
+#power-profiles-daemon {
+  background-color: rgba(148, 226, 213, 0.22);
+  padding: 0 9px 0 5px;
+}
+
+#hardware {
   background-color: rgba(116, 199, 236, 0.22);
-  min-width: 42px;
+  border-radius: 2px;
+  margin: 2px 1px;
+  padding: 0 6px 0 4px;
 }
 
-#memory {
-  background-color: rgba(180, 190, 254, 0.22);
-  min-width: 42px;
+#hardware #cpu,
+#hardware #memory,
+#hardware #custom-disk,
+#hardware #custom-system {
+  background-color: transparent;
+  box-shadow: none;
+  min-width: 0;
+  margin: 0;
+  padding: 0 4px;
 }
-
-#custom-disk {
-  background-color: rgba(166, 173, 200, 0.22);
-  min-width: 42px;
-}
-
-
 
 #custom-power-menu {
   margin-right: 4px;
