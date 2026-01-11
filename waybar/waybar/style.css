@@ -8,10 +8,9 @@
 }
 
 window#waybar {
-  background-color: rgba(16, 32, 48, 0.85);
-  color: #ffffff;
-  transition: box-shadow 0.2s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
+  background-color: rgba(38, 50, 56, 0.92);
+  color: #ECEFF1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16), 0 2px 10px rgba(0, 0, 0, 0.12);
 }
 
 window#waybar.hidden {
@@ -26,7 +25,7 @@ window#waybar.hidden {
   margin: 0;
   padding: 0;
   background: transparent;
-  color: #89b4fa;
+  color: #80CBC4;
 }
 
 button {
@@ -34,7 +33,7 @@ button {
   border: none;
   border-radius: 0;
   background: transparent;
-  color: #a6adc8;
+  color: #B0BEC5;
   transition: all 0.2s ease;
   text-shadow: none;
 }
@@ -70,19 +69,19 @@ button:hover {
 
 #workspaces button.focused {
   padding: 0 16px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
-  border-bottom: 2px solid #89b4fa;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-bottom: 2px solid #80CBC4;
   opacity: 1;
 }
 
 #workspaces button.urgent {
-  background-color: #eb4d4b;
+  background-color: #FF5252;
   color: #ffffff;
   opacity: 1;
 }
 
+/* Material Chips - 统一背景，彩色图标/文字 */
 #clock,
 #battery,
 #backlight,
@@ -101,44 +100,47 @@ button:hover {
 #scratchpad,
 #mpd,
 #custom-disk,
+#custom-system,
 #custom-power-menu {
-  margin: 2px 1px;
-  padding: 0 8px;
-  background-color: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
-  border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.24);
+  margin: 2px 2px;
+  padding: 0 10px;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ECEFF1;
+  border-radius: 12px;
   transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-/* 功能性色块 - 冷色科技感 */
+/* Material 500 色彩 - 用于图标/文字 */
 #idle_inhibitor {
-  background-color: rgba(245, 194, 231, 0.22);
-  padding: 0 8px 0 6px;
+  color: #F48FB1;
 }
 
 #backlight {
-  background-color: rgba(249, 226, 175, 0.22);
+  color: #FFE082;
 }
 
 #pulseaudio {
-  background-color: rgba(137, 220, 235, 0.22);
+  color: #80DEEA;
 }
 
 #clock {
-  background-color: rgba(137, 180, 250, 0.22);
+  color: #90CAF9;
+}
+
+#battery {
+  color: #A5D6A7;
 }
 
 #power-profiles-daemon {
-  background-color: rgba(148, 226, 213, 0.22);
-  padding: 0 9px 0 5px;
+  color: #80CBC4;
+  padding: 0 11px 0 9px;
 }
 
 #hardware {
-  background-color: rgba(116, 199, 236, 0.22);
-  border-radius: 2px;
-  margin: 2px 1px;
-  padding: 0 6px 0 4px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  margin: 2px 2px;
+  padding: 0 4px;
 }
 
 #hardware #cpu,
@@ -146,16 +148,19 @@ button:hover {
 #hardware #custom-disk,
 #hardware #custom-system {
   background-color: transparent;
-  box-shadow: none;
+  color: #81D4FA;
   min-width: 0;
   margin: 0;
-  padding: 0 4px;
+  padding: 0 6px;
+  border-radius: 0;
 }
 
 #custom-power-menu {
+  color: #EF9A9A;
   margin-right: 4px;
 }
 
+/* Hover - Material ripple effect */
 #clock:hover,
 #battery:hover,
 #power-profiles-daemon:hover,
@@ -173,9 +178,9 @@ button:hover {
 #idle_inhibitor:hover,
 #scratchpad:hover,
 #mpd:hover,
-#custom-disk:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+#custom-disk:hover,
+#hardware:hover {
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .modules-left > widget:first-child > #workspaces { margin-left: 0; }
@@ -193,53 +198,53 @@ button:hover {
   100% { opacity: 1; }
 }
 
+/* 状态颜色 - 保持高可见度 */
 #battery.charging, #battery.plugged {
-  background-color: #a6e3a1;
-  color: #1e1e2e;
+  color: #69F0AE;
 }
 
 #battery.warning:not(.charging) {
-  background-color: #fab387;
   color: #1e1e2e;
+  background-color: #FFC107;
   animation-name: pulse;
   animation-duration: 2s;
   animation-iteration-count: infinite;
 }
 
 #battery.critical:not(.charging) {
-  background-color: #f38ba8;
-  color: #1e1e2e;
+  color: #ffffff;
+  background-color: #FF5252;
   animation-name: pulse;
   animation-duration: 1s;
   animation-iteration-count: infinite;
 }
 
 #cpu.high {
-  background-color: #fab387;
   color: #1e1e2e;
+  background-color: #FFC107;
 }
 
 #memory.high {
-  background-color: #cba6f7;
   color: #1e1e2e;
+  background-color: #CE93D8;
 }
 
 #network.disconnected {
-  background-color: #f38ba8;
-  color: #1e1e2e;
+  color: #ffffff;
+  background-color: #FF5252;
 }
 
 #temperature.critical {
-  background-color: #eb4d4b;
   color: #ffffff;
+  background-color: #FF5252;
   animation-name: pulse;
   animation-duration: 1s;
   animation-iteration-count: infinite;
 }
 
 #idle_inhibitor.activated {
-  background-color: rgba(137, 180, 250, 0.4);
-  color: #ffffff;
+  color: #1e1e2e;
+  background-color: #90CAF9;
 }
 
 #tray > .passive {
@@ -248,7 +253,7 @@ button:hover {
 
 #tray > .needs-attention {
   -gtk-icon-effect: highlight;
-  background-color: #eb4d4b;
+  background-color: #FF5252;
 }
 
 #mode {
