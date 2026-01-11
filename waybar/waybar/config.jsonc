@@ -6,14 +6,13 @@
     "idle_inhibitor",
     "backlight",
     "pulseaudio",
-    "group/power",
+    "battery",
+    "power-profiles-daemon",
     "sway/scratchpad",
     "sway/mode",
     "tray",
     "clock",
-    "cpu",
-    "memory",
-    "custom/disk",
+    "group/hardware",
     "custom/power-menu"
   ],
   "modules-center": [
@@ -87,18 +86,20 @@
     "format": "{icon}",
     "format-alt": "{icon} {percent}%",
     "format-icons": [
-      "🌕",
-      "🌔",
-      "🌓",
-      "🌒",
-      "🌑"
+      "󰃚",
+      "󰃛",
+      "󰃜",
+      "󰃝",
+      "󰃞",
+      "󰃟",
+      "󰃠"
     ],
-    "tooltip-format": " Brightness: {percent}%",
+    "tooltip-format": "󰃟 Brightness: {percent}%",
     "scroll-step": 2,
     "smooth-scrolling-threshold": 1.0
   },
   "pulseaudio": {
-    "format": "{icon} ",
+    "format": "{icon}",
     "format-alt": "{icon} {volume}%",
     "format-alt-click": "click-right",
     "format-bluetooth": "󰂰",
@@ -118,20 +119,13 @@
     "smooth-scrolling-threshold": 1.0
   },
   "idle_inhibitor": {
-    "format": "{icon} ",
+    "format": "{icon}",
     "format-icons": {
       "activated": "󰅶",
       "deactivated": "󰛊"
     },
     "tooltip-format-activated": " Sleep prevention: ON",
     "tooltip-format-deactivated": " Sleep prevention: OFF"
-  },
-  "group/power": {
-    "orientation": "inherit",
-    "modules": [
-      "battery",
-      "power-profiles-daemon"
-    ]
   },
   "power-profiles-daemon": {
     "format": "{icon}",
@@ -174,6 +168,24 @@
     "interval": 60,
     "tooltip-format": "󰋊 Disk: {}%",
     "on-click": "htop"
+  },
+  "custom/system": {
+    "format": "󰒋",
+    "tooltip-format": "System Monitor"
+  },
+  "group/hardware": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 300,
+      "children-class": "hardware-drawer",
+      "transition-left-to-right": false
+    },
+    "modules": [
+      "custom/system",
+      "cpu",
+      "memory",
+      "custom/disk"
+    ]
   },
   "tray": {
     "icon-size": 16,
