@@ -6,8 +6,7 @@
     "idle_inhibitor",
     "backlight",
     "pulseaudio",
-    "battery",
-    "power-profiles-daemon",
+    "group/power",
     "sway/scratchpad",
     "sway/mode",
     "tray",
@@ -121,11 +120,18 @@
   "idle_inhibitor": {
     "format": "{icon} ",
     "format-icons": {
-      "activated": "",
-      "deactivated": ""
+      "activated": "󰅶",
+      "deactivated": "󰛊"
     },
     "tooltip-format-activated": " Sleep prevention: ON",
     "tooltip-format-deactivated": " Sleep prevention: OFF"
+  },
+  "group/power": {
+    "orientation": "inherit",
+    "modules": [
+      "battery",
+      "power-profiles-daemon"
+    ]
   },
   "power-profiles-daemon": {
     "format": "{icon}",

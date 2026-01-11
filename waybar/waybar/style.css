@@ -85,6 +85,7 @@ button:hover {
 
 #clock,
 #battery,
+#backlight,
 #power-profiles-daemon,
 #cpu,
 #memory,
@@ -111,40 +112,60 @@ button:hover {
 }
 
 /* 功能性色块 - 冷色科技感 */
-#clock {
-  background-color: rgba(137, 180, 250, 0.25);
-  padding: 0 5px 0 3px;
+#idle_inhibitor {
+  background-color: rgba(245, 194, 231, 0.22);
 }
 
-#battery {
-  background-color: rgba(148, 226, 213, 0.22);
-}
-
-#power-profiles-daemon {
-  background-color: rgba(148, 226, 213, 0.22);
-}
-
-#cpu {
-  background-color: rgba(116, 199, 236, 0.22);
-  padding: 0 5px;
-  min-width: 42px;
-}
-
-#memory {
-  background-color: rgba(180, 190, 254, 0.22);
-  padding: 0 4px 0 6px;
-  min-width: 42px;
+#backlight {
+  background-color: rgba(249, 226, 175, 0.22);
 }
 
 #pulseaudio {
   background-color: rgba(137, 220, 235, 0.22);
 }
 
-#custom-disk {
-  background-color: rgba(166, 173, 200, 0.22);
-  padding: 0 4px 0 6px;
+#power {
+  background-color: rgba(148, 226, 213, 0.22);
+  border-radius: 2px;
+  margin: 2px 1px;
+  padding: 0 4px;
+}
+
+#power > * {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+#power #battery,
+#power #power-profiles-daemon {
+  background: transparent;
+  box-shadow: none;
+  padding: 0 4px;
+  margin: 0;
+}
+
+#clock {
+  background-color: rgba(137, 180, 250, 0.22);
+}
+
+#cpu {
+  background-color: rgba(116, 199, 236, 0.22);
   min-width: 42px;
 }
+
+#memory {
+  background-color: rgba(180, 190, 254, 0.22);
+  min-width: 42px;
+}
+
+#custom-disk {
+  background-color: rgba(166, 173, 200, 0.22);
+  min-width: 42px;
+}
+
+
 
 #custom-power-menu {
   margin-right: 4px;
@@ -161,6 +182,7 @@ button:hover {
 #pulseaudio:hover,
 #wireplumber:hover,
 #custom-media:hover,
+#backlight:hover,
 #tray:hover,
 #mode:hover,
 #idle_inhibitor:hover,
@@ -247,8 +269,4 @@ button:hover {
 #mode {
   border-bottom: 2px solid #ffffff;
   border-radius: 0;
-}
-
-#idle_inhibitor, #pulseaudio {
-  padding: 0 2px 0 3px;
 }
