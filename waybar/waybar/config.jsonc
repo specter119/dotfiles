@@ -95,8 +95,8 @@
       "󰃠"
     ],
     "tooltip-format": "󰃟 Brightness: {percent}%",
-    "scroll-step": 2,
-    "smooth-scrolling-threshold": 1.0
+    "on-scroll-up": "lightctl up 2",
+    "on-scroll-down": "lightctl down 2"
   },
   "pulseaudio": {
     "format": "{icon}",
@@ -114,9 +114,9 @@
       ]
     },
     "tooltip-format": "󰕾 Volume: {volume}%",
-    "scroll-step": 2,
-    "on-click": "pavucontrol",
-    "smooth-scrolling-threshold": 1.0
+    "on-scroll-up": "volumectl -u up 2",
+    "on-scroll-down": "volumectl -u down 2",
+    "on-click": "pavucontrol"
   },
   "idle_inhibitor": {
     "format": "{icon}",
