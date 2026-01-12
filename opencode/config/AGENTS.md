@@ -172,6 +172,16 @@
 
 ### 语言特定习惯
 
+#### Python API 设计与代码范式
+
+详见 [Friendly Python](./friendly_python.md)：基于 Frost Ming 系列文章整理的 Python 工程实践指南，涵盖：
+
+- 以用户体验倒推 API 设计（合理默认值、上下文管理器）
+- 扩展点收敛（注册中心替代 if-else 链）
+- 构造方式清晰（classmethod 替代 flag 参数）
+- 显式优于隐式（避免 `__getattr__` 滥用）
+- 复用生态扩展点（如 `requests.auth.AuthBase`）
+
 #### Python 独立脚本
 
 使用 `uv run` + PEP 723 Inline Script Metadata：
