@@ -4,12 +4,7 @@ if status is-login; or set -q ZELLIJ
         set -gx __profile_sourced 1
         exec bash -c "\
             test -e /etc/profile && source /etc/profile
-            test -e $HOME/.bash_profile && source $HOME/.bash_profile
             exec fish --login
         "
     end
-end
-
-# Main fish configuration file
-if status is-interactive
 end
