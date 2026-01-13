@@ -1,0 +1,23 @@
+# Atuin configuration
+# https://docs.atuin.sh/configuration/config/
+
+[settings]
+search_mode_shell_up_key_binding = "skim"
+filter_mode_shell_up_key_binding = "directory"
+style = "compact"
+inline_height_shell_up_key_binding = 25
+invert = true
+show_preview = true
+max_preview_height = 4
+show_help = true
+show_tabs = false
+exit_mode = "return-original"
+enter_accept = true
+history_filter = [
+  "^z ",
+  "^zi$",
+  "^zi "
+]
+
+[theme]
+name = "marine"
