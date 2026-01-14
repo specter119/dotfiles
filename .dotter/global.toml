@@ -15,8 +15,12 @@ waybar = '~/.config'
 [sov.files]
 sov = '~/.config/sov'
 
+[avizo.files]
+'avizo/avizo' = '~/.config/avizo'
+'avizo/systemd' = '~/.config/systemd'
+
 [sway]
-depends = ['mako', 'waybar']
+depends = ['mako', 'waybar', 'avizo']
 
 [sway.files]
 sway = '~/.config'
