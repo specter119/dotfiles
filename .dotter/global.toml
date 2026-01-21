@@ -79,11 +79,17 @@ julia = '~/.julia'
 [stylua.files]
 stylua = '~/.config/stylua'
 
+['agents.md.d'.files]
+'agents.md.d' = '~/.config/agents.md.d'
+
 [claude-code.files]
 'claude-code' = '~/.config'
 
 [codex.files]
 codex = '~/.config'
+
+[opencode]
+depends = ['agents.md.d']
 
 [opencode.files]
 'opencode/config' = '~/.config/opencode'
@@ -92,6 +98,12 @@ codex = '~/.config'
 [vscode.files]
 'vscode/config' = '~/.config'
 'vscode/share' = '~/.local/share'
+
+[amp]
+depends = ['agents.md.d']
+
+[amp.files]
+amp = '~/.config/amp'
 
 [atuin.files]
 atuin = '~/.config'
@@ -158,7 +170,15 @@ depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
 depends = ['git', 'ssh', 'container', 'LazyVim']
 
 [copilot]
-depends = ['roo-code', 'claude-code', 'codex', 'opencode', 'ollama', 'zellij']
+depends = [
+  'roo-code',
+  'claude-code',
+  'codex',
+  'opencode',
+  'amp',
+  'ollama',
+  'zellij'
+]
 
 [python]
 depends = ['uv', 'conda', 'marimo']
