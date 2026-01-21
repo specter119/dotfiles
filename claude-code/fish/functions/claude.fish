@@ -34,6 +34,19 @@ function claude --description 'Run claude code with bwrap sandboxing and adapted
         test -f $CLAUDE_SHARE/$config_file; or echo '{}' >$CLAUDE_SHARE/$config_file
     end
 
+    # Detect git worktree and prepare extra mounts
+    set -l worktree_mounts
+    if git rev-parse --is-inside-work-tree &>/dev/null
+        set -l git_common_dir (git rev-parse --git-common-dir 2>/dev/null)
+        set -l git_dir (git rev-parse --git-dir 2>/dev/null)
+        if test "$git_common_dir" != "$git_dir"
+            set -l main_repo (dirname (realpath $git_common_dir))
+            if test -d "$main_repo"
+                set worktree_mounts --bind $main_repo $main_repo
+            end
+        end
+    end
+
     # Bwrap
     bwrap \
         --dev /dev \
@@ -74,6 +87,7 @@ function claude --description 'Run claude code with bwrap sandboxing and adapted
         --bind-try $CLAUDE_CONFIG/skills $HOME/.claude/skills \
         --bind-try $HOME/.gemini $HOME/.gemini \
         --bind (pwd) (pwd) \
+        $worktree_mounts \
         --setenv HOME $HOME \
         --setenv PATH $HOME/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin \
         --unshare-all \
