@@ -16,8 +16,7 @@ waybar = '~/.config'
 sov = '~/.config/sov'
 
 [avizo.files]
-'avizo/avizo' = '~/.config/avizo'
-'avizo/systemd' = '~/.config/systemd'
+avizo = '~/.config'
 
 [sway]
 depends = ['mako', 'waybar', 'avizo']
@@ -94,8 +93,6 @@ codex = '~/.config'
 [vscode.files]
 'vscode/config' = '~/.config'
 'vscode/share' = '~/.local/share'
-
-[amp]
 
 [amp.files]
 amp = '~/.config/amp'
