@@ -19,13 +19,7 @@ function claude --description 'Run claude code with bwrap sandboxing and adapted
     set CLAUDE_SHARE (string replace '~' $HOME $CLAUDE_SHARE)
     set -q CLAUDE_CONFIG; or set CLAUDE_CONFIG $HOME/.config/claude
     set CLAUDE_CONFIG (string replace '~' $HOME $CLAUDE_CONFIG)
-
-    # Determine which claude binary to use
-    if test -f $CLAUDE_SHARE/local/claude
-        set claude_cmd $HOME/.claude/local/claude
-    else
-        set claude_cmd (command -v claude)
-    end
+    set claude_cmd (command -v claude) # the npm install binary is deprecated
 
     # Handle config files localted at `~` by default.
     mkdir -p $CLAUDE_SHARE
