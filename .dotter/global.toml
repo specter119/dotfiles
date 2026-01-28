@@ -176,7 +176,7 @@ depends = [
 copilot = '~/.config'
 
 [python]
-depends = ['uv', 'conda', 'marimo']
+depends = ['uv', 'conda']
 
 [nodejs]
 depends = ['bun']
