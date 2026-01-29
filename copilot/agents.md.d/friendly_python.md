@@ -283,4 +283,3 @@ for cmd_cls in COMMANDS:
 - 是否优先使用生态扩展点？
 - 是否为了炫技牺牲了显式性与可维护性？
 - 移植代码是否重新设计了调用方式？
-  :wrap_callback
