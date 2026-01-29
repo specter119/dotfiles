@@ -1,8 +1,8 @@
 {
   "alwaysThinkingEnabled": true,
   "enabledPlugins": {
-    "claude-mem@thedotmack": true,
     "code-simplifier@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true
@@ -18,7 +18,7 @@
       {
         "hooks": [
           {
-            "command": "~/.local/bin/claude-hook-notifier.sh",
+            "command": "~/.local/share/copilot-hooks/notify.sh",
             "type": "command"
           }
         ],

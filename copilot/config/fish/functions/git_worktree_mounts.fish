@@ -1,3 +1,4 @@
+#!/usr/bin/env fish
 function git_worktree_mounts --description 'Print bwrap mount args for git worktrees'
     set -l worktree_mounts
     if git rev-parse --is-inside-work-tree &>/dev/null
