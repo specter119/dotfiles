@@ -55,30 +55,30 @@
 
 ### MCP 工具
 
-| 用途 | 工具 |
-|------|------|
-| 网络搜索 | `mcp__exa__web_search_exa` |
-| 网页抓取 | `mcp__exa__crawling_exa` |
-| 代码搜索 | `mcp__exa__get_code_context_exa` |
-| 库文档查询 | `context7 MCP`（主动使用获取最新文档） |
-| 智能代码搜索 | `mcp__morph-mcp__warpgrep_codebase_search` |
-| 高效编辑 | `mcp__morph-mcp__edit_file` |
+| 用途         | 工具                                                                                  |
+| ------------ | ------------------------------------------------------------------------------------- |
+| 网络搜索     | `mcp__exa__web_search_exa`（每 session 至多尝试一次 WebSearch，失败后持续使用本工具） |
+| 网页抓取     | `mcp__exa__crawling_exa`（每 session 至多尝试一次 Fetch，失败后后持续使用本工具）     |
+| 代码搜索     | `mcp__exa__get_code_context_exa`                                                      |
+| 库文档查询   | `context7 MCP`                                                                        |
+| 智能代码搜索 | `mcp__morph-mcp__warpgrep_codebase_search`                                            |
+| 高效编辑     | `mcp__morph-mcp__edit_file`                                                           |
 
-### Memory 搜索 (claude-mem)
-
-**必须主动使用的场景：**
-
-1. 用户暗示历史信息 - "之前说过"、"上次提到"、"你记得吗"
-2. 需要具体值但不确定 - 模型名称、API 配置、参数值（**绝不猜测**）
-3. 涉及用户偏好/约定 - 代码风格、命名规范、工具选择
-4. 跨 session 任务延续 - 继续之前的工作
-
-```
-mcp__plugin_claude-mem_mem-search__search(query="...")
-mcp__plugin_claude-mem_mem-search__get_recent_context()
-```
-
-**原则：宁可多查一次 memory，也不要猜测。**
+<!-- ### Memory 搜索 (claude-mem) -->
+<!---->
+<!-- **必须主动使用的场景：** -->
+<!---->
+<!-- 1. 用户暗示历史信息 - "之前说过"、"上次提到"、"你记得吗" -->
+<!-- 2. 需要具体值但不确定 - 模型名称、API 配置、参数值（**绝不猜测**） -->
+<!-- 3. 涉及用户偏好/约定 - 代码风格、命名规范、工具选择 -->
+<!-- 4. 跨 session 任务延续 - 继续之前的工作 -->
+<!---->
+<!-- ``` -->
+<!-- mcp__plugin_claude-mem_mem-search__search(query="...") -->
+<!-- mcp__plugin_claude-mem_mem-search__get_recent_context() -->
+<!-- ``` -->
+<!---->
+<!-- **原则：宁可多查一次 memory，也不要猜测。** -->
 
 ### 任务管理
 
@@ -146,18 +146,18 @@ mcp__plugin_claude-mem_mem-search__get_recent_context()
 
 ### 两种内容类型
 
-| 类型 | 说明 | 处理方式 |
-|------|------|----------|
-| Claude 不知道的 | 内部流程、API schema、业务规则 | 详细写入 `references/` |
-| Claude 已知但需激活的 | 领域理论、设计原则、最佳实践 | 提及权威来源和关键术语 |
+| 类型                  | 说明                           | 处理方式               |
+| --------------------- | ------------------------------ | ---------------------- |
+| Claude 不知道的       | 内部流程、API schema、业务规则 | 详细写入 `references/` |
+| Claude 已知但需激活的 | 领域理论、设计原则、最佳实践   | 提及权威来源和关键术语 |
 
 ### 知识唤醒
 
-| 方法 | ❌ 硬编码规则 | ✅ 知识唤醒 |
-|------|--------------|------------|
-| 提及权威来源 | "代码要整洁" | "遵循 Robert Martin 的 Clean Code" |
-| 使用领域术语 | "函数要短" | "应用单一职责原则（SRP）" |
-| 说明 WHY | "每页 5 个要点" | "考虑认知负荷理论（7±2）" |
+| 方法         | ❌ 硬编码规则   | ✅ 知识唤醒                        |
+| ------------ | --------------- | ---------------------------------- |
+| 提及权威来源 | "代码要整洁"    | "遵循 Robert Martin 的 Clean Code" |
+| 使用领域术语 | "函数要短"      | "应用单一职责原则（SRP）"          |
+| 说明 WHY     | "每页 5 个要点" | "考虑认知负荷理论（7±2）"          |
 
 ### Skill 反馈循环
 
