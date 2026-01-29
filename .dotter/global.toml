@@ -88,9 +88,11 @@ codex = '~/.config'
 'opencode/config' = '~/.config/opencode'
 'opencode/share' = '~/.local/share/opencode'
 
+[opencode-cn]
+depends = ['opencode']
+
 [opencode-cn.files]
 'opencode-cn' = '~/.config/opencode-cn'
-'opencode/config/plugins' = '~/.config/opencode-cn/plugins'
 
 [vscode.files]
 'vscode/config' = '~/.config'
