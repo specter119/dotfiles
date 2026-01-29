@@ -1,0 +1,55 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": "tokyonight",
+  "provider": {
+    "volcengine-coding": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "volcengine",
+      "options": {
+        "baseURL": "https://ark.cn-beijing.volces.com/api/coding/v3",
+        "apiKey": "{{replace (command_output 'rbw get volcengine-ark-api-key') '\n' ''}}"
+      },
+      "models": {
+        "ark-code-latest": {
+          "name": "ark-code-latest"
+        }
+      }
+    }
+  },
+  "mcp": {
+    "morph-mcp": {
+      "type": "local",
+      "command": [
+        "bunx",
+        "-y",
+        "@morphllm/morphmcp"
+      ],
+      "environment": {
+        "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}",
+        "ENABLED_TOOLS": "edit_file,warpgrep_codebase_search"
+      }
+    },
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "{{replace (command_output 'rbw get context7-api-key') '\n' ''}}"
+      }
+    },
+    "exa": {
+      "type": "local",
+      "command": [
+        "bunx",
+        "-y",
+        "exa-mcp-server",
+        "tools=web_search_exa,get_code_context_exa,crawling_exa"
+      ],
+      "environment": {
+        "EXA_API_KEY": "{{replace (command_output 'rbw get exa-api-key') '\n' ''}}"
+      }
+    }
+  },
+  "plugin": [
+    "oh-my-opencode"
+  ]
+}

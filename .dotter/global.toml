@@ -84,11 +84,15 @@ stylua = '~/.config/stylua'
 [codex.files]
 codex = '~/.config'
 
-[opencode]
-
 [opencode.files]
 'opencode/config' = '~/.config/opencode'
 'opencode/share' = '~/.local/share/opencode'
+
+[opencode-cn]
+depends = ['opencode']
+
+[opencode-cn.files]
+'opencode-cn' = '~/.config/opencode-cn'
 
 [vscode.files]
 'vscode/config' = '~/.config'
@@ -167,6 +171,7 @@ depends = [
   'claude-code',
   'codex',
   'opencode',
+  'opencode-cn',
   'amp',
   'ollama',
   'zellij'
