@@ -92,7 +92,7 @@ codex = '~/.config'
 depends = ['opencode']
 
 [opencode-cn.files]
-'opencode-cn' = '~/.config/opencode-cn'
+'opencode-cn' = '~/.config'
 
 [vscode.files]
 'vscode/config' = '~/.config'
