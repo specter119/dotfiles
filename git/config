@@ -67,7 +67,7 @@
 	format = man
 
 [credential]
-	helper = {{env_var "WSL_WIN_HOME"}}/scoop/apps/mingit/current/mingw64/bin/git-credential-wincred.exe
+	helper = {{env_var "WSL_WIN_HOME"}}/scoop/apps/mingit/current/mingw64/bin/git-credential-manager.exe
 {{/if}}
 {{#if dotter.windows}}
 

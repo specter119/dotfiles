@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=%D/marimo
-ExecStart=uvx --with marimo[recommended,lsp,mcp],watchdog,httpx[http2] marimo edit --headless --no-token
+ExecStart=uvx --with marimo[recommended,lsp,mcp],watchdog,httpx[http2] marimo edit --watch --headless --no-token
 ExecStartPost=/bin/bash -c '(sleep 2 && PYPATH=$$(pgrep -af "marimo edit" | awk "/\.cache\/uv.*bin\/python/ {print \$$2; exit}") && V=$${PYPATH%%/bin/*} && [ -n "$$V" ] && echo "{\\"venv\\": \\"$$V\\"}" > pyrightconfig.json) &'
 Restart=on-failure
 RestartSec=5
