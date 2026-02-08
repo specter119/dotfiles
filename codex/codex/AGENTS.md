@@ -54,7 +54,8 @@
 
 ### 网络与文档
 
-- 需要最新信息或引用时：使用 `web.run`
+- 一般网络搜索：优先 `web.run`，失败或结果不足时回退到 `exa` MCP（`web_search_exa` / `crawling_exa`）
+- 代码相关搜索：优先 `exa` MCP（`get_code_context_exa`）
 - 技术库文档：优先 `context7`，仅在库文档不足时再查网页
 
 ## 自检与修复

@@ -39,6 +39,7 @@ function codex --description 'Run codex with bwrap sandboxing'
         --bind-try $HOME/.config $HOME/.config \
         --dir $HOME/.local \
         --bind-try $HOME/.local $HOME/.local \
+        --dir $HOME/.cache \
         --bind-try $HOME/.cache $HOME/.cache \
         --bind $CODEX_CONFIG $HOME/.codex \
         --bind (pwd) (pwd) \
