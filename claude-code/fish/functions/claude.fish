@@ -77,7 +77,5 @@ function claude --description 'Run claude code with bwrap sandboxing and adapted
         $worktree_mounts \
         --setenv HOME $HOME \
         --setenv PATH $HOME/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin \
-        --unshare-all \
-        --share-net \
         $claude_cmd $argv
 end

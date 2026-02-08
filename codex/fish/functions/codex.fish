@@ -45,7 +45,5 @@ function codex --description 'Run codex with bwrap sandboxing'
         $worktree_mounts \
         --setenv HOME $HOME \
         --setenv PATH $HOME/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin \
-        --unshare-all \
-        --share-net \
         (command -v codex) $argv
 end
