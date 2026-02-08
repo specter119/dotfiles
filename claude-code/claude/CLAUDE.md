@@ -58,7 +58,7 @@
 | 用途         | 工具                                                                                  |
 | ------------ | ------------------------------------------------------------------------------------- |
 | 网络搜索     | `mcp__exa__web_search_exa`（每 session 至多尝试一次 WebSearch，失败后持续使用本工具） |
-| 网页抓取     | `mcp__exa__crawling_exa`（每 session 至多尝试一次 Fetch，失败后后持续使用本工具）     |
+| 网页抓取     | `mcp__exa__crawling_exa`（WebFetch 已禁用，直接使用本工具）                           |
 | 代码搜索     | `mcp__exa__get_code_context_exa`                                                      |
 | 库文档查询   | `context7 MCP`                                                                        |
 | 智能代码搜索 | `mcp__morph-mcp__warpgrep_codebase_search`                                            |
