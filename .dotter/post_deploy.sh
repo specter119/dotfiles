@@ -52,7 +52,7 @@ else
 fi
 
 # Configure Claude Code MCP servers and onboarding flag
-if [[ "$ENABLED_PACKAGES" == *" claude-code "* ]]; then
+if [[ "$ENABLED_PACKAGES" == *" claude-code "* ]] && type -P claude >/dev/null 2>&1; then
 	if [[ -n "$MORPH_KEY" && -n "$EXA_KEY" ]]; then
 		fish -c 'claude mcp remove --scope user morph-mcp >/dev/null 2>&1; or true'
 		fish -c 'claude mcp add --scope user morph-mcp -e MORPH_API_KEY="$MORPH_KEY" -e ENABLED_TOOLS=edit_file,warpgrep_codebase_search -- bunx -y @morphllm/morphmcp >/dev/null'
@@ -69,7 +69,7 @@ if [[ "$ENABLED_PACKAGES" == *" claude-code "* ]]; then
 fi
 
 # Configure Codex MCP servers
-if [[ "$ENABLED_PACKAGES" == *" codex "* ]]; then
+if [[ "$ENABLED_PACKAGES" == *" codex "* ]] && type -P codex >/dev/null 2>&1; then
 	if [[ -n "$MORPH_KEY" && -n "$EXA_KEY" && -n "$CONTEXT7_KEY" ]]; then
 		fish -c 'codex mcp remove morph-mcp >/dev/null 2>&1; or true'
 		fish -c 'codex mcp add morph-mcp --env MORPH_API_KEY="$MORPH_KEY" --env ENABLED_TOOLS=edit_file,warpgrep_codebase_search -- bunx -y @morphllm/morphmcp >/dev/null'
