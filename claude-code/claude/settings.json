@@ -39,11 +39,13 @@
       "Bash(cat:*)",
       "Bash(head:*)",
       "Bash(tail:*)",
+      "Bash(tree:*)",
       "Bash(ruff:check,format)",
       "Bash(mypy:*)",
       "Bash(pytest:*)",
       "Bash(uv:venv,sync)",
-      "Bash(pre-commit:*)"
+      "Bash(pre-commit:*)",
+      "mcp__plugin_context7_context7__*"
     ],
     "deny": []
   },

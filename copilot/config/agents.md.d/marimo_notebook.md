@@ -196,3 +196,92 @@ def _():
 - [ ] reactive 链超过 3 层了吗？考虑用 form 收束
 - [ ] 用户期望"即时反馈"还是"确认后执行"？
 - [ ] notebook 打开时会自动执行耗时/危险操作吗？
+
+## 变量作用域规则 (MB002: multiple-definitions)
+
+Marimo 的 reactive execution model 要求**每个变量只能在一个 cell 中定义**（single source of truth）。
+
+### 规则
+
+| 场景 | 处理方式 |
+| ---- | -------- |
+| 需要跨 cell 共享的变量 | 在一个 cell 中定义，通过 `return` 导出 |
+| 仅在当前 cell 使用的临时变量 | 使用下划线前缀 `_var`，使其成为 cell-local |
+| 循环变量 | 使用 `_i`, `_row` 等下划线前缀 |
+
+### 示例
+
+**Bad**：同一变量在多个 cell 中定义
+
+```python
+# Cell 1
+x = 1
+
+# Cell 2
+x = 2  # Error: x defined in multiple cells
+```
+
+**Good**：使用不同变量名或下划线前缀
+
+```python
+# Cell 1
+x = 1
+return (x,)
+
+# Cell 2
+y = 2  # 使用不同变量名
+return (y,)
+```
+
+```python
+# Cell 1
+for _i in range(10):  # _i 是 cell-local
+    ...
+
+# Cell 2
+for _i in range(5):  # 可以重复使用 _i
+    ...
+```
+
+### 参考
+
+- <https://docs.marimo.io/guides/understanding_errors/multiple_definitions>
+- <https://docs.marimo.io/guides/lint_rules/rules/multiple_definitions>
+
+## 工作目录与模块导入
+
+Marimo 的 `__file__` 指向 notebook 文件本身，但工作目录可能不是 notebook 所在目录（取决于启动方式）。为了对齐 Jupyter 的行为并方便导入同目录模块，可以在初始化 cell 中设置工作目录：
+
+```python
+@app.cell
+def _():
+    import os
+    from pathlib import Path
+
+    os.chdir(Path(__file__).parent)
+    return
+```
+
+**注意**：这是一个全局副作用，但作为初始化 cell 的一次性设置是可接受的。
+
+## 自动渲染的数据类型
+
+Marimo 会自动渲染以下类型，无需用 `mo.ui.table()` 包裹：
+
+- Polars DataFrame / LazyFrame
+- Pandas DataFrame / Series
+- Altair Chart
+- Matplotlib Figure
+- 基本类型 (str, int, list, dict)
+
+只需将表达式作为 cell 的最后一行或放入 `mo.vstack()` 即可：
+
+```python
+@app.cell
+def _(df, pl):
+    # DataFrame 直接返回，marimo 自动渲染
+    df.group_by("category").agg(pl.len())
+    return
+```
+
+`mo.ui.table()` 适用于需要交互功能（选择行、分页控制）的场景。

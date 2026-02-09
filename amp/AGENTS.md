@@ -112,6 +112,10 @@ from rich import print
 
 **适用场景**：一次性脚本、工具脚本、不需要独立项目的小程序。
 
+#### Marimo Notebook
+
+详见 [Marimo Notebook 原则](file://$HOME/.config/agents.md.d/marimo_notebook.md)
+
 ## 测试要求
 
 - 修改代码后运行相关测试
