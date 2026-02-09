@@ -45,6 +45,7 @@ function codex --description 'Run codex with bwrap sandboxing'
         --bind-try $HOME/.config $HOME/.config \
         --dir $HOME/.local \
         --bind-try $HOME/.local $HOME/.local \
+        --dir $HOME/.cache \
         --bind-try $HOME/.cache $HOME/.cache \
         --bind $CODEX_CONFIG $HOME/.codex \
         $ro_ref_mounts \
@@ -52,7 +53,5 @@ function codex --description 'Run codex with bwrap sandboxing'
         $worktree_mounts \
         --setenv HOME $HOME \
         --setenv PATH $HOME/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin \
-        --unshare-all \
-        --share-net \
         (command -v codex) $argv
 end

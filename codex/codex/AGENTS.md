@@ -1,4 +1,4 @@
-# Claude Code 配置
+# AGENTS.md
 
 ## 交流规范
 
@@ -37,15 +37,14 @@
 
 ## 工具使用偏好
 
-### 内置工具（优先使用）
+### Codex 工具（优先使用）
 
-- 搜索内容：`Grep`（不是 bash `rg`）
-- 查找文件：`Glob`（不是 bash `fd`）
-- 读取文件：`Read`（不是 `cat`）
-- 编辑文件：`Edit`（不是 `sed`）
-- 创建文件：`Write`（不是 `echo >`）
+- 读写文件：`Read`/`Write`/`Edit`/`apply_patch`
+- 执行命令：`shell_command`
+- 并行查询：`multi_tool_use.parallel`
+- 计划管理（复杂任务）：`update_plan`
 
-### 系统工具
+### 系统命令
 
 - 文本搜索：`rg` > `grep`
 - 文件查找：`fd` > `find`
@@ -53,38 +52,11 @@
 - 网络连接：`ss` > `netstat`
 - 语法搜索：`ast-grep`
 
-### MCP 工具
+### 网络与文档
 
-| 用途         | 工具                                                                                  |
-| ------------ | ------------------------------------------------------------------------------------- |
-| 网络搜索     | `mcp__exa__web_search_exa`（每 session 至多尝试一次 WebSearch，失败后持续使用本工具） |
-| 网页抓取     | `mcp__exa__crawling_exa`（WebFetch 已禁用，直接使用本工具）                           |
-| 代码搜索     | `mcp__exa__get_code_context_exa`                                                      |
-| 库文档查询   | `context7 MCP`                                                                        |
-| 智能代码搜索 | `mcp__morph-mcp__warpgrep_codebase_search`                                            |
-| 高效编辑     | `mcp__morph-mcp__edit_file`                                                           |
-
-<!-- ### Memory 搜索 (claude-mem) -->
-<!---->
-<!-- **必须主动使用的场景：** -->
-<!---->
-<!-- 1. 用户暗示历史信息 - "之前说过"、"上次提到"、"你记得吗" -->
-<!-- 2. 需要具体值但不确定 - 模型名称、API 配置、参数值（**绝不猜测**） -->
-<!-- 3. 涉及用户偏好/约定 - 代码风格、命名规范、工具选择 -->
-<!-- 4. 跨 session 任务延续 - 继续之前的工作 -->
-<!---->
-<!-- ``` -->
-<!-- mcp__plugin_claude-mem_mem-search__search(query="...") -->
-<!-- mcp__plugin_claude-mem_mem-search__get_recent_context() -->
-<!-- ``` -->
-<!---->
-<!-- **原则：宁可多查一次 memory，也不要猜测。** -->
-
-### 任务管理
-
-- 复杂任务：使用 `Task` 工具启动专门 agent
-- 大型重构：使用 `Explore` agent 先理解代码
-- 跟踪进度：使用 `TodoWrite` 管理多步骤任务
+- 一般网络搜索：优先 `web.run`，失败或结果不足时回退到 `exa` MCP（`web_search_exa` / `crawling_exa`）
+- 代码相关搜索：优先 `exa` MCP（`get_code_context_exa`）
+- 技术库文档：优先 `context7`，仅在库文档不足时再查网页
 
 ## 自检与修复
 
@@ -118,7 +90,13 @@
 
 #### Python API 设计与代码范式
 
-详见 [Friendly Python](file://$HOME/.config/agents.md.d/friendly_python.md)
+详见 [Friendly Python](file://$HOME/.config/agents.md.d/friendly_python.md)：基于 Frost Ming 系列文章整理的 Python 工程实践指南，涵盖：
+
+- 以用户体验倒推 API 设计（合理默认值、上下文管理器）
+- 扩展点收敛（注册中心替代 if-else 链）
+- 构造方式清晰（classmethod 替代 flag 参数）
+- 显式优于隐式（避免 `__getattr__` 滥用）
+- 复用生态扩展点（如 `requests.auth.AuthBase`）
 
 #### Python 独立脚本
 
@@ -127,13 +105,26 @@
 ```python
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["requests", "rich"]
+# dependencies = [
+#     "requests",
+#     "rich",
+# ]
 # ///
+
+import requests
+from rich import print
 ```
 
-#### Marimo Notebook
+运行：`uv run script.py`
 
-详见 [Marimo Notebook 原则](file://$HOME/.config/agents.md.d/marimo_notebook.md)
+**适用场景**：一次性脚本、工具脚本、不需要独立项目的小程序。
+
+## 测试要求
+
+- 修改代码后运行相关测试
+- 重要功能补充测试用例
+- 测试独立、可重复、快速
+- 测试名称清晰描述测试内容
 
 ## Git 规范
 
@@ -144,14 +135,18 @@
 
 ## Skill 设计原则
 
+> 本节是对官方 `skill-creator` 的补充，补充「激活 LLM 已有的知识」。
+
 ### 两种内容类型
 
-| 类型                  | 说明                           | 处理方式               |
-| --------------------- | ------------------------------ | ---------------------- |
-| Claude 不知道的       | 内部流程、API schema、业务规则 | 详细写入 `references/` |
-| Claude 已知但需激活的 | 领域理论、设计原则、最佳实践   | 提及权威来源和关键术语 |
+| 类型                 | 说明                           | 处理方式               |
+| -------------------- | ------------------------------ | ---------------------- |
+| Model 不知道的       | 内部流程、API schema、业务规则 | 详细写入 `references/` |
+| Model 已知但需激活的 | 领域理论、设计原则、最佳实践   | 提及权威来源和关键术语 |
 
-### 知识唤醒
+### 知识唤醒：激活已有知识
+
+**原理**：提及权威来源或关键术语，激活完整知识体系。
 
 | 方法         | ❌ 硬编码规则   | ✅ 知识唤醒                        |
 | ------------ | --------------- | ---------------------------------- |
@@ -159,10 +154,33 @@
 | 使用领域术语 | "函数要短"      | "应用单一职责原则（SRP）"          |
 | 说明 WHY     | "每页 5 个要点" | "考虑认知负荷理论（7±2）"          |
 
+**效果**：
+
+- 硬编码规则 → 机械执行，边缘情况失效
+- 知识唤醒 → 调用完整理论，灵活应用
+
+### 应用指南
+
+**编写 Skill 时**：
+
+1. 区分「不知道的」vs「已知但需激活的」
+2. 前者详细写入 `references/`，后者提及权威来源
+3. 避免重复解释 Model 已知的基础理论
+
+**使用 Skill 时**：
+
+1. 看到权威名字或术语 → 调用完整知识
+2. 理解背后的 WHY → 灵活应用
+3. 用专业直觉判断 → 不是按清单打钩
+
 ### Skill 反馈循环
 
-1. **先诊断 Skill** - 检查是否定义有缺陷
-2. **询问用户** - "是否先更新 Skill 再重新生成，还是直接优化当前产出？"
-3. **根据选择执行**
+当用户使用 Skill 后反馈问题时：
+
+1. **先诊断 Skill**：检查是否 Skill 定义有缺陷（缺少场景、规则不完整）
+2. **询问用户**："是否先更新 Skill 再重新生成，还是直接优化当前产出？"
+3. **根据选择执行**：
+   - 更新 Skill → 重新生成
+   - 直接优化产出
 
 **原则**：先治本（Skill），再治标（产出）。
