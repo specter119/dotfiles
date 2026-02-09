@@ -34,6 +34,12 @@ function claude --description 'Run claude code with bwrap sandboxing and adapted
         set worktree_mounts (git_worktree_mounts)
     end
 
+    # Prepare read-only reference mounts from BWRAP_RO_REFS
+    set -l ro_ref_mounts
+    if functions -q bwrap_ro_ref_mounts
+        set ro_ref_mounts (bwrap_ro_ref_mounts)
+    end
+
     # Bwrap
     bwrap \
         --dev /dev \
@@ -73,6 +79,7 @@ function claude --description 'Run claude code with bwrap sandboxing and adapted
         --bind-try $CLAUDE_CONFIG/agents $HOME/.claude/agents \
         --bind-try $CLAUDE_CONFIG/skills $HOME/.claude/skills \
         --bind-try $HOME/.gemini $HOME/.gemini \
+        $ro_ref_mounts \
         --bind (pwd) (pwd) \
         $worktree_mounts \
         --setenv HOME $HOME \

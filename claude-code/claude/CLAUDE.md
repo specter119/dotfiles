@@ -135,6 +135,10 @@
 # ///
 ```
 
+#### Marimo Notebook
+
+详见 [Marimo Notebook 原则](file://$HOME/.config/agents.md.d/marimo_notebook.md)
+
 ## Git 规范
 
 - Commit message：英文，格式 `<type>: <description>`

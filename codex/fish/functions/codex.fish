@@ -14,6 +14,12 @@ function codex --description 'Run codex with bwrap sandboxing'
         set worktree_mounts (git_worktree_mounts)
     end
 
+    # Prepare read-only reference mounts from BWRAP_RO_REFS
+    set -l ro_ref_mounts
+    if functions -q bwrap_ro_ref_mounts
+        set ro_ref_mounts (bwrap_ro_ref_mounts)
+    end
+
     # Bwrap sandboxing
     bwrap \
         --dev /dev \
@@ -41,6 +47,7 @@ function codex --description 'Run codex with bwrap sandboxing'
         --bind-try $HOME/.local $HOME/.local \
         --bind-try $HOME/.cache $HOME/.cache \
         --bind $CODEX_CONFIG $HOME/.codex \
+        $ro_ref_mounts \
         --bind (pwd) (pwd) \
         $worktree_mounts \
         --setenv HOME $HOME \
