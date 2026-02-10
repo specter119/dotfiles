@@ -201,46 +201,58 @@ def _():
 
 Marimo 的 reactive execution model 要求**每个变量只能在一个 cell 中定义**（single source of truth）。
 
-### 规则
+### 变量命名与共享策略
 
-| 场景 | 处理方式 |
-| ---- | -------- |
-| 需要跨 cell 共享的变量 | 在一个 cell 中定义，通过 `return` 导出 |
-| 仅在当前 cell 使用的临时变量 | 使用下划线前缀 `_var`，使其成为 cell-local |
-| 循环变量 | 使用 `_i`, `_row` 等下划线前缀 |
+| 类型 | 命名 | return | 示例 |
+| ---- | ---- | ------ | ---- |
+| 长期复用的共享对象 | 无 `_` 前缀 | ✓ 导出 | `llm_client`, `df`, `token_mgr` |
+| 仅展示的结果 | 不赋值 | 表达式作为最后一行 | `df.head()`, `mo.ui.table(result)` |
+| 中间变量 / 循环变量 | `_` 前缀 | ✗ 不导出 | `_resp`, `_row`, `_i` |
+
+**原则**：
+
+- **HTTP/LLM client、需要持续处理的 DataFrame** → 全局共享，在 imports cell 创建并 return
+- **展示用的 table / chart** → 不赋变量，直接作为 cell 最后一行表达式
+- **循环中间变量、单次 HTTP response** → `_` 前缀，cell-local
 
 ### 示例
 
-**Bad**：同一变量在多个 cell 中定义
-
 ```python
-# Cell 1
-x = 1
+# Cell 1: imports + shared clients
+@app.cell
+def _():
+    from openai import AzureOpenAI
+    from keycloak import get_token
 
-# Cell 2
-x = 2  # Error: x defined in multiple cells
-```
+    llm_client = AzureOpenAI(
+        azure_endpoint="https://example.com",
+        azure_deployment="gpt-4.1-mini-deploy",
+        api_version="",
+        azure_ad_token_provider=get_token,
+    )
+    return llm_client,
 
-**Good**：使用不同变量名或下划线前缀
+# Cell 2: processing → shared DataFrame
+@app.cell
+def _(llm_client):
+    df = process_data(llm_client)
+    return df,
 
-```python
-# Cell 1
-x = 1
-return (x,)
+# Cell 3: display only → no variable, just expression
+@app.cell
+def _(df):
+    df.head()
+    return
 
-# Cell 2
-y = 2  # 使用不同变量名
-return (y,)
-```
-
-```python
-# Cell 1
-for _i in range(10):  # _i 是 cell-local
-    ...
-
-# Cell 2
-for _i in range(5):  # 可以重复使用 _i
-    ...
+# Cell 4: loop with intermediate vars
+@app.cell
+def _(df, llm_client):
+    _results = []
+    for _row in df.iter_rows(named=True):
+        _resp = llm_client.chat.completions.create(...)
+        _results.append(_resp)
+    result_df = pl.DataFrame(_results)
+    return result_df,
 ```
 
 ### 参考
@@ -266,7 +278,7 @@ def _():
 
 ## 自动渲染的数据类型
 
-Marimo 会自动渲染以下类型，无需用 `mo.ui.table()` 包裹：
+Marimo 会自动渲染以下类型，直接作为 cell 最后一行表达式即可，**不要**多余包裹：
 
 - Polars DataFrame / LazyFrame
 - Pandas DataFrame / Series
@@ -279,9 +291,28 @@ Marimo 会自动渲染以下类型，无需用 `mo.ui.table()` 包裹：
 ```python
 @app.cell
 def _(df, pl):
-    # DataFrame 直接返回，marimo 自动渲染
+    # DataFrame 直接返回，marimo 自动渲染（含分页、排序）
     df.group_by("category").agg(pl.len())
     return
 ```
 
-`mo.ui.table()` 适用于需要交互功能（选择行、分页控制）的场景。
+### `mo.ui.table()` 的唯一使用场景
+
+`mo.ui.table()` **仅在需要把用户的行选择暴露为 reactive 值时使用**——选中的行通过 `.value` 传给下游 cell 触发计算。普通 DataFrame 自动渲染也有分页和选择 UI，但选择结果不会传递到其他 cell。
+
+```python
+# 需要 reactive 行选择时才用 mo.ui.table
+@app.cell
+def _(df):
+    table = mo.ui.table(df)
+    table
+    return table,
+
+@app.cell
+def _(table):
+    # table.value 是用户选中的行，选择变化时自动重跑
+    table.value.describe()
+    return
+```
+
+**不需要 reactive 行选择 → 直接放 DataFrame 表达式，不用 `mo.ui.table()`。**
