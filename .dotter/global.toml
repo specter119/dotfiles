@@ -131,6 +131,9 @@ ipython = '~/.ipython'
 [weston.files]
 weston = '~/.config'
 
+[mihomo.files]
+mihomo = '~/.config/mihomo'
+
 [chromium.files]
 chromium = '~/.config'
 
@@ -159,8 +162,8 @@ yt-dlp = '~/.config/yt-dlp'
 [shell]
 depends = ['env', 'fish', 'yazi', 'atuin']
 
-[ui]
-depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
+[wm]
+depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty', 'mihomo']
 
 [dev]
 depends = ['git', 'ssh', 'container', 'LazyVim']
