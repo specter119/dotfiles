@@ -67,6 +67,7 @@ export MORPH_KEY EXA_KEY CONTEXT7_KEY
 # breaks the import.meta.url guard, but bun resolves symlinks in argv[1])
 if type -P bun >/dev/null 2>&1; then
 	bun add -g mcp-excalidraw-server >/dev/null 2>&1
+	rm -f excalidraw.log
 fi
 
 # Share opencode plugins: link opencode-cn -> opencode
