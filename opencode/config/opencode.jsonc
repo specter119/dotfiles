@@ -32,6 +32,18 @@
       "environment": {
         "EXA_API_KEY": "{{replace (command_output 'rbw get exa-api-key') '\n' ''}}"
       }
+    },
+    "excalidraw": {
+      "type": "local",
+      "command": [
+        "bun",
+        "{{replace (command_output 'echo $HOME') '\\n' ''}}/.local/bin/mcp-excalidraw-server"
+      ],
+      "environment": {
+        "EXPRESS_SERVER_URL": "https://excalidraw.{{domain}}",
+        "ENABLE_CANVAS_SYNC": "true",
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+      }
     }
   },
   "plugin": [
