@@ -201,19 +201,54 @@ def _():
 
 Marimo 的 reactive execution model 要求**每个变量只能在一个 cell 中定义**（single source of truth）。
 
+### `_` 前缀的本质
+
+`_` 前缀的唯一作用是**避免 MB002**——当同名变量需要在多个 cell 中出现时，加 `_` 使其 cell-local。它不是通用的"这个变量不导出"标记。
+
+**判断是否需要 `_` 前缀的唯一标准：这个名字会不会在其他 cell 中也被定义？**
+
 ### 变量命名与共享策略
 
 | 类型 | 命名 | return | 示例 |
 | ---- | ---- | ------ | ---- |
 | 长期复用的共享对象 | 无 `_` 前缀 | ✓ 导出 | `llm_client`, `df`, `token_mgr` |
 | 仅展示的结果 | 不赋值 | 表达式作为最后一行 | `df.head()`, `mo.ui.table(result)` |
-| 中间变量 / 循环变量 | `_` 前缀 | ✗ 不导出 | `_resp`, `_row`, `_i` |
+| 可能跨 cell 重名的中间变量 | `_` 前缀 | ✗ 不导出 | `_resp`, `_row`, `_i` |
+
+### Import 规则（不加 `_` 前缀）
+
+**Import 语句永远不加 `_` 前缀。** `import httpx as _httpx` 是反模式。
+
+| 场景 | 做法 | 示例 |
+| ---- | ---- | ---- |
+| 多 cell 共享的库 | 在 imports cell 导入并 return | `import polars as pl` → `return pl,` |
+| 仅单个 cell 使用的库 | 在该 cell 内直接导入，不 return | `import httpx` |
+| 同目录模块 | 在 imports cell 导入并 return | `from utils import oneshot` → `return oneshot,` |
+
+```python
+# ✗ Bad: import 加 _ 前缀
+@app.cell
+def _(json):
+    import httpx as _httpx
+    from pathlib import Path as _Path
+    _resp = _httpx.get("http://example.com")
+    ...
+
+# ✓ Good: import 保持原名，中间变量加 _
+@app.cell
+def _(json):
+    import httpx
+    from pathlib import Path
+    _resp = httpx.get("http://example.com")
+    ...
+```
 
 **原则**：
 
 - **HTTP/LLM client、需要持续处理的 DataFrame** → 全局共享，在 imports cell 创建并 return
 - **展示用的 table / chart** → 不赋变量，直接作为 cell 最后一行表达式
 - **循环中间变量、单次 HTTP response** → `_` 前缀，cell-local
+- **import 语句** → 保持标准 Python 写法，不加 `_` 前缀
 
 ### 示例
 
