@@ -63,12 +63,6 @@ EXA_KEY=$(rbw get exa-api-key 2>/dev/null)
 CONTEXT7_KEY=$(rbw get context7-api-key 2>/dev/null)
 export MORPH_KEY EXA_KEY CONTEXT7_KEY
 
-# Clean up legacy mcp-excalidraw-server (no longer used)
-if type -P bun >/dev/null 2>&1; then
-	bun remove -g mcp-excalidraw-server >/dev/null 2>&1
-	rm -f excalidraw.log
-fi
-
 # Share opencode plugins: link opencode-cn -> opencode
 # See: https://github.com/SuperCuber/dotter/issues/186
 if [[ "$ENABLED_PACKAGES" == *" opencode-cn "* ]]; then
@@ -85,8 +79,6 @@ if [[ "$ENABLED_PACKAGES" == *" claude-code "* ]] && type -P claude >/dev/null 2
 		fish -c 'claude mcp add --scope user morph-mcp -e MORPH_API_KEY="$MORPH_KEY" -e ENABLED_TOOLS=edit_file,warpgrep_codebase_search -- bunx -y @morphllm/morphmcp >/dev/null'
 		fish -c 'claude mcp remove --scope user exa >/dev/null 2>&1; or true'
 		fish -c 'claude mcp add --scope user exa -e EXA_API_KEY="$EXA_KEY" -- bunx -y exa-mcp-server "tools=web_search_exa,get_code_context_exa,crawling_exa" >/dev/null'
-
-		fish -c 'claude mcp remove --scope user excalidraw >/dev/null 2>&1; or true'
 
 		# Ensure hasCompletedOnboarding is set
 		CLAUDE_JSON="$HOME/.claude.json"
@@ -109,6 +101,5 @@ if [[ "$ENABLED_PACKAGES" == *" codex "* ]] && type -P codex >/dev/null 2>&1; th
 		fish -c 'codex mcp remove context7 >/dev/null 2>&1; or true'
 		fish -c 'codex mcp add context7 -- bunx -y @upstash/context7-mcp --api-key "$CONTEXT7_KEY" >/dev/null'
 
-		fish -c 'codex mcp remove excalidraw >/dev/null 2>&1; or true'
 	fi
 fi
