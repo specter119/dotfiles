@@ -81,7 +81,7 @@ if [[ "$ENABLED_PACKAGES" == *" claude-code "* ]] && type -P claude >/dev/null 2
 		fish -c 'claude mcp add --scope user exa -e EXA_API_KEY="$EXA_KEY" -- bunx -y exa-mcp-server "tools=web_search_exa,get_code_context_exa,crawling_exa" >/dev/null'
 
 		# Ensure hasCompletedOnboarding is set
-		CLAUDE_JSON="$HOME/.claude.json"
+		CLAUDE_JSON="$HOME/.local/share/claude/.claude.json"
 		if [[ -f "$CLAUDE_JSON" ]] && ! jq -e '.hasCompletedOnboarding == true' "$CLAUDE_JSON" >/dev/null 2>&1; then
 			_tmp=$(jq '.hasCompletedOnboarding = true' "$CLAUDE_JSON") && printf '%s\n' "$_tmp" >"$CLAUDE_JSON"
 			unset _tmp
