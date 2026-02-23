@@ -169,7 +169,15 @@ yt-dlp = '~/.config/yt-dlp'
 depends = ['env', 'fish', 'yazi', 'atuin']
 
 [wm]
-depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty', 'mihomo']
+depends = [
+  'sway',
+  'fontconfig',
+  'fcitx5',
+  'chromium',
+  'zathura',
+  'kitty',
+  'mihomo'
+]
 
 [dev]
 depends = ['git', 'ssh', 'container', 'LazyVim']
