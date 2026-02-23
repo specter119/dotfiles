@@ -33,14 +33,14 @@
 
 ## 场景决策表
 
-| 场景             | 推荐方式             | 避免               |
-| ---------------- | -------------------- | ------------------ |
-| 一次性 EDA       | 直接计算显示         | 添加参数选择器     |
-| 固定参数分析     | 硬编码参数值         | slider/dropdown    |
-| 参数敏感性分析   | slider + 轻量计算    | -                  |
-| 批量测试/API调用 | run_button gate      | 自动触发的reactive |
-| 交互式仪表板     | 全套 UI + reactive   | -                  |
-| 表单提交         | mo.ui.form() 包裹    | 多个独立 reactive  |
+| 场景             | 推荐方式           | 避免               |
+| ---------------- | ------------------ | ------------------ |
+| 一次性 EDA       | 直接计算显示       | 添加参数选择器     |
+| 固定参数分析     | 硬编码参数值       | slider/dropdown    |
+| 参数敏感性分析   | slider + 轻量计算  | -                  |
+| 批量测试/API调用 | run_button gate    | 自动触发的reactive |
+| 交互式仪表板     | 全套 UI + reactive | -                  |
+| 表单提交         | mo.ui.form() 包裹  | 多个独立 reactive  |
 
 ## 典型 Good/Bad 示例
 
@@ -50,15 +50,13 @@
 
 ```python
 @app.cell
-def _():
+def _(mo):
     threshold = mo.ui.slider(0, 1, value=0.5, label="Threshold")
-    threshold
-    return
+    return threshold,
 
 @app.cell
-def _():
-    result = df.filter(pl.col("score") > threshold.value)
-    result
+def _(df, pl, threshold):
+    df.filter(pl.col("score") > threshold.value)
     return
 ```
 
@@ -66,10 +64,8 @@ def _():
 
 ```python
 @app.cell
-def _():
-    THRESHOLD = 0.5
-    result = df.filter(pl.col("score") > THRESHOLD)
-    result
+def _(df, pl):
+    df.filter(pl.col("score") > 0.5)
     return
 ```
 
@@ -79,16 +75,14 @@ def _():
 
 ```python
 @app.cell
-def _():
+def _(mo):
     query = mo.ui.text(label="Query")
-    query
-    return
+    return query,
 
 @app.cell
-def _():
+def _(query):
     # 危险：每次输入变化都会调用 API！
-    response = call_api(query.value)
-    response
+    call_api(query.value)
     return
 ```
 
@@ -96,17 +90,16 @@ def _():
 
 ```python
 @app.cell
-def _():
+def _(mo):
     query = mo.ui.text(label="Query")
     submit = mo.ui.run_button(label="Submit")
     mo.hstack([query, submit])
-    return
+    return query, submit
 
 @app.cell
-def _():
+def _(mo, query, submit):
     mo.stop(not submit.value)
-    response = call_api(query.value)
-    response
+    call_api(query.value)
     return
 ```
 
@@ -117,10 +110,9 @@ def _():
 ```python
 @app.cell
 def _():
-    test_cases = load_test_cases()
+    _cases = load_test_cases()
     # 每次 notebook 打开都会跑全部测试！
-    results = [run_test(case) for case in test_cases]
-    results
+    [run_test(c) for c in _cases]
     return
 ```
 
@@ -128,17 +120,16 @@ def _():
 
 ```python
 @app.cell
-def _():
+def _(mo):
     test_cases = load_test_cases()
     run_tests = mo.ui.run_button(label="Run All Tests")
     mo.vstack([mo.md(f"Loaded {len(test_cases)} test cases"), run_tests])
-    return
+    return test_cases, run_tests
 
 @app.cell
-def _():
+def _(mo, run_tests, test_cases):
     mo.stop(not run_tests.value, mo.md("Click button to run tests"))
-    results = [run_test(case) for case in test_cases]
-    results
+    [run_test(c) for c in test_cases]
     return
 ```
 
@@ -148,18 +139,17 @@ def _():
 
 ```python
 @app.cell
-def _():
+def _(mo):
     start_date = mo.ui.date(label="Start")
     end_date = mo.ui.date(label="End")
     category = mo.ui.dropdown(options=["A", "B", "C"], label="Category")
     mo.hstack([start_date, end_date, category])
-    return
+    return start_date, end_date, category
 
 @app.cell
-def _():
+def _(start_date, end_date, category):
     # 任何一个输入变化都会重新查询数据库
-    data = query_database(start_date.value, end_date.value, category.value)
-    data
+    query_database(start_date.value, end_date.value, category.value)
     return
 ```
 
@@ -167,7 +157,7 @@ def _():
 
 ```python
 @app.cell
-def _():
+def _(mo):
     filter_form = mo.ui.form(
         mo.hstack([
             mo.ui.date(label="Start"),
@@ -177,15 +167,12 @@ def _():
         label="Query",
         bordered=True,
     )
-    filter_form
-    return
+    return filter_form,
 
 @app.cell
-def _():
+def _(filter_form, mo):
     mo.stop(not filter_form.value)
-    start, end, cat = filter_form.value
-    data = query_database(start, end, cat)
-    data
+    query_database(*filter_form.value)
     return
 ```
 
@@ -199,58 +186,43 @@ def _():
 
 ## 变量作用域规则 (MB002: multiple-definitions)
 
-Marimo 的 reactive execution model 要求**每个变量只能在一个 cell 中定义**（single source of truth）。
+Marimo 的每个非 `_` cell 顶层变量都是 reactive 依赖图的节点。`_` 前缀的含义是：**这个变量只是计算过程的临时产物，不应参与依赖图。**
 
-### 规则
+判断标准：**这个变量是有意义的依赖对象（实例、数据集），还是一次性的中间值？**
 
-| 场景 | 处理方式 |
-| ---- | -------- |
-| 需要跨 cell 共享的变量 | 在一个 cell 中定义，通过 `return` 导出 |
-| 仅在当前 cell 使用的临时变量 | 使用下划线前缀 `_var`，使其成为 cell-local |
-| 循环变量 | 使用 `_i`, `_row` 等下划线前缀 |
+### 三条规则
 
-### 示例
+**Rule 1 — 中间值：加 `_`**
 
-**Bad**：同一变量在多个 cell 中定义
+Cell 顶层的临时变量（循环变量、单次 response、中间结果）不应成为依赖图节点。好的实践是尽量少生成中间变量，保持 cell 精简。
 
-```python
-# Cell 1
-x = 1
+**Rule 2 — 被其他 cell 依赖的变量：不加 `_`**
 
-# Cell 2
-x = 2  # Error: x defined in multiple cells
-```
+如果一个变量需要通过 return 导出给其他 cell 使用，它就是依赖图的共享节点，不加 `_`。
 
-**Good**：使用不同变量名或下划线前缀
+**Rule 3 — Import 和嵌套作用域：不加 `_`**
 
-```python
-# Cell 1
-x = 1
-return (x,)
+Import 是模块引用，不是中间值。嵌套函数、类、推导式内的变量不在 cell 作用域中，marimo 不追踪。
 
-# Cell 2
-y = 2  # 使用不同变量名
-return (y,)
-```
+### 变量处理速查
 
-```python
-# Cell 1
-for _i in range(10):  # _i 是 cell-local
-    ...
-
-# Cell 2
-for _i in range(5):  # 可以重复使用 _i
-    ...
-```
+| 变量用途                                | `_` 前缀？                         | return？   |
+| --------------------------------------- | ---------------------------------- | ---------- |
+| 被其他 cell 依赖的变量                  | ✗                                  | ✓          |
+| 仅展示的结果                            | 不赋变量，表达式作为 cell 最后一行 | ✗          |
+| 计算过程的中间值                        | ✓                                  | ✗          |
+| 嵌套函数 / 类 / 推导式内的变量          | ✗                                  | N/A        |
+| import 语句                             | ✗                                  | 视是否共享 |
 
 ### 参考
 
 - <https://docs.marimo.io/guides/understanding_errors/multiple_definitions>
 - <https://docs.marimo.io/guides/lint_rules/rules/multiple_definitions>
+- <https://docs.marimo.io/CLAUDE.md>（官方 AI 辅助指南，内容有限但可参考）
 
 ## 工作目录与模块导入
 
-Marimo 的 `__file__` 指向 notebook 文件本身，但工作目录可能不是 notebook 所在目录（取决于启动方式）。为了对齐 Jupyter 的行为并方便导入同目录模块，可以在初始化 cell 中设置工作目录：
+Marimo 的 `__file__` 指向 notebook 文件本身，但工作目录取决于启动方式。在初始化 cell 中切换到 notebook 所在目录，方便导入同目录模块：
 
 ```python
 @app.cell
@@ -262,11 +234,9 @@ def _():
     return
 ```
 
-**注意**：这是一个全局副作用，但作为初始化 cell 的一次性设置是可接受的。
-
 ## 自动渲染的数据类型
 
-Marimo 会自动渲染以下类型，无需用 `mo.ui.table()` 包裹：
+Marimo 会自动渲染以下类型，直接作为 cell 最后一行表达式即可，**不要**多余包裹：
 
 - Polars DataFrame / LazyFrame
 - Pandas DataFrame / Series
@@ -279,9 +249,54 @@ Marimo 会自动渲染以下类型，无需用 `mo.ui.table()` 包裹：
 ```python
 @app.cell
 def _(df, pl):
-    # DataFrame 直接返回，marimo 自动渲染
+    # DataFrame 直接返回，marimo 自动渲染（含分页、排序）
     df.group_by("category").agg(pl.len())
     return
 ```
 
-`mo.ui.table()` 适用于需要交互功能（选择行、分页控制）的场景。
+### 关键：只有最后一行表达式会被渲染
+
+Marimo 只渲染 cell 中 **最后一个表达式**（return 之前）。中间的 `mo.md()`、DataFrame 等表达式会被静默丢弃。
+
+**Bad**：`mo.md()` 不在最后一行，不会显示
+
+```python
+@app.cell
+def _(df, mo, pl):
+    mo.md(f"**Total: {df.height} rows**")  # ← 不会显示！
+    df.head(10)  # ← 只有这行会渲染
+    return
+```
+
+**Good**：用 `mo.vstack()` 组合多个输出
+
+```python
+@app.cell
+def _(df, mo, pl):
+    mo.vstack([
+        mo.md(f"**Total: {df.height} rows**"),
+        df.head(10),
+    ])
+    return
+```
+
+### `mo.ui.table()` 的唯一使用场景
+
+`mo.ui.table()` **仅在需要把用户的行选择暴露为 reactive 值时使用**——选中的行通过 `.value` 传给下游 cell 触发计算。普通 DataFrame 自动渲染也有分页和选择 UI，但选择结果不会传递到其他 cell。
+
+```python
+# 需要 reactive 行选择时才用 mo.ui.table
+@app.cell
+def _(df):
+    table = mo.ui.table(df)
+    table
+    return table,
+
+@app.cell
+def _(table):
+    # table.value 是用户选中的行，选择变化时自动重跑
+    table.value.describe()
+    return
+```
+
+**不需要 reactive 行选择 → 直接放 DataFrame 表达式，不用 `mo.ui.table()`。**

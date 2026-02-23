@@ -125,11 +125,17 @@ LazyVim = '~/.config/nvim'
 [marimo.files]
 marimo = '~/.config'
 
+[bub.files]
+'bub/systemd' = '~/.config/systemd'
+
 [ipython.files]
 ipython = '~/.ipython'
 
 [weston.files]
 weston = '~/.config'
+
+[mihomo.files]
+mihomo = '~/.config/mihomo'
 
 [chromium.files]
 chromium = '~/.config'
@@ -153,14 +159,17 @@ depends = ['weston']
 [steam.files]
 steam = '~/.config'
 
+[alma.files]
+alma = '~/.config'
+
 [yt-dlp.files]
 yt-dlp = '~/.config/yt-dlp'
 
 [shell]
 depends = ['env', 'fish', 'yazi', 'atuin']
 
-[ui]
-depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
+[wm]
+depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty', 'mihomo']
 
 [dev]
 depends = ['git', 'ssh', 'container', 'LazyVim']
@@ -172,6 +181,7 @@ depends = [
   'codex',
   'opencode',
   'opencode-cn',
+  'alma',
   'amp',
   'ollama',
   'zellij'

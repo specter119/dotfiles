@@ -1,0 +1,12 @@
+[Unit]
+Description=Bub coding agent
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=uvx --from git+https://github.com/PsiACE/bub.git bub idle
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
