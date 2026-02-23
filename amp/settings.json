@@ -6,17 +6,6 @@
       },
       "url": "https://mcp.context7.com/mcp"
     },
-    "excalidraw": {
-      "args": [
-        "{{replace (command_output 'echo $HOME') '\\n' ''}}/.local/bin/mcp-excalidraw-server"
-      ],
-      "command": "bun",
-      "env": {
-        "ENABLE_CANVAS_SYNC": "true",
-        "EXPRESS_SERVER_URL": "https://excalidraw.{{domain}}",
-        "NODE_TLS_REJECT_UNAUTHORIZED": "0"
-      }
-    },
     "eza": {
       "args": [
         "-y",
