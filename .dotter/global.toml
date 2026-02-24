@@ -84,6 +84,9 @@ stylua = '~/.config/stylua'
 [codex.files]
 codex = '~/.config'
 
+[gemini.files]
+gemini = '~/.config'
+
 [opencode.files]
 'opencode/config' = '~/.config/opencode'
 'opencode/share' = '~/.local/share/opencode'
@@ -187,6 +190,7 @@ depends = [
   'roo-code',
   'claude-code',
   'codex',
+  'gemini',
   'opencode',
   'opencode-cn',
   'alma',
