@@ -26,6 +26,6 @@ function claude --description 'Run claude code with bwrap sandboxing and adapted
         --bind-try $CLAUDE_CONFIG_DIR/commands $HOME/.claude/commands \
         --bind-try $CLAUDE_CONFIG_DIR/agents $HOME/.claude/agents \
         --bind-try $CLAUDE_CONFIG_DIR/skills $HOME/.claude/skills \
-        --bind-try $HOME/.gemini $HOME/.gemini \
+        --bind-try $HOME/.config/gemini $HOME/.gemini \
         -- claude $argv
 end
