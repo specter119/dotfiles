@@ -103,7 +103,9 @@ proxy-groups:
   - {name: 自动选择, type: url-test, include-all-providers: true, tolerance: 10}
 rules:
   - GEOIP,lan,直连,no-resolve
-  - DOMAIN-SUFFIX,{{trim (command_output "powershell.exe -NoProfile -c '($env:USERDNSDOMAIN -replace \\\"^corp[.]\\\", \\\"\\\").ToLower()'")}},直连,no-resolve
+  # {{#each mihomo_direct_suffixes}}
+  - DOMAIN-SUFFIX,{{this}},直连,no-resolve
+  # {{/each}}
   - RULE-SET,biliintl_domain,哔哩东南亚
   - RULE-SET,github_domain,Github
   - RULE-SET,twitter_domain,Twitter
