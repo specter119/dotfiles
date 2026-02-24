@@ -3,7 +3,7 @@ local config = wezterm.config_builder()
 local launch_menu = {}
 
 -- Enable Kitty Keyboard Protocol for better key handling (required for zellij Ctrl+Shift bindings)
-config.enable_kitty_keyboard = true
+-- config.enable_kitty_keyboard = true
 
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   table.insert(launch_menu, {
@@ -26,7 +26,8 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
     args = { 'wsl.exe', '--cd', '~', '--distribution', 'archlinux', '--', 'zellij', 'attach', '--create', 'main' },
   })
 
-  config.default_prog = { 'wsl.exe', '--cd', '~', '--distribution', 'archlinux', '--', 'zellij', 'attach', '--create', 'main' }
+  config.default_prog =
+    { 'wsl.exe', '--cd', '~', '--distribution', 'archlinux', '--', 'zellij', 'attach', '--create', 'main' }
 
   config.keys = {
     { key = 'v', mods = 'CTRL', action = wezterm.action.Nop },
