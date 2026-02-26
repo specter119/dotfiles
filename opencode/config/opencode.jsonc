@@ -32,6 +32,11 @@
       }
     }
   },
+  "permission": {
+    "bash": {
+      "rbw get*": "deny"
+    }
+  },
   "plugin": [
     "oh-my-opencode"
   ],

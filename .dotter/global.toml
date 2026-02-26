@@ -81,6 +81,9 @@ stylua = '~/.config/stylua'
 [claude-code.files]
 'claude-code' = '~/.config'
 
+[qoder.files]
+'qoder' = '~/.config'
+
 [codex.files]
 codex = '~/.config'
 
@@ -189,6 +192,7 @@ depends = ['git', 'ssh', 'container', 'LazyVim']
 depends = [
   'roo-code',
   'claude-code',
+  'qoder',
   'codex',
   'gemini',
   'opencode',

@@ -26,5 +26,14 @@
         "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}"
       }
     }
-  }
+  },
+  "amp.permissions": [
+    {
+      "action": "reject",
+      "matches": {
+        "cmd": "*rbw get*"
+      },
+      "tool": "Bash"
+    }
+  ]
 }
