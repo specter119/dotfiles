@@ -46,9 +46,10 @@
 - 语法搜索：`ast-grep`
 - 网络搜索：`websearch`；若请求失败，用 `exa_web_search_exa`
 - 网页抓取：`webfetch`；若请求失败，用 `exa_crawling_exa`
+- 浏览器操作（网页截图、表单填写、Web 测试）：`playwright-cli`（比 Playwright MCP 更省 token）
 - PDF 转图片：`pdftoppm`（不要用 Playwright）
 
-> **注意**：PDF 截图 ≠ 浏览器截图。用 `pdftoppm -png -r 150 file.pdf out/page`。
+> **注意**：PDF 截图 ≠ 浏览器截图。PDF 用 `pdftoppm -png -r 150 file.pdf out/page`，网页用 `playwright-cli screenshot`。
 > 每次截图前清理输出目录，避免旧文件残留。
 
 ## 自检与修复

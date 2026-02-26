@@ -52,6 +52,7 @@
 - DNS 查询：`dig` > `nslookup`
 - 网络连接：`ss` > `netstat`
 - 语法搜索：`ast-grep`
+- 浏览器操作（网页截图、表单填写、Web 测试）：`playwright-cli`（比 Playwright MCP 更省 token）
 
 ### 网络与文档
 

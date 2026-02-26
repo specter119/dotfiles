@@ -69,6 +69,7 @@
       "Bash(uv:*)",
       "Bash(pre-commit:*)",
       "Bash(pdftoppm:*)",
+      "Bash(playwright-cli:*)",
       "mcp__plugin_context7_context7__*",
       "mcp__exa__*",
       "Skill(deep-research)",
@@ -78,6 +79,9 @@
       "Skill(slide)",
       "Skill(typst)",
       "Skill(skill-creator)"
+    ],
+    "deny": [
+      "Bash(rbw:get*)"
     ]
   },
   "skipWebFetchPreflight": true,
