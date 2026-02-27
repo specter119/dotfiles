@@ -72,5 +72,5 @@ function _bwrap_agentic_cli --description 'Run a CLI tool inside a bwrap sandbox
         $worktree_mounts \
         --setenv HOME $HOME \
         --setenv PATH $HOME/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin \
-        (command -v $cmd_args[1]) $cmd_args[2..]
+        -- (command -v $cmd_args[1]) $cmd_args[2..]
 end

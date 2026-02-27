@@ -63,6 +63,17 @@
 | 代码搜索     | `mcp__exa__get_code_context_exa`                                                      |
 | 库文档查询   | `context7 MCP`                                                                        |
 
+### 跨 Agent 对话 (xurl)
+
+使用 `xurl` 读取和查询其他 AI agent 的对话记录（provider：`amp`、`claude`、`codex`、`gemini`、`opencode`）：
+
+```bash
+xurl <provider>                        # 列出最近线程
+xurl '<provider>?q=keyword'            # 按关键词搜索
+xurl <provider>/<session_id>           # 读取对话内容
+xurl <provider>/<session_id> -d "msg"  # 继续对话
+```
+
 ### 任务管理
 
 - 复杂任务：使用 `Task` 工具启动专门 agent

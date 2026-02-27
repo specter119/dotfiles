@@ -29,6 +29,7 @@
       }
     ]
   },
+  "includeCoAuthoredBy": false,
   "model": "opus",
   "permissions": {
     "allow": [

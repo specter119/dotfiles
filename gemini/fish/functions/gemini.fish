@@ -1,10 +1,10 @@
 function gemini --description 'Run gemini with bwrap sandboxing'
-    set -q GEMINI_CONFIG_DIR; or set GEMINI_CONFIG_DIR $HOME/.config/gemini
-    set GEMINI_CONFIG_DIR (string replace '~' $HOME $GEMINI_CONFIG_DIR)
+    set -q GEMINI_CLI_HOME; or set GEMINI_CLI_HOME $HOME/.config/gemini
+    set GEMINI_CLI_HOME (string replace '~' $HOME $GEMINI_CLI_HOME)
 
-    mkdir -p $GEMINI_CONFIG_DIR
+    mkdir -p $GEMINI_CLI_HOME
 
     _bwrap_agentic_cli \
-        --bind $GEMINI_CONFIG_DIR $HOME/.gemini \
+        --bind $GEMINI_CLI_HOME $HOME/.gemini \
         -- gemini $argv
 end
