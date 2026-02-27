@@ -52,6 +52,17 @@
 > **注意**：PDF 截图 ≠ 浏览器截图。PDF 用 `pdftoppm -png -r 150 file.pdf out/page`，网页用 `playwright-cli screenshot`。
 > 每次截图前清理输出目录，避免旧文件残留。
 
+### 跨 Agent 对话 (xurl)
+
+使用 `xurl` 读取和查询其他 AI agent 的对话记录（provider：`amp`、`claude`、`codex`、`gemini`、`opencode`）：
+
+```bash
+xurl <provider>                        # 列出最近线程
+xurl '<provider>?q=keyword'            # 按关键词搜索
+xurl <provider>/<session_id>           # 读取对话内容
+xurl <provider>/<session_id> -d "msg"  # 继续对话
+```
+
 ## 自检与修复
 
 ### 回答前自检
