@@ -1,0 +1,16 @@
+  [Unit]
+  Description=Marimo ACP Codex Bridge
+  After=network-online.target
+  Wants=network-online.target
+
+  [Service]
+  Type=simple
+  WorkingDirectory=%D/marimo
+  ExecStartPre=bun install -g stdio-to-ws @zed-industries/codex-acp
+  ExecStartPre=bun update -g stdio-to-ws @zed-industries/codex-acp
+  ExecStart=bunx stdio-to-ws "bunx @zed-industries/codex-acp" --port 3021
+  Restart=always
+  RestartSec=3
+
+  [Install]
+  WantedBy=default.target
