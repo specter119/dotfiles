@@ -3,7 +3,8 @@ function claude --description 'Run claude code with bwrap sandboxing and adapted
     # mounted as ~/.claude (Claude Code's default) inside bwrap.
 
     set -q CLAUDE_CONFIG_DIR; or set CLAUDE_CONFIG_DIR $HOME/.config/claude
-    set CLAUDE_CONFIG_DIR (string replace '~' $HOME $CLAUDE_CONFIG_DIR)
+    set CLAUDE_CONFIG_DIR (string replace -r '^~/' "$HOME/" $CLAUDE_CONFIG_DIR)
+    set CLAUDE_CONFIG_DIR (string replace -r '^~$' $HOME $CLAUDE_CONFIG_DIR)
 
     # Ensure directory and .claude.json files exist
     mkdir -p $CLAUDE_CONFIG_DIR
