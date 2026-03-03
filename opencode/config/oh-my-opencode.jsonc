@@ -1,6 +1,12 @@
 {
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
   "agents": {
+    "build": {
+      "model": "github-copilot/claude-sonnet-4.6"
+    },
+    "plan": {
+      "model": "github-copilot/claude-opus-4.6"
+    },
     "atlas": {
       "model": "github-copilot/claude-opus-4.6"
     },
@@ -30,7 +36,10 @@
     }
   },
   "experimental": {
-    "preemptive_compaction_threshold": 0.85
+    "dynamic_context_pruning": {
+      "enabled": true,
+      "notification": "detailed"
+    }
   },
   "sisyphus_agent": {
     "planner_enabled": true,
