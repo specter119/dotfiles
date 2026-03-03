@@ -33,7 +33,7 @@
 	insteadOf = git@github.com:
 
 [pager]
-	diff = delta
+	diff = diffnav
 	log = delta
 	reflog = delta
 	show = delta
