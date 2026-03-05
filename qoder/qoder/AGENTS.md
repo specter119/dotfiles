@@ -114,6 +114,12 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 
 详见 [Friendly Python](file://$HOME/.config/agents.md.d/friendly_python.md)
 
+- 以用户体验倒推 API 设计（合理默认值、上下文管理器）
+- 扩展点收敛（注册中心替代 if-else 链）
+- 构造方式清晰（classmethod 替代 flag 参数）
+- 显式优于隐式（避免 `__getattr__` 滥用）
+- 复用生态扩展点（如 `requests.auth.AuthBase`）
+
 #### Python 独立脚本
 
 使用 `uv run` + PEP 723 Inline Script Metadata：
@@ -128,6 +134,13 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 #### Marimo Notebook
 
 详见 [Marimo Notebook 原则](file://$HOME/.config/agents.md.d/marimo_notebook.md)
+
+## 测试要求
+
+- 修改代码后运行相关测试
+- 重要功能补充测试用例
+- 测试独立、可重复、快速
+- 测试名称清晰描述测试内容
 
 ## Git 规范
 
