@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=uvx --from git+https://github.com/PsiACE/bub.git bub idle
+ExecStart=uvx --from git+https://github.com/PsiACE/bub.git bub message
 Restart=on-failure
 RestartSec=5
 
