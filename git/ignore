@@ -70,3 +70,14 @@ venv
 node_modules
 .sass-cache
 .ipynb_checkpoints
+
+# Added by iloom CLI
+**/.iloom/settings.local.json
+
+# Added by iloom CLI
+**/.iloom/package.iloom.local.json
+
+# Added by iloom CLI
+**/.claude/agents/iloom-*
+**/.claude/skills/iloom-*
+**/.claude/iloom-swarm-mcp-config-path

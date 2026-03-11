@@ -56,30 +56,14 @@
 
 ### MCP 工具
 
-| 用途         | 工具                                                                                  |
-| ------------ | ------------------------------------------------------------------------------------- |
-| 网络搜索     | `WebSearch`（优先）、`mcp__exa__web_search_exa`（备选）                               |
-| 网页抓取     | `WebFetch`（优先）、`mcp__exa__crawling_exa`（备选）                                  |
-| 代码搜索     | `mcp__exa__get_code_context_exa`                                                      |
-| 库文档查询   | `context7 MCP`                                                                        |
-| 智能代码搜索 | `mcp__morph-mcp__warpgrep_codebase_search`                                            |
-| 高效编辑     | `mcp__morph-mcp__edit_file`                                                           |
-
-<!-- ### Memory 搜索 (claude-mem) -->
-<!---->
-<!-- **必须主动使用的场景：** -->
-<!---->
-<!-- 1. 用户暗示历史信息 - "之前说过"、"上次提到"、"你记得吗" -->
-<!-- 2. 需要具体值但不确定 - 模型名称、API 配置、参数值（**绝不猜测**） -->
-<!-- 3. 涉及用户偏好/约定 - 代码风格、命名规范、工具选择 -->
-<!-- 4. 跨 session 任务延续 - 继续之前的工作 -->
-<!---->
-<!-- ``` -->
-<!-- mcp__plugin_claude-mem_mem-search__search(query="...") -->
-<!-- mcp__plugin_claude-mem_mem-search__get_recent_context() -->
-<!-- ``` -->
-<!---->
-<!-- **原则：宁可多查一次 memory，也不要猜测。** -->
+| 用途         | 工具                                                    |
+| ------------ | ------------------------------------------------------- |
+| 网络搜索     | `WebSearch`（优先）、`mcp__exa__web_search_exa`（备选） |
+| 网页抓取     | `WebFetch`（优先）、`mcp__exa__crawling_exa`（备选）    |
+| 代码搜索     | `mcp__exa__get_code_context_exa`                        |
+| 库文档查询   | `context7 MCP`                                          |
+| 智能代码搜索 | `mcp__morph-mcp__warpgrep_codebase_search`              |
+| 高效编辑     | `mcp__morph-mcp__edit_file`                             |
 
 ### 跨 Agent 对话 (xurl)
 

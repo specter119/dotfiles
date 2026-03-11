@@ -87,6 +87,9 @@ stylua = '~/.config/stylua'
 [codex.files]
 codex = '~/.config'
 
+[skm.files]
+skm = '~/.config/skm'
+
 [gemini.files]
 gemini = '~/.config'
 
@@ -193,6 +196,7 @@ depends = [
   'claude-code',
   'qoder',
   'codex',
+  'skm',
   'gemini',
   'opencode',
   'opencode-cn',
