@@ -4,3 +4,7 @@ agents:
     - claude
 packages:
   - repo: https://github.com/specter119/craft-skills.git
+  - repo: https://github.com/Xuanwo/xurl.git
+    # {{#if (command_success "uname -r | grep -qi wsl")}}
+  - repo: https://hkggitlab.oocl.com/huijo2/ds-internal-skills.git
+# {{/if}}
