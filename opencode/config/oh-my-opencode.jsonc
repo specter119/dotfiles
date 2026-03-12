@@ -1,8 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
-  "claude_code": {
-    "skills": false
-  },
   "agents": {
     "build": {
       "model": "github-copilot/claude-sonnet-4.6"
@@ -29,7 +26,7 @@
       "model": "github-copilot/gemini-3-flash-preview"
     },
     "oracle": {
-      "model": "github-copilot/gpt-5.2"
+      "model": "github-copilot/gpt-5.4"
     },
     "prometheus": {
       "model": "github-copilot/claude-opus-4.6"

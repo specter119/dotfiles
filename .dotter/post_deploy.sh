@@ -63,14 +63,8 @@ EXA_KEY=$(rbw get exa-api-key 2>/dev/null)
 CONTEXT7_KEY=$(rbw get context7-api-key 2>/dev/null)
 export MORPH_KEY EXA_KEY CONTEXT7_KEY
 
-# Share opencode plugins: link opencode-cn -> opencode
-# See: https://github.com/SuperCuber/dotter/issues/186
-if [[ "$ENABLED_PACKAGES" == *" opencode-cn "* ]]; then
-	ln -sfn ~/.config/opencode/plugins ~/.config/opencode-cn/plugins
-	ln -sfn ~/.config/opencode/AGENTS.md ~/.config/opencode-cn/
-else
-	rm -rf ~/.config/opencode-cn
-fi
+# Clean legacy standalone opencode-cn config after merging back into opencode.
+rm -rf ~/.config/opencode-cn
 
 # Configure MCP servers for agentic CLIs
 bash .dotter/scripts/mcp_setup.sh --shell fish

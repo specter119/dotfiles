@@ -97,12 +97,6 @@ gemini = '~/.config'
 'opencode/config' = '~/.config/opencode'
 'opencode/share' = '~/.local/share/opencode'
 
-[opencode-cn]
-depends = ['opencode']
-
-[opencode-cn.files]
-'opencode-cn' = '~/.config'
-
 [vscode.files]
 'vscode/config' = '~/.config'
 'vscode/share' = '~/.local/share'
@@ -199,7 +193,6 @@ depends = [
   'skm',
   'gemini',
   'opencode',
-  'opencode-cn',
   'alma',
   'amp',
   'ollama',
