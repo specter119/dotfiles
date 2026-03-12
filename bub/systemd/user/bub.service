@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=%h/.config/bub
-ExecStart=uv run --isolated --no-project --with git+https://github.com/bubbuild/bub-contrib.git#subdirectory=packages/bub-feishu --with git+https://github.com/bubbuild/bub-contrib.git#subdirectory=packages/bub-codex bub gateway --enable-channel feishu
+ExecStart=uv run --isolated --no-project --with git+https://github.com/bubbuild/bub-contrib.git#subdirectory=packages/bub-feishu bub gateway --enable-channel feishu
 Restart=on-failure
 RestartSec=5
 
