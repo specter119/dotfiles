@@ -5,4 +5,5 @@ agents:
 packages:
   - repo: https://github.com/specter119/craft-skills.git
   - repo: https://github.com/Xuanwo/xurl.git
+  - repo: https://github.com/PsiACE/skills.git
 
