@@ -103,8 +103,6 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 
 #### Python API 设计与代码范式
 
-详见 [Friendly Python](file://$HOME/.config/agents.md.d/friendly_python.md)
-
 - 以用户体验倒推 API 设计（合理默认值、上下文管理器）
 - 扩展点收敛（注册中心替代 if-else 链）
 - 构造方式清晰（classmethod 替代 flag 参数）
