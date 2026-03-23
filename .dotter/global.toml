@@ -131,6 +131,9 @@ marimo = '~/.config'
 [bub.files]
 'bub/systemd' = '~/.config/systemd'
 
+[lody.files]
+lody = '~/.config'
+
 [ipython.files]
 ipython = '~/.ipython'
 
@@ -172,14 +175,7 @@ yt-dlp = '~/.config/yt-dlp'
 depends = ['env', 'fish', 'yazi', 'atuin']
 
 [wm]
-depends = [
-  'sway',
-  'fontconfig',
-  'fcitx5',
-  'chromium',
-  'zathura',
-  'kitty'
-]
+depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
 
 [dev]
 depends = ['git', 'ssh', 'container', 'LazyVim']
@@ -196,7 +192,8 @@ depends = [
   'alma',
   'amp',
   'ollama',
-  'zellij'
+  'zellij',
+  'lody'
 ]
 
 [copilot.files]

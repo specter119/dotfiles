@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "lody": "latest"
+  },
+  "name": "lody-service",
+  "private": true,
+  "trustedDependencies": [
+    "acp-extension-codex-linux-x64"
+  ]
+}

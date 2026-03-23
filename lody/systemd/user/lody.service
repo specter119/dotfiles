@@ -1,0 +1,15 @@
+[Unit]
+Description=Lody Agent Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/.config/lody
+ExecStartPre=bun update --latest --production --force lody
+ExecStart=bun run lody start
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
