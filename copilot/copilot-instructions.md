@@ -1,5 +1,12 @@
 # GitHub Copilot CLI 配置
 
+## 目标与边界
+
+- 目标：优先利用 Copilot CLI 原生能力完成任务，只额外定义少量 custom agents 与轻量 handoff 规则
+- 默认单 agent 执行；只有搜索、评审、高不确定性判断、复杂实现拆分时才委派
+- 不模拟外部框架，不引入 `.sisyphus/` 一类计划文件、hook 链路或多级 orchestration
+- 委派最多一层，同时最多并行 2 个子 agent；子 agent 不再继续委派
+
 ## 交流规范
 
 - 用中文交流、写 spec 和文档
@@ -35,6 +42,79 @@
    - moderate: 单文件复杂逻辑、局部重构
    - complex: 跨模块设计、大型重构
 
+## 多 Agent 协作
+
+### 可用角色
+
+- `explorer`：读代码、搜实现、列事实、收集上下文
+- `librarian`：查官方文档、第三方库、OSS 示例、迁移资料
+- `task-subagent`：通用实现子 agent，负责明确范围内的执行与验证
+- `reviewer`：findings-first 的评审子 agent
+- `oracle`：只读顾问，用于架构、调试、方案裁决
+
+### 路由规则
+
+- trivial 任务：直接完成，不委派
+- 代码库探索、现状梳理、找入口：优先委派 `explorer`
+- 外部文档、定向查某个库/API 用法、升级迁移：优先委派 `librarian`
+- 需要广度搜索（web + GitHub 多源）的深度调研：用 `/research`，而非 `librarian`
+- 明确实现任务且已知怎么做，但范围较大、需要隔离执行：委派 `task-subagent`
+- 多个互不依赖的子任务可以并行：用 `/fleet` 启动 fleet mode，再并行委派多个 `task-subagent`
+- 用户要求 formal review，或实现后需要风险复核：委派 `reviewer`
+- 需求含糊、方案冲突、架构权衡大、调试无明显方向：委派 `oracle`
+
+### CLI 原生能力路由
+
+| 场景 | 用法 |
+|------|------|
+| 任务开始前需要结构化规划 | `/plan` 进入 plan 模式，确认后执行 |
+| 多个互不依赖的子任务并行 | `/fleet` → 主 agent 自动分解任务并行派发给 subagent，可指定用哪个 custom agent（如 `task-subagent`） |
+| 需要广度 web + GitHub 调研 | `/research` |
+| 长流水线任务，需要 agent 自主推进不等待审批 | Shift+Tab 切换到 Autopilot mode（已启用 experimental） |
+| 完整 feature 完成后生成 PR | `/delegate` |
+| 后台运行任务 / 查看 subagent 状态 | `/tasks` |
+| 查看上下文窗口用量 | `/context` |
+| 对话过长导致上下文压力 | `/compact` 压缩历史 |
+
+### 委派原则
+
+- 能直接完成就不要委派
+- 不要把一次简单修改拆成多个子 agent
+- 不要为了“看起来更 agentic”而委派
+- 不要让子 agent 做无验收标准的高风险写操作
+- 不要递归委派
+
+### Handoff 协议
+
+委派时必须提供这些字段，缺一不可：
+
+- `task`
+- `goal`
+- `in_scope`
+- `out_of_scope`
+- `context`
+- `constraints`
+- `inputs`
+- `expected_output`
+- `acceptance_criteria`
+
+### 子 Agent 输出协议
+
+子 agent 必须返回：
+
+- `conclusion`
+- `key_evidence`
+- `risks`
+- `open_questions`
+- `recommended_next_step`
+
+### 汇总与裁决
+
+- 主 agent 负责最终结论，不能把最终责任转给子 agent
+- 如果多个子 agent 结论冲突，主 agent 必须明确说明冲突点和裁决依据
+- `oracle` 的意见是 consultation only，不自动覆盖实现或评审结论
+- `task-subagent` 是 generic executor，不承担架构裁决职责
+
 ## 工具使用偏好
 
 - 文本搜索：优先 `rg`，其次 `grep`
@@ -43,6 +123,7 @@
 - 网络连接排查：优先 `ss`，其次 `netstat`
 - DNS 查询：优先 `dig`，其次 `nslookup`
 - 修改前先搜索相关代码和配置，不凭文件名臆测
+- 需要 custom agent 时，优先使用原生 agent 能力，不用单个 prompt 模拟多角色
 
 ## 自检与修复
 
