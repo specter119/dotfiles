@@ -79,16 +79,16 @@ julia = '~/.julia'
 stylua = '~/.config/stylua'
 
 [claude-code.files]
-'claude-code' = '~/.config'
-
-[qoder.files]
-'qoder' = '~/.config'
+'claude-code' = '~/.config/claude'
 
 [codex.files]
-codex = '~/.config'
+codex = '~/.config/codex'
 
-[skm.files]
-skm = '~/.config/skm'
+[amp.files]
+amp = '~/.config/amp'
+
+[copilot.files]
+copilot = '~/.config/copilot'
 
 [gemini.files]
 gemini = '~/.config'
@@ -97,12 +97,15 @@ gemini = '~/.config'
 'opencode/config' = '~/.config/opencode'
 'opencode/share' = '~/.local/share/opencode'
 
+[skm.files]
+skm = '~/.config/skm'
+
+[qoder.files]
+qoder = '~/.config'
+
 [vscode.files]
 'vscode/config' = '~/.config'
 'vscode/share' = '~/.local/share'
-
-[amp.files]
-amp = '~/.config/amp'
 
 [atuin.files]
 atuin = '~/.config'
@@ -180,25 +183,26 @@ depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
 [dev]
 depends = ['git', 'ssh', 'container', 'LazyVim']
 
-[copilot]
+[agentic-coding]
 depends = [
-  'roo-code',
-  'claude-code',
-  'qoder',
   'codex',
-  'skm',
-  'gemini',
-  'opencode',
-  'alma',
   'amp',
-  'ollama',
-  'zellij',
-  'lody'
+  'claude-code',
+  'copilot',
+  'opencode',
+  'gemini',
+  'qoder',
+  'alma',
+  'lody',
+  'roo-code'
 ]
 
-[copilot.files]
-'copilot/config' = '~/.config'
-'copilot/share' = '~/.local/share'
+[agentic-coding.files]
+'agentic-coding/config' = '~/.config'
+'agentic-coding/share' = '~/.local/share'
+
+[llm-infra]
+depends = ['ollama', 'skm', 'zellij']
 
 [python]
 depends = ['uv', 'conda']

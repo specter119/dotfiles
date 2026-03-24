@@ -21,7 +21,7 @@
       {
         "hooks": [
           {
-            "command": "~/.local/share/copilot-hooks/notify.sh",
+            "command": "~/.local/share/cli-hooks/notify.sh",
             "type": "command"
           }
         ],
