@@ -120,10 +120,6 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 # ///
 ```
 
-#### Marimo Notebook
-
-详见 [Marimo Notebook 原则](file://$HOME/.config/agents.md.d/marimo_notebook.md)
-
 ## 测试要求
 
 - 修改代码后运行相关测试
@@ -133,6 +129,10 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 
 ## Git 规范
 
+- 将 `jj` 作为当前的首选本地版本控制工作流；在存在 `.jj/` 的仓库中，默认启用 `onevcat-jj` skill 并优先使用 `jj`
+- 主动使用 `jj log` / `jj diff` / `jj new` 组织工作；需要拆分复杂任务时，优先考虑用 `jj` 的 change-based workflow 管理中间状态
+- 避免在 `jj` 仓库中使用 `git add`、`git commit`、`git stash`、`git checkout` 处理本地变更；仅在远端兼容或只读场景下使用 `git`
+- 需要和远端同步时，优先使用 `jj git fetch`、`jj bookmark`、`jj git push`
 - Commit message：英文，格式 `<type>: <description>`
 - Type：`feat`, `fix`, `refactor`, `docs`, `test`, `chore`
 - 每次 commit 逻辑完整

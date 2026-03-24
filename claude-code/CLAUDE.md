@@ -131,10 +131,6 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 # ///
 ```
 
-#### Marimo Notebook
-
-详见 [Marimo Notebook 原则](file://$HOME/.config/agents.md.d/marimo_notebook.md)
-
 ## 测试要求
 
 - 修改代码后运行相关测试
