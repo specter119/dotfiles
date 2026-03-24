@@ -6,12 +6,13 @@
 	name = {{to_lower_case (env_var "USERNAME")}}
 	email = {{to_lower_case (env_var "USERNAME")}}@{{replace (to_lower_case (env_var "USERDNSDOMAIN")) "corp." ""}}
 {{else}}
-	name = {{trim (command_output "powershell.exe -NoProfile -c '$env:USERNAME.ToLower()'")}}
-	email = {{trim (command_output "powershell.exe -NoProfile -c '$env:USERNAME.ToLower()'")}}@{{trim (command_output "powershell.exe -NoProfile -c '($env:USERDNSDOMAIN -replace \"^corp[.]\", \"\").ToLower()'")}}
+	name = specter119
+	email = specter119@gmail.com
 {{/if}}
 
 [core]
 	excludesfile = ~/.config/git/ignore
+
 {{#if dotter.linux}}
 	filemode = false
 	symlinks = true
@@ -55,6 +56,7 @@
 
 [includeIf "gitdir:~/.cache/paru/clone"]
 	excludesfile = ~/.config/git/ignore-pkgbuild
+
 {{#if (command_success "uname -r | grep -qi wsl")}}
 
 [includeIf "gitdir:~/Documents/github.repos/"]
@@ -63,17 +65,22 @@
 [includeIf "gitdir:{{env_var "WSL_WIN_HOME"}}/scoop/"]
 	path = ~/.config/git/config-github
 
-[helper]
-	format = man
+{{#each git_enterprise}}
+[includeIf "gitdir:{{repo_dir}}"]
+	path = ~/.config/git/generated/{{@key}}.conf
+
+{{/each}}
+
 
 [credential]
 	helper = {{env_var "WSL_WIN_HOME"}}/scoop/apps/mingit/current/mingw64/bin/git-credential-manager.exe
+
 {{/if}}
 {{#if dotter.windows}}
 
 [includeIf "gitdir/i:{{env_var "USERPROFILE"}}/scoop/"]
 	path = ~/.config/git/config-github
+{{/if}}
 
 [helper]
 	format = man
-{{/if}}
