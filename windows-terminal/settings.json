@@ -77,16 +77,17 @@
                 "source": "Windows.Terminal.PowershellCore"
             },
             {
+              
+                "guid": "{84160838-d5a5-519c-a5f3-8b3df3bad345}",
+                "hidden": false,
+                "name": "Arch Linux",
                 "font": 
                 {
                     "face": "Sarasa Term SC Nerd",
                     "size": 12,
                     "weight": "medium"
-                },
-                "guid": "{84160838-d5a5-519c-a5f3-8b3df3bad345}",
-                "hidden": false,
-                "name": "Arch Linux",
-                "source": "Microsoft.WSL"
+                },  "source": "Microsoft.WSL",
+                "closeOnExit": "always"
             },
             {
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -nologo",
