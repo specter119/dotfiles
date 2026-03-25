@@ -3,8 +3,16 @@ agents:
     - standard
     - claude
 packages:
-  - repo: https://github.com/specter119/craft-skills.git
+  - repo: https://github.com/specter119/skills.git
   - repo: https://github.com/Xuanwo/xurl.git
   - repo: https://github.com/PsiACE/skills.git
   - repo: https://github.com/onevcat/skills.git
-
+# {{#each skm_local_packages}}
+  - repo: {{repo}}
+  # {{#if skills}}
+    skills:
+    # {{#each skills}}
+      - {{this}}
+    # {{/each}}
+  # {{/if}}
+# {{/each}}

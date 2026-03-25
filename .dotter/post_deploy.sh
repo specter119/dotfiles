@@ -36,26 +36,37 @@ PY
 
 ENABLED_PACKAGES=" $(parse_packages) "
 
-# Parse a variable from local.toml with a default fallback
-parse_variable() {
-	local key="$1" default="$2"
-	python3 - "$key" "$default" <<'PY'
-import sys, tomllib
+cleanup_rendered_yaml_templates() {
+	python3 - <<'PY' | while IFS= read -r file; do
+import tomllib
 from pathlib import Path
 
-key, default = sys.argv[1], sys.argv[2]
-local_path = Path(".dotter/local.toml")
-if local_path.exists():
-    with local_path.open("rb") as fh:
-        val = tomllib.load(fh).get("variables", {}).get(key, default)
-else:
-    val = default
-print(val)
-PY
-}
+cache_toml = Path(".dotter/cache.toml")
+if not cache_toml.exists():
+    raise SystemExit(0)
 
-DOMAIN=$(parse_variable domain homelab.com)
-export DOMAIN
+with cache_toml.open("rb") as fh:
+    templates = tomllib.load(fh).get("templates", {})
+
+for source, target in templates.items():
+    source_path = Path(source)
+    if source_path.suffix not in {".yaml", ".yml"}:
+        continue
+    try:
+        text = source_path.read_text(encoding="utf-8")
+    except (FileNotFoundError, UnicodeDecodeError):
+        continue
+    if "{" + "{" not in text:
+        continue
+
+    print(Path(".dotter/cache") / source_path)
+    print(target)
+PY
+		if [[ -f "$file" ]]; then
+			sed -i '/^[[:space:]]*#[[:space:]]*$/d' "$file"
+		fi
+	done
+}
 
 # Shared MCP secrets (do not depend on enabled packages)
 MORPH_KEY=$(rbw get morph-api-key 2>/dev/null)
@@ -65,6 +76,9 @@ export MORPH_KEY EXA_KEY CONTEXT7_KEY
 
 # Clean legacy standalone opencode-cn config after merging back into opencode.
 rm -rf ~/.config/opencode-cn
+
+# Clean up rendered YAML templates after deployment.
+cleanup_rendered_yaml_templates
 
 # Configure MCP servers for agentic CLIs
 bash .dotter/scripts/mcp_setup.sh --shell fish
