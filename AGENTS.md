@@ -64,6 +64,28 @@ The `replace ... '\n' ''` removes trailing newline from rbw output.
 {{#if (not cond)}}...{{/if}}
 ```
 
+### YAML Template Tips
+
+When a YAML file is both a Dotter template and pre-commit formatted with `yamlfmt`, keep these rules:
+
+```yaml
+# {{#each skm_local_packages}}
+  - repo: "{{repo}}"
+    # {{#if skills}}
+    skills:
+      # {{#each skills}}
+      - "{{this}}"
+      # {{/each}}
+# {{/if}}
+# {{/each}}
+```
+
+- Put control blocks like `#each` and `#if` in YAML comments so YAML formatters and editors can still parse the file.
+- Quote inline Handlebars values in YAML scalars, for example `repo: "{{repo}}"` and `- "{{this}}"`. Unquoted forms may be rewritten into invalid `{ { repo } }` style text by formatters.
+- Dotter treats any file containing `{{` as a template; `.tmpl` is not a required or special suffix.
+- Dotter hook scripts are also templates. Do not write a literal `{{` inside embedded shell or Python snippets; build it at runtime instead, for example `"{" + "{"`.
+- After deploy, generated YAML files may contain empty `#` lines left by commented control blocks. It is safe to delete lines matching `^[[:space:]]*#[[:space:]]*$` in both the rendered target and the Dotter cache copy so future deploys stay in sync.
+
 ### Commands
 
 ```bash

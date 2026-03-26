@@ -1,0 +1,9 @@
+[project]
+name = "bub-service"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = [
+  "bub @ git+https://github.com/bubbuild/bub.git",
+  "bub-feishu @ git+https://github.com/bubbuild/bub-contrib.git#subdirectory=packages/bub-feishu",
+  "bub-tapestore-sqlite @ git+https://github.com/bubbuild/bub-contrib.git#subdirectory=packages/bub-tapestore-sqlite"
+]
