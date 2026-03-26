@@ -84,11 +84,14 @@ stylua = '~/.config/stylua'
 [codex.files]
 codex = '~/.config/codex'
 
-[amp.files]
-amp = '~/.config/amp'
+[pi.files]
+pi = '~/.config/pi'
 
 [copilot.files]
 copilot = '~/.config/copilot'
+
+[amp.files]
+amp = '~/.config/amp'
 
 [gemini.files]
 gemini = '~/.config'
@@ -188,13 +191,14 @@ depends = [
   'codex',
   'amp',
   'claude-code',
+  'pi',
   'copilot',
   'opencode',
   'gemini',
   'qoder',
   'alma',
   'lody',
-  'roo-code'
+  'roo-code',
 ]
 
 [agentic-coding.files]

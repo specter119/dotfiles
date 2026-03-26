@@ -1,0 +1,14 @@
+{
+  "lastChangelogVersion": "0.62.0",
+  "defaultProvider": "zai",
+  "defaultModel": "glm-5",
+  "npmCommand": [
+    "bun"
+  ],
+  "packages": [
+    "https://github.com/davebcn87/pi-autoresearch",
+    "git:github.com/aliou/pi-guardrails"
+  ],
+  "defaultThinkingLevel": "high",
+  "hideThinkingBlock": false
+}

@@ -1,0 +1,166 @@
+# AGENTS.md
+
+## 交流规范
+
+- 用中文交流、写 spec 和文档
+- 用英文写代码、注释、日志和 commit message
+- 回答简洁，避免冗长解释
+- 不明确时主动提问，不臆测
+
+### 回答结构（复杂任务）
+
+1. **直接结论** - 应该怎么做 / 当前最合理的结论
+2. **简要推理** - 关键前提、判断步骤、重要权衡
+3. **可选方案** - 1-2 个选项及适用场景
+4. **下一步计划** - 可执行的行动列表
+
+## 工作流程
+
+### 基础流程
+
+1. **理解需求** - 有疑问立即提问
+2. **搜索优先** - 修改前先搜索并阅读相关代码
+3. **小步快跑** - 拆分大任务，逐步完成
+4. **及时验证** - 每次修改后验证
+5. **主动报告** - 完成后报告结果
+
+### 推理框架
+
+操作前完成以下推理：
+
+1. **优先级与约束**：显式规则 > 操作顺序 > 前置条件
+2. **风险评估**：低风险直接行动，高风险说明替代方案
+3. **复杂度分级**：
+   - trivial: 简单语法、<10行修改
+   - moderate: 单文件复杂逻辑、局部重构
+   - complex: 跨模块设计、大型重构
+
+## 工具使用偏好
+
+### 内置工具（优先使用）
+
+- 读取文件：`read`（不是 `cat`）
+- 编辑文件：`edit`（精确替换，不是 `sed`）
+- 创建文件：`write`（新文件或完全重写）
+- 执行命令：`bash`（ls, grep, find, fd, rg 等）
+
+### 系统命令
+
+- 文本搜索：`rg` > `grep`
+- 文件查找：`fd` > `find`
+- DNS 查询：`dig` > `nslookup`
+- 网络连接：`ss` > `netstat`
+- 语法搜索：`ast-grep`
+- 浏览器操作（网页截图、表单填写、Web 测试）：`playwright-cli`
+- PDF 转图片：`pdftoppm`（不要用 Playwright）
+
+> **注意**：PDF 截图 ≠ 浏览器截图。PDF 用 `pdftoppm -png -r 150 file.pdf out/page`，网页用 `playwright-cli screenshot`。
+> 每次截图前清理输出目录，避免旧文件残留。
+
+### 跨 Agent 对话 (xurl)
+
+使用 `xurl` 读取和查询其他 AI agent 的对话记录（provider：`amp`、`claude`、`codex`、`gemini`、`opencode`）：
+
+```bash
+xurl <provider>                        # 列出最近线程
+xurl '<provider>?q=keyword'            # 按关键词搜索
+xurl <provider>/<session_id>           # 读取对话内容
+xurl <provider>/<session_id> -d "msg"  # 继续对话
+```
+
+### Skills
+
+按需激活 skills，使用 `/skill:name` 或让 agent 自动加载。
+
+## 自检与修复
+
+### 回答前自检
+
+1. 任务复杂度：trivial / moderate / complex？
+2. 是否在解释已知的基础知识？
+3. 是否可以直接修复低级错误？
+
+### 自动修复低级错误
+
+直接修复，无需批准：
+
+- 语法错误（括号不配对、字符串未闭合）
+- 明显的缩进或格式问题
+- 编译期错误（缺失 import、错误类型）
+
+### 风险操作
+
+破坏性操作（删除文件、重建数据库、`git reset --hard`）必须：
+
+- 明确说明风险
+- 给出更安全的替代方案
+- 确认用户意图
+
+## 编程原则
+
+遵循软件工程基本原则（DRY, KISS, YAGNI, SRP）。
+
+### 语言特定习惯
+
+#### Python API 设计与代码范式
+
+- 以用户体验倒推 API 设计（合理默认值、上下文管理器）
+- 扩展点收敛（注册中心替代 if-else 链）
+- 构造方式清晰（classmethod 替代 flag 参数）
+- 显式优于隐式（避免 `__getattr__` 滥用）
+- 复用生态扩展点（如 `requests.auth.AuthBase`）
+
+#### Python 独立脚本
+
+使用 `uv run` + PEP 723 Inline Script Metadata：
+
+```python
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["requests", "rich"]
+# ///
+```
+
+## 测试要求
+
+- 修改代码后运行相关测试
+- 重要功能补充测试用例
+- 测试独立、可重复、快速
+- 测试名称清晰描述测试内容
+
+## Git 规范
+
+- 将 `jj` 作为当前的首选本地版本控制工作流；在存在 `.jj/` 的仓库中，默认启用 `onevcat-jj` skill 并优先使用 `jj`
+- 主动使用 `jj log` / `jj diff` / `jj new` 组织工作；需要拆分复杂任务时，优先考虑用 `jj` 的 change-based workflow 管理中间状态
+- 避免在 `jj` 仓库中使用 `git add`、`git commit`、`git stash`、`git checkout` 处理本地变更；仅在远端兼容或只读场景下使用 `git`
+- 需要和远端同步时，优先使用 `jj git fetch`、`jj bookmark`、`jj git push`
+- `jj git init --colocate` 后必须立即 `jj bookmark track <name>@origin` 常用远端 bookmark（如 `master`/`main`），否则后续 `jj git push` 会因 non-tracking 报错
+- Commit message：英文，格式 `<type>: <description>`
+- Type：`feat`, `fix`, `refactor`, `docs`, `test`, `chore`
+- 每次 commit 逻辑完整
+- Push 前确保测试通过
+
+## Skill 设计原则
+
+### 两种内容类型
+
+| 类型                 | 说明                           | 处理方式               |
+| -------------------- | ------------------------------ | ---------------------- |
+| Model 不知道的       | 内部流程、API schema、业务规则 | 详细写入 `references/` |
+| Model 已知但需激活的 | 领域理论、设计原则、最佳实践   | 提及权威来源和关键术语 |
+
+### 知识唤醒
+
+| 方法         | ❌ 硬编码规则   | ✅ 知识唤醒                        |
+| ------------ | --------------- | ---------------------------------- |
+| 提及权威来源 | "代码要整洁"    | "遵循 Robert Martin 的 Clean Code" |
+| 使用领域术语 | "函数要短"      | "应用单一职责原则（SRP）"          |
+| 说明 WHY     | "每页 5 个要点" | "考虑认知负荷理论（7±2）"          |
+
+### Skill 反馈循环
+
+1. **先诊断 Skill** - 检查是否定义有缺陷
+2. **询问用户** - "是否先更新 Skill 再重新生成，还是直接优化当前产出？"
+3. **根据选择执行**
+
+**原则**：先治本（Skill），再治标（产出）。

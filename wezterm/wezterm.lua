@@ -6,6 +6,18 @@ local launch_menu = {}
 -- config.enable_kitty_keyboard = true
 
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
+  -- Configure WSL domain with zellij as default shell
+  config.wsl_domains = {
+    {
+      name = 'wsl:archlinux',
+      distribution = 'archlinux',
+      default_prog = { 'zellij', 'attach', '--create', 'main' },
+    },
+  }
+
+  -- Set the WSL domain as default
+  config.default_gui_startup_args = { 'connect', 'wsl:archlinux' }
+
   table.insert(launch_menu, {
     label = 'PowerShell Core',
     args = { os.getenv 'SCOOP' .. '\\apps\\pwsh\\current\\pwsh.exe', '-NoLogo' },
@@ -18,16 +30,8 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
 
   table.insert(launch_menu, {
     label = 'Arch Linux (WSL)',
-    args = { 'wsl.exe', '--cd', '~', '--distribution', 'archlinux', '--', 'fish', '--login' },
+    domain = { DomainName = 'wsl:archlinux' },
   })
-
-  table.insert(launch_menu, {
-    label = 'Arch Linux with zellij (WSL)',
-    args = { 'wsl.exe', '--cd', '~', '--distribution', 'archlinux', '--', 'zellij', 'attach', '--create', 'main' },
-  })
-
-  config.default_prog =
-    { 'wsl.exe', '--cd', '~', '--distribution', 'archlinux', '--', 'zellij', 'attach', '--create', 'main' }
 
   config.keys = {
     { key = 'v', mods = 'CTRL', action = wezterm.action.Nop },

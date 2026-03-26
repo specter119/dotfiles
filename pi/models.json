@@ -1,0 +1,7 @@
+{
+  "providers": {
+    "zai": {
+      "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4"
+    }
+  }
+}
