@@ -7,6 +7,7 @@ packages:
   - repo: https://github.com/Xuanwo/xurl.git
   - repo: https://github.com/PsiACE/skills.git
   - repo: https://github.com/onevcat/skills.git
+  # {{#if skm_local_packages}}
   # {{#each skm_local_packages}}
   - repo: "{{repo}}"
     # {{#if skills}}
@@ -14,5 +15,6 @@ packages:
       # {{#each skills}}
       - "{{this}}"
       # {{/each}}
-# {{/if}}
+    # {{/if}}
 # {{/each}}
+# {{/if}}

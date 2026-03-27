@@ -1,7 +1,9 @@
 {
-  "lastChangelogVersion": "0.63.1",
-  "defaultProvider": "zai",
   "defaultModel": "glm-5",
+  "defaultProvider": "zai",
+  "defaultThinkingLevel": "high",
+  "hideThinkingBlock": false,
+  "lastChangelogVersion": "0.63.1",
   "npmCommand": [
     "pi_npm_command"
   ],
@@ -9,7 +11,5 @@
     "https://github.com/davebcn87/pi-autoresearch",
     "git:github.com/aliou/pi-guardrails",
     "git:github.com/sherif-fanous/pi-rtk"
-  ],
-  "defaultThinkingLevel": "high",
-  "hideThinkingBlock": false
+  ]
 }

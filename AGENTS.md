@@ -91,6 +91,40 @@ The `replace ... '\n' ''` removes trailing newline from rbw output.
 {{#if (not cond)}}...{{/if}}
 ```
 
+### Optional Variables with `#each`
+
+**Always wrap `#each` with `#if` to handle undefined variables gracefully.**
+
+Dotter's `#each` fails when the variable is undefined, breaking template rendering. Wrap it with `#if` to skip the block when the variable is missing:
+
+```handlebars
+# {{#if my_items}}
+# {{#each my_items}}
+- name: "{{name}}"
+# {{/each}}
+# {{/if}}
+```
+
+This pattern ensures templates render correctly even when `my_items` is not defined in `local.toml`.
+
+### Git Enterprise Identities
+
+Add enterprise Git identities in `.dotter/local.toml` under `variables.git_enterprise`:
+
+```toml
+[variables.git_enterprise.company_a]
+repo_dir = "~/Documents/company-a.repos/"
+name = "your-work-name"
+email = "your-work-email@company-a.example"
+
+[variables.git_enterprise.company_b]
+repo_dir = "~/Documents/company-b.repos/"
+name = "your-other-work-name"
+email = "your-other-work-email@company-b.example"
+```
+
+Each entry generates `git/generated/<key>.conf`, then Dotter links it to `~/.config/git/generated/<key>.conf`.
+
 ### YAML Template Tips
 
 When a YAML file is both a Dotter template and pre-commit formatted with `yamlfmt`, keep these rules:
