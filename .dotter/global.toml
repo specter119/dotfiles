@@ -190,26 +190,17 @@ depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
 [dev]
 depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
 
-[agentic-coding]
-depends = [
-  'codex',
-  'amp',
-  'claude-code',
-  'pi',
-  'copilot',
-  'opencode',
-  'gemini',
-  'qoder',
-  'alma',
-  'lody',
-  'roo-code'
-]
+[harness]
+depends = ['harness-infra', 'codex', 'amp', 'claude-code', 'pi', 'copilot', 'opencode', 'gemini']
 
-[agentic-coding.files]
-'agentic-coding/config' = '~/.config'
-'agentic-coding/share' = '~/.local/share'
+[harness.files]
+'harness/config' = '~/.config'
+'harness/share' = '~/.local/share'
 
-[llm-infra]
+[harness-remote]
+depends = ['skm', 'bub', 'lody', 'alma']
+
+[harness-infra]
 depends = ['ollama', 'skm', 'zellij']
 
 [python]
