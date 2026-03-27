@@ -1,0 +1,17 @@
+# :schema https://docs.jj-vcs.dev/latest/config-schema.json
+
+[user]
+name = "specter119"
+email = "specter119@gmail.com"
+
+# {{#if git_enterprise}}
+# {{#each git_enterprise}}
+[[--scope]]
+--when.repositories = ["{{repo_dir}}"]
+
+[--scope.user]
+name = "{{name}}"
+email = "{{email}}"
+
+# {{/each}}
+# {{/if}}

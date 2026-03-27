@@ -48,6 +48,9 @@ yazi = '~/.config/yazi'
 [git.files]
 git = '~/.config/git'
 
+[jj.files]
+jj = '~/.config/jj'
+
 [ssh.files]
 ssh = '~/.ssh'
 
@@ -185,7 +188,7 @@ depends = ['env', 'fish', 'yazi', 'atuin']
 depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
 
 [dev]
-depends = ['git', 'ssh', 'container', 'LazyVim']
+depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
 
 [agentic-coding]
 depends = [
