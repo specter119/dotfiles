@@ -85,7 +85,8 @@ stylua = '~/.config/stylua'
 codex = '~/.config/codex'
 
 [pi.files]
-pi = '~/.config/pi'
+'pi/config' = '~/.config/pi'
+'pi/bin' = '~/.local/bin'
 
 [copilot.files]
 copilot = '~/.config/copilot'

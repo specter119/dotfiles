@@ -1,0 +1,2 @@
+#!/bin/bash
+BUN_INSTALL_TRUST=1 bun "$@"

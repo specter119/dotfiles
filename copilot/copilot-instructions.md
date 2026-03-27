@@ -185,3 +185,26 @@
 - Type：`feat`, `fix`, `refactor`, `docs`, `test`, `chore`
 - 每次 commit 逻辑完整
 - Push 前确保测试通过
+
+## Session 持续模式
+
+**核心规则**：在交互模式下，每次完成任务后必须调用 `ask_user` 工具询问用户是否有其他需求。
+
+### 具体行为
+
+1. 完成当前任务后，不要结束对话
+2. 调用 `ask_user` 工具，询问："还有其他需要帮助的吗？"
+3. 用户回复后继续执行，保持 agent loop 运行
+4. 只有用户明确说"结束"/"没了"/"bye"等才停止调用 `ask_user`
+
+### 注意事项
+
+- **仅限交互模式**：`ask_user` 需要用户输入，在非交互模式（`-p` + `--autopilot`）下会失败
+- **与 autopilot 互斥**：`--autopilot` 模式下不应调用 `ask_user`，让 agent 自主完成即可
+- 如果检测到非交互环境，跳过此规则
+
+### 目的
+
+- 一个 premium request 完成整个 session
+- 减少配额消耗
+- 保持上下文连续性

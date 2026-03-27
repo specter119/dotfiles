@@ -2,27 +2,55 @@
 
 Cross-platform dotfiles managed by [dotter](https://github.com/SuperCuber/dotter).
 
+## Agent Config Paths (XDG)
+
+**Read this section before modifying any agent configs.**
+
+This repo manages configs for multiple AI coding agents. Their paths follow XDG spec (`~/.config/<name>`) instead of defaults (`~/.<name>`):
+
+| Agent   | Env Var               | Path                |
+| ------- | --------------------- | ------------------- |
+| Codex   | `CODEX_HOME`          | `~/.config/codex`   |
+| Claude  | `CLAUDE_CONFIG_DIR`   | `~/.config/claude`  |
+| Pi      | `PI_CODING_AGENT_DIR` | `~/.config/pi`      |
+| Copilot | `COPILOT_HOME`        | `~/.config/copilot` |
+| Gemini  | `GEMINI_CLI_HOME`     | `~/.config/gemini`  |
+| Qoder   | `QODERCLI_HOME`       | `~/.config/qoder`   |
+
+When reading or writing agent configs, use these paths.
+
 ## Dotter Template Syntax
 
 ### Built-in Variables
 
 ```handlebars
-{{dotter.linux}}      # true on Linux
-{{dotter.windows}}    # true on Windows
-{{dotter.macos}}      # true on macOS
-{{dotter.hostname}}   # machine hostname
+{{dotter.linux}}
+# true on Linux
+{{dotter.windows}}
+# true on Windows
+{{dotter.macos}}
+# true on macOS
+{{dotter.hostname}}
+# machine hostname
 ```
 
 ### Built-in Helpers
 
 ```handlebars
-{{env_var "VAR_NAME"}}                # read environment variable
-{{command_output "cmd"}}              # execute command, return stdout
-{{command_success "cmd"}}             # true if command exits 0
-{{trim "  hello  "}}                  # trim whitespace -> "hello"
-{{to_lower_case "HELLO"}}             # lowercase -> "hello"
-{{to_upper_case "hello"}}             # uppercase -> "HELLO"
-{{replace "old" "o" "0"}}             # string replace -> "0ld"
+{{env_var "VAR_NAME"}}
+# read environment variable
+{{command_output "cmd"}}
+# execute command, return stdout
+{{command_success "cmd"}}
+# true if command exits 0
+{{trim "  hello  "}}
+# trim whitespace -> "hello"
+{{to_lower_case "HELLO"}}
+# lowercase -> "hello"
+{{to_upper_case "hello"}}
+# uppercase -> "HELLO"
+{{replace "old" "o" "0"}}
+# string replace -> "0ld"
 ```
 
 ### WSL Detection
@@ -44,14 +72,13 @@ Use `command_success` to detect WSL:
 Inject secrets from Bitwarden using `rbw get`:
 
 ```handlebars
-{
-  "api_key": "{{replace (command_output 'rbw get my-api-key') '\n' ''}}"
-}
+{ "api_key": "{{replace (command_output "rbw get my-api-key") "\n" ""}}" }
 ```
 
 The `replace ... '\n' ''` removes trailing newline from rbw output.
 
 **Workflow:**
+
 1. `rbw add my-api-key` - store secret in Bitwarden
 2. Use `{{replace (command_output 'rbw get my-api-key') '\n' ''}}` in template
 3. `dotter deploy --force` - deploy with secrets injected
@@ -70,12 +97,12 @@ When a YAML file is both a Dotter template and pre-commit formatted with `yamlfm
 
 ```yaml
 # {{#each skm_local_packages}}
-  - repo: "{{repo}}"
-    # {{#if skills}}
-    skills:
-      # {{#each skills}}
-      - "{{this}}"
-      # {{/each}}
+- repo: "{{repo}}"
+  # {{#if skills}}
+  skills:
+    # {{#each skills}}
+    - "{{this}}"
+    # {{/each}}
 # {{/if}}
 # {{/each}}
 ```
@@ -86,7 +113,7 @@ When a YAML file is both a Dotter template and pre-commit formatted with `yamlfm
 - Dotter hook scripts are also templates. Do not write a literal `{{` inside embedded shell or Python snippets; build it at runtime instead, for example `"{" + "{"`.
 - After deploy, generated YAML files may contain empty `#` lines left by commented control blocks. It is safe to delete lines matching `^[[:space:]]*#[[:space:]]*$` in both the rendered target and the Dotter cache copy so future deploys stay in sync.
 
-### Commands
+## Commands
 
 ```bash
 dotter deploy           # deploy dotfiles
