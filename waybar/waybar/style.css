@@ -86,21 +86,15 @@ button:hover {
 #battery,
 #backlight,
 #power-profiles-daemon,
+#custom-system,
 #cpu,
 #memory,
-#disk,
-#temperature,
-#network,
 #pulseaudio,
-#wireplumber,
-#custom-media,
 #tray,
 #mode,
 #idle_inhibitor,
 #scratchpad,
-#mpd,
 #custom-disk,
-#custom-system,
 #custom-power-menu {
   margin: 2px 2px;
   padding: 0 10px;
@@ -130,6 +124,8 @@ button:hover {
 }
 
 #battery {
+  /* Keep battery on a dedicated stack to avoid icon/number overlap. */
+  font-family: "Sarasa UI SC", "Symbols Nerd Font", "IosevkaTerm Nerd Font", sans-serif;
   color: #A5D6A7;
 }
 
@@ -169,18 +165,12 @@ button:hover {
 #power-profiles-daemon:hover,
 #cpu:hover,
 #memory:hover,
-#disk:hover,
-#temperature:hover,
-#network:hover,
 #pulseaudio:hover,
-#wireplumber:hover,
-#custom-media:hover,
 #backlight:hover,
 #tray:hover,
 #mode:hover,
 #idle_inhibitor:hover,
 #scratchpad:hover,
-#mpd:hover,
 #custom-disk:hover,
 #hardware:hover {
   background-color: rgba(255, 255, 255, 0.15);
@@ -230,19 +220,6 @@ button:hover {
 #memory.high {
   color: #1e1e2e;
   background-color: #CE93D8;
-}
-
-#network.disconnected {
-  color: #ffffff;
-  background-color: #FF5252;
-}
-
-#temperature.critical {
-  color: #ffffff;
-  background-color: #FF5252;
-  animation-name: pulse;
-  animation-duration: 1s;
-  animation-iteration-count: infinite;
 }
 
 #idle_inhibitor.activated {
