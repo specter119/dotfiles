@@ -1,6 +1,6 @@
 {
-  "defaultModel": "glm-5",
-  "defaultProvider": "zai",
+  "defaultModel": "MiniMax-M2.7-highspeed",
+  "defaultProvider": "minimax-cn",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": false,
   "lastChangelogVersion": "0.63.1",

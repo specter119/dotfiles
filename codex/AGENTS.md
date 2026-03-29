@@ -71,6 +71,20 @@ xurl <provider>/<session_id>           # 读取对话内容
 xurl <provider>/<session_id> -d "msg"  # 继续对话
 ```
 
+### Nowledge Mem
+
+- 启动时会通过 hook 自动加载 Working Memory；结束时会自动执行 thread save
+- 当用户问题明显依赖历史上下文、过往决策、之前修复或连续任务时，优先考虑搜索 memory
+- 当本轮产生了可复用的决策、流程、排障结论或长期偏好时，主动考虑保存为 memory
+
+常用命令：
+
+```bash
+nmem --json m search "query"              # 搜索 memory
+nmem m add "content" -t "Title" -i 0.8    # 保存 memory
+nmem t save --from codex --truncate       # 保存当前 thread
+```
+
 ## 自检与修复
 
 ### 回答前自检
