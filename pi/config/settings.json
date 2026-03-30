@@ -1,11 +1,6 @@
 {
   "defaultModel": "glm-5",
   "defaultProvider": "zai",
-  "providers": {
-    "minimax-cn": {
-      "apiKey": "{{replace (command_output \"rbw get minimax-api-key\") \"\\n\" \"\"}}"
-    }
-  },
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": false,
   "lastChangelogVersion": "0.64.0",
