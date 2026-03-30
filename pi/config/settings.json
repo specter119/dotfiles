@@ -1,9 +1,9 @@
 {
-  "defaultModel": "MiniMax-M2.7-highspeed",
-  "defaultProvider": "minimax-cn",
+  "defaultModel": "glm-5",
+  "defaultProvider": "zai",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": false,
-  "lastChangelogVersion": "0.63.1",
+  "lastChangelogVersion": "0.64.0",
   "npmCommand": [
     "pi_npm_command"
   ],
@@ -11,5 +11,8 @@
     "https://github.com/davebcn87/pi-autoresearch",
     "git:github.com/aliou/pi-guardrails",
     "git:github.com/sherif-fanous/pi-rtk"
+  ],
+  "extensions": [
+    "~/.config/pi/agent/extensions/pi-nmem.ts"
   ]
 }
