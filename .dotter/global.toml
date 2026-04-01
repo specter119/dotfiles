@@ -182,7 +182,7 @@ alma = '~/.config'
 yt-dlp = '~/.config/yt-dlp'
 
 [shell]
-depends = ['env', 'fish', 'yazi', 'atuin']
+depends = ['env', 'fish', 'yazi', 'atuin', 'mihomo']
 
 [wm]
 depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
@@ -191,7 +191,16 @@ depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
 depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
 
 [harness]
-depends = ['harness-infra', 'codex', 'amp', 'claude-code', 'pi', 'copilot', 'opencode', 'gemini']
+depends = [
+  'harness-infra',
+  'codex',
+  'amp',
+  'claude-code',
+  'pi',
+  'copilot',
+  'opencode',
+  'gemini',
+]
 
 [harness.files]
 'harness/config' = '~/.config'
