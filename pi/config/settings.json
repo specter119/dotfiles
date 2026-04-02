@@ -1,6 +1,6 @@
 {
-  "defaultModel": "glm-5",
-  "defaultProvider": "zai",
+  "defaultModel": "gpt-5.4",
+  "defaultProvider": "openai",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": false,
   "lastChangelogVersion": "0.64.0",
