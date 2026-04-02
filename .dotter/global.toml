@@ -144,6 +144,9 @@ marimo = '~/.config'
 [lody.files]
 lody = '~/.config'
 
+[slock-ai.files]
+slock-ai = '~/.config'
+
 [ipython.files]
 ipython = '~/.ipython'
 
@@ -207,7 +210,7 @@ depends = [
 'harness/share' = '~/.local/share'
 
 [harness-remote]
-depends = ['skm', 'bub', 'lody', 'alma']
+depends = ['skm', 'bub', 'lody', 'slock-ai', 'alma']
 
 [harness-infra]
 depends = ['ollama', 'skm', 'zellij']

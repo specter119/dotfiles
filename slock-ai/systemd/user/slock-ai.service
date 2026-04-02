@@ -1,0 +1,15 @@
+[Unit]
+Description=Slock AI Daemon
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/.config/slock-ai
+ExecStartPre=bun update --latest --production --force @slock-ai/daemon
+ExecStart=bun run slock-daemon --server-url https://api.slock.ai --api-key {{variables.slock_api_key}}
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
