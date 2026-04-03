@@ -210,7 +210,7 @@ depends = [
 'harness/share' = '~/.local/share'
 
 [harness-remote]
-depends = ['skm', 'bub', 'lody', 'slock-ai', 'alma']
+depends = ['skm', 'bub', 'lody', 'alma']
 
 [harness-infra]
 depends = ['ollama', 'skm', 'zellij']
