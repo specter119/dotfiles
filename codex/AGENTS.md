@@ -40,7 +40,6 @@
 ### Codex 工具（优先使用）
 
 - 执行命令：`functions.exec_command`
-- 智能代码搜索：`mcp__morph-mcp__warpgrep_codebase_search`
 - 高效编辑：`mcp__morph-mcp__edit_file`（优先）/ `apply_patch`（小改）
 - 并行调用：`multi_tool_use.parallel`
 - 网络浏览：`web.run`
@@ -56,8 +55,8 @@
 
 ### 网络与文档
 
-- 一般网络搜索：优先 `web.run`，失败或结果不足时回退到 `mcp__exa__web_search_exa` / `mcp__exa__crawling_exa`
-- 代码相关搜索：优先 `mcp__exa__get_code_context_exa`
+- 一般网络搜索：优先 `web.run`
+- 代码相关搜索：优先 `rg` / `ast-grep`
 - 技术库文档：优先 `context7`，仅在库文档不足时再查网页
 
 ### 跨 Agent 对话 (xurl)

@@ -44,8 +44,10 @@
 - DNS 查询：`dig` > `nslookup`
 - 网络连接：`ss` > `netstat`
 - 语法搜索：`ast-grep`
-- 网络搜索：`websearch`；若请求失败，用 `exa_web_search_exa`
-- 网页抓取：`webfetch`；若请求失败，用 `exa_crawling_exa`
+- 网络搜索：`websearch`
+- 网页抓取：`webfetch`
+- 库文档：`context7`
+- 高效编辑：`morph edit_file`
 - 浏览器操作（网页截图、表单填写、Web 测试）：`playwright-cli`（比 Playwright MCP 更省 token）
 - PDF 转图片：`pdftoppm`（不要用 Playwright）
 

@@ -167,7 +167,7 @@
       ],
       "environment": {
         "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}",
-        "ENABLED_TOOLS": "edit_file,warpgrep_codebase_search"
+        "ENABLED_TOOLS": "edit_file"
       }
     },
     "context7": {
@@ -175,17 +175,6 @@
       "url": "https://mcp.context7.com/mcp",
       "headers": {
         "CONTEXT7_API_KEY": "{{replace (command_output 'rbw get context7-api-key') '\n' ''}}"
-      }
-    },
-    "exa": {
-      "type": "local",
-      "command": [
-        "bunx",
-        "exa-mcp-server",
-        "tools=web_search_exa,get_code_context_exa,crawling_exa"
-      ],
-      "environment": {
-        "EXA_API_KEY": "{{replace (command_output 'rbw get exa-api-key') '\n' ''}}"
       }
     }
   },

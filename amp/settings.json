@@ -6,23 +6,13 @@
       },
       "url": "https://mcp.context7.com/mcp"
     },
-    "eza": {
-      "args": [
-        "exa-mcp-server",
-        "tools=web_search_exa,get_code_context_exa,crawling_exa"
-      ],
-      "command": "bunx",
-      "env": {
-        "EXA_API_KEY": "{{replace (command_output 'rbw get exa-api-key') '\n' ''}}"
-      }
-    },
     "morph-mcp": {
       "args": [
         "@morphllm/morphmcp"
       ],
       "command": "bunx",
       "environment": {
-        "ENABLED_TOOLS": "edit_file,warpgrep_codebase_search",
+        "ENABLED_TOOLS": "edit_file",
         "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}"
       }
     }

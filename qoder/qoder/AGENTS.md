@@ -56,12 +56,11 @@
 
 ### MCP 工具
 
-| 用途         | 工具                                                                                  |
-| ------------ | ------------------------------------------------------------------------------------- |
-| 网络搜索     | `WebSearch`（优先）、`mcp__exa__web_search_exa`（备选）                               |
-| 网页抓取     | `WebFetch`（优先）、`mcp__exa__crawling_exa`（备选）                                  |
-| 代码搜索     | `mcp__exa__get_code_context_exa`                                                      |
-| 库文档查询   | `context7 MCP`                                                                        |
+| 用途       | 工具           |
+| ---------- | -------------- |
+| 网络搜索   | `WebSearch`    |
+| 网页抓取   | `WebFetch`     |
+| 库文档查询 | `context7 MCP` |
 
 ### 跨 Agent 对话 (xurl)
 
