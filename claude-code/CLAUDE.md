@@ -1,3 +1,5 @@
+@RTK.md
+
 # Claude Code 配置
 
 ## 交流规范

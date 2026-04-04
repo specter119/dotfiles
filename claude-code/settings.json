@@ -10,8 +10,8 @@
     "superpowers@claude-plugins-official": true
   },
   "env": {
-    "ANTHROPIC_AUTH_TOKEN": "{{replace (command_output 'rbw get packy-api-claude-key') '\n' ''}}",
-    "ANTHROPIC_BASE_URL": "https://www.packyapi.com",
+    "ANTHROPIC_AUTH_TOKEN": "{{replace (command_output 'rbw get codesome-claude-sub-key') '\n' ''}}",
+    "ANTHROPIC_BASE_URL": "https://cc.codesome.ai",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "ENABLE_LSP_TOOL": "1"
@@ -26,6 +26,17 @@
           }
         ],
         "matcher": ""
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "~/.config/claude/hooks/rtk-rewrite.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
       }
     ]
   },
@@ -64,6 +75,7 @@
       "Bash(ast-grep:*)",
       "Bash(jq:*)",
       "Bash(git:status,show,diff,grep,branch,tag,log,rev-parse,config)",
+      "Bash(jj:*)",
       "Bash(ruff:*)",
       "Bash(mypy:*)",
       "Bash(pytest:*)",
