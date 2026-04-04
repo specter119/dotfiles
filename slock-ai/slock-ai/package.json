@@ -1,7 +1,6 @@
 {
   "dependencies": {
-    "@slock-ai/daemon": "^0.31.2",
-    "https-proxy-agent": "^9.0.0"
+    "@slock-ai/daemon": "^0.31.2"
   },
   "name": "slock-ai-service",
   "private": true
