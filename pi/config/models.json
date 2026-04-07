@@ -2,6 +2,9 @@
   "providers": {
     "zai": {
       "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4"
+    },
+    "openai": {
+      "baseUrl": "https://codex-api.packycode.com/v1"
     }
   }
 }

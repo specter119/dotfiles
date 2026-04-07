@@ -51,33 +51,34 @@ ensure_claude_onboarding() {
 }
 
 if [[ "${ENABLED_PACKAGES:-}" == *" claude-code "* ]] && cli_available claude; then
-	if [[ -n "${MORPH_KEY:-}" && -n "${EXA_KEY:-}" ]]; then
-		run_shell_allow_fail 'claude mcp remove --scope user morph-mcp >/dev/null 2>&1'
-		run_shell 'claude mcp add --scope user morph-mcp -e MORPH_API_KEY="$MORPH_KEY" -e ENABLED_TOOLS=edit_file,warpgrep_codebase_search -- bunx @morphllm/morphmcp >/dev/null'
-		run_shell_allow_fail 'claude mcp remove --scope user exa >/dev/null 2>&1'
-		run_shell 'claude mcp add --scope user exa -e EXA_API_KEY="$EXA_KEY" -- bunx exa-mcp-server "tools=web_search_exa,get_code_context_exa,crawling_exa" >/dev/null'
+	run_shell_allow_fail 'claude mcp remove --scope user morph-mcp >/dev/null 2>&1'
+	run_shell_allow_fail 'claude mcp remove --scope user exa >/dev/null 2>&1'
+	if [[ -n "${MORPH_KEY:-}" ]]; then
+		run_shell 'claude mcp add --scope user morph-mcp -e MORPH_API_KEY="$MORPH_KEY" -e ENABLED_TOOLS=edit_file -- bunx @morphllm/morphmcp >/dev/null'
 		ensure_claude_onboarding
 	fi
 fi
 
 if [[ "${ENABLED_PACKAGES:-}" == *" codex "* ]] && cli_available codex; then
-	if [[ -n "${MORPH_KEY:-}" && -n "${EXA_KEY:-}" && -n "${CONTEXT7_KEY:-}" ]]; then
-		run_shell_allow_fail 'codex mcp remove morph-mcp >/dev/null 2>&1'
-		run_shell 'codex mcp add morph-mcp --env MORPH_API_KEY="$MORPH_KEY" --env ENABLED_TOOLS=edit_file,warpgrep_codebase_search -- bunx @morphllm/morphmcp >/dev/null'
-		run_shell_allow_fail 'codex mcp remove exa >/dev/null 2>&1'
-		run_shell 'codex mcp add exa --env EXA_API_KEY="$EXA_KEY" -- bunx exa-mcp-server "tools=web_search_exa,get_code_context_exa,crawling_exa" >/dev/null'
-		run_shell_allow_fail 'codex mcp remove context7 >/dev/null 2>&1'
+	run_shell_allow_fail 'codex mcp remove morph-mcp >/dev/null 2>&1'
+	run_shell_allow_fail 'codex mcp remove exa >/dev/null 2>&1'
+	run_shell_allow_fail 'codex mcp remove context7 >/dev/null 2>&1'
+	if [[ -n "${MORPH_KEY:-}" ]]; then
+		run_shell 'codex mcp add morph-mcp --env MORPH_API_KEY="$MORPH_KEY" --env ENABLED_TOOLS=edit_file -- bunx @morphllm/morphmcp >/dev/null'
+	fi
+	if [[ -n "${CONTEXT7_KEY:-}" ]]; then
 		run_shell 'codex mcp add context7 -- bunx @upstash/context7-mcp --api-key "$CONTEXT7_KEY" >/dev/null'
 	fi
 fi
 
 if [[ "${ENABLED_PACKAGES:-}" == *" gemini "* ]] && cli_available gemini && supports_mcp gemini; then
-	if [[ -n "${MORPH_KEY:-}" && -n "${EXA_KEY:-}" && -n "${CONTEXT7_KEY:-}" ]]; then
-		run_shell_allow_fail 'gemini mcp remove -s user morph-mcp >/dev/null 2>&1'
-		run_shell 'gemini mcp add -s user -e MORPH_API_KEY="$MORPH_KEY" -e ENABLED_TOOLS=edit_file,warpgrep_codebase_search morph-mcp bunx @morphllm/morphmcp >/dev/null'
-		run_shell_allow_fail 'gemini mcp remove -s user exa >/dev/null 2>&1'
-		run_shell 'gemini mcp add -s user -e EXA_API_KEY="$EXA_KEY" exa bunx exa-mcp-server "tools=web_search_exa,get_code_context_exa,crawling_exa" >/dev/null'
-		run_shell_allow_fail 'gemini mcp remove -s user context7 >/dev/null 2>&1'
+	run_shell_allow_fail 'gemini mcp remove -s user morph-mcp >/dev/null 2>&1'
+	run_shell_allow_fail 'gemini mcp remove -s user exa >/dev/null 2>&1'
+	run_shell_allow_fail 'gemini mcp remove -s user context7 >/dev/null 2>&1'
+	if [[ -n "${MORPH_KEY:-}" ]]; then
+		run_shell 'gemini mcp add -s user -e MORPH_API_KEY="$MORPH_KEY" -e ENABLED_TOOLS=edit_file morph-mcp bunx @morphllm/morphmcp >/dev/null'
+	fi
+	if [[ -n "${CONTEXT7_KEY:-}" ]]; then
 		run_shell 'gemini mcp add -s user -e CONTEXT7_KEY="$CONTEXT7_KEY" context7 bunx @upstash/context7-mcp --api-key "$CONTEXT7_KEY" >/dev/null'
 	fi
 fi

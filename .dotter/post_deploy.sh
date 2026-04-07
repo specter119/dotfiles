@@ -70,9 +70,8 @@ PY
 
 # Shared MCP secrets (do not depend on enabled packages)
 MORPH_KEY=$(rbw get morph-api-key 2>/dev/null)
-EXA_KEY=$(rbw get exa-api-key 2>/dev/null)
 CONTEXT7_KEY=$(rbw get context7-api-key 2>/dev/null)
-export MORPH_KEY EXA_KEY CONTEXT7_KEY
+export MORPH_KEY CONTEXT7_KEY
 
 # Clean legacy standalone opencode-cn config after merging back into opencode.
 rm -rf ~/.config/opencode-cn

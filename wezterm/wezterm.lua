@@ -6,17 +6,30 @@ local launch_menu = {}
 -- config.enable_kitty_keyboard = true
 
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
-  -- Configure WSL domain with zellij as default shell
   config.wsl_domains = {
     {
       name = 'wsl:archlinux',
       distribution = 'archlinux',
-      default_prog = { 'zellij', 'attach', '--create', 'main' },
     },
   }
 
-  -- Set the WSL domain as default
-  config.default_gui_startup_args = { 'connect', 'wsl:archlinux' }
+  config.default_domain = 'wsl:archlinux'
+
+  -- Launch zellij only on initial startup
+  wezterm.on('gui-startup', function(cmd)
+    local args = cmd and cmd.args or { 'zellij', 'attach', '--create', 'main' }
+    local _, _, window = wezterm.mux.spawn_window {
+      domain = { DomainName = 'wsl:archlinux' },
+      args = args,
+    }
+    window:gui_window():maximize()
+  end)
+
+  table.insert(launch_menu, {
+    label = 'zellij',
+    domain = { DomainName = 'wsl:archlinux' },
+    args = { 'zellij', 'attach', '--create', 'main' },
+  })
 
   table.insert(launch_menu, {
     label = 'PowerShell Core',
@@ -26,11 +39,6 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   table.insert(launch_menu, {
     label = 'Command Prompt',
     args = { 'cmd.exe' },
-  })
-
-  table.insert(launch_menu, {
-    label = 'Arch Linux (WSL)',
-    domain = { DomainName = 'wsl:archlinux' },
   })
 
   config.keys = {

@@ -27,8 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "input=$(cat); output=$(printf '%s' \"$input\" | rtk hook copilot 2>/dev/null || true); if [ -z \"$output\" ]; then exit 0; fi; if command -v jq >/dev/null 2>&1 && printf '%s' \"$output\" | jq -e '(.hookSpecificOutput.hookEventName // \"\") == \"PreToolUse\" and (.hookSpecificOutput.updatedInput.command // \"\") != \"\"' >/dev/null 2>&1; then rewritten=$(printf '%s' \"$output\" | jq -r '.hookSpecificOutput.updatedInput.command'); jq -n --arg reason \"RTK rewrite required. Run this instead: $rewritten\" '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":$reason}}'; else printf '%s' \"$output\"; fi",
-            "statusMessage": "RTK: Optimizing command output",
+            "command": "bash \"$HOME/.config/codex/scripts/rtk-codex-hook.sh\"",
             "timeout": 5
           }
         ]
@@ -39,7 +38,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "nmem t save --from codex --truncate >/dev/null 2>&1 || true"
+            "command": "nmem t save --from codex --truncate >/dev/null 2>&1 || true",
+            "statusMessage": "Nowledge Mem: Saving working memory"
           }
         ]
       }

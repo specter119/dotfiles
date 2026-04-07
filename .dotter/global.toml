@@ -144,6 +144,12 @@ marimo = '~/.config'
 [lody.files]
 lody = '~/.config'
 
+[slock-ai.files]
+slock-ai = '~/.config'
+
+[slock-ai.variables]
+slock_api_key = ""
+
 [ipython.files]
 ipython = '~/.ipython'
 
@@ -199,7 +205,7 @@ depends = [
   'pi',
   'copilot',
   'opencode',
-  'gemini',
+  'gemini'
 ]
 
 [harness.files]
@@ -207,7 +213,7 @@ depends = [
 'harness/share' = '~/.local/share'
 
 [harness-remote]
-depends = ['skm', 'bub', 'lody', 'alma']
+depends = ['skm', 'bub', 'lody', 'alma', 'slock-ai']
 
 [harness-infra]
 depends = ['ollama', 'skm', 'zellij']
