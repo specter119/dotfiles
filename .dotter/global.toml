@@ -48,8 +48,14 @@ yazi = '~/.config/yazi'
 [git.files]
 git = '~/.config/git'
 
+[git.variables]
+git_repo_identities = {}
+
 [jj.files]
 jj = '~/.config/jj'
+
+[jj.variables]
+git_repo_identities = {}
 
 [ssh.files]
 ssh = '~/.ssh'
@@ -107,6 +113,9 @@ gemini = '~/.config'
 [skm.files]
 skm = '~/.config/skm'
 
+[skm.variables]
+skm_local_packages = []
+
 [qoder.files]
 qoder = '~/.config'
 
@@ -144,11 +153,12 @@ marimo = '~/.config'
 [lody.files]
 lody = '~/.config'
 
-[slock-ai.files]
-slock-ai = '~/.config'
+[slock.files]
+slock = '~/.config'
 
-[slock-ai.variables]
+[slock.variables]
 slock_api_key = ""
+slock_proxy = ""
 
 [ipython.files]
 ipython = '~/.ipython'
@@ -158,6 +168,9 @@ weston = '~/.config'
 
 [mihomo.files]
 mihomo = '~/.config/mihomo'
+
+[mihomo.variables]
+mihomo_direct_suffixes = []
 
 [chromium.files]
 chromium = '~/.config'
@@ -213,7 +226,7 @@ depends = [
 'harness/share' = '~/.local/share'
 
 [harness-remote]
-depends = ['skm', 'bub', 'lody', 'alma', 'slock-ai']
+depends = ['skm', 'bub', 'lody', 'alma', 'slock']
 
 [harness-infra]
 depends = ['ollama', 'skm', 'zellij']

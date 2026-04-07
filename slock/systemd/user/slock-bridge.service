@@ -1,0 +1,20 @@
+[Unit]
+Description=Slock WebSocket Bridge (proxy tunnel)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/.config/slock
+Environment="NODE_PATH=%h/.config/slock/node_modules"
+{{#if slock_proxy}}
+ExecStartPre=bun add --no-save --force --no-frozen-lockfile https-proxy-agent ws
+ExecStart=node ws-bridge.mjs --proxy "{{slock_proxy}}"
+{{else}}
+ExecStart=/usr/bin/false
+{{/if}}
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target

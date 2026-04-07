@@ -4,8 +4,8 @@
 name = "specter119"
 email = "specter119@gmail.com"
 
-# {{#if git_enterprise}}
-# {{#each git_enterprise}}
+# {{#if git_repo_identities}}
+# {{#each git_repo_identities}}
 [[--scope]]
 --when.repositories = ["{{repo_dir}}"]
 
