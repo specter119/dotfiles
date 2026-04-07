@@ -13,21 +13,11 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
     },
   }
 
-  config.default_domain = 'wsl:archlinux'
-
-  -- Launch zellij only on initial startup
-  wezterm.on('gui-startup', function(cmd)
-    local args = cmd and cmd.args or { 'zellij', 'attach', '--create', 'main' }
-    local _, _, window = wezterm.mux.spawn_window {
-      domain = { DomainName = 'wsl:archlinux' },
-      args = args,
-    }
-    window:gui_window():maximize()
-  end)
+  -- Start in WSL domain with zellij; new tabs use default shell
+  config.default_gui_startup_args = { 'start', '--domain', 'wsl:archlinux', '--', 'zellij', 'attach', '--create', 'main' }
 
   table.insert(launch_menu, {
     label = 'zellij',
-    domain = { DomainName = 'wsl:archlinux' },
     args = { 'zellij', 'attach', '--create', 'main' },
   })
 
