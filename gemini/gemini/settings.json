@@ -7,5 +7,28 @@
     "auth": {
       "selectedType": "gemini-api-key"
     }
+  },
+  "mcpServers": {
+    "morph-mcp": {
+      "command": "bunx",
+      "args": [
+        "@morphllm/morphmcp"
+      ],
+      "env": {
+        "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}",
+        "ENABLED_TOOLS": "edit_file"
+      }
+    },
+    "context7": {
+      "command": "bunx",
+      "args": [
+        "@upstash/context7-mcp",
+        "--api-key",
+        "{{replace (command_output 'rbw get context7-api-key') '\n' ''}}"
+      ],
+      "env": {
+        "CONTEXT7_KEY": "{{replace (command_output 'rbw get context7-api-key') '\n' ''}}"
+      }
+    }
   }
 }

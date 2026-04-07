@@ -2,9 +2,17 @@
 
 Cross-platform dotfiles managed by [dotter](https://github.com/SuperCuber/dotter).
 
+## Directory Guidance
+
+- `AGENTS.md`: repo-level architecture, package organization, template conventions, variable strategy
+- `.dotter/AGENTS.md`: Dotter internals, `pre_deploy` / `post_deploy` scripts, post-deploy patching, and other implementation exceptions
+
+If you touch `.dotter/`, read `.dotter/AGENTS.md` first.
+
 ## Agent Config Paths (XDG)
 
 **Read this section before modifying any agent configs.**
+**Do not assume default upstream paths like `~/.codex` or `~/.claude`.**
 
 This repo manages configs for multiple AI coding agents. Their paths follow XDG spec (`~/.config/<name>`) instead of defaults (`~/.<name>`):
 
@@ -18,6 +26,19 @@ This repo manages configs for multiple AI coding agents. Their paths follow XDG 
 | Qoder   | `QODERCLI_HOME`       | `~/.config/qoder`   |
 
 When reading or writing agent configs, use these paths.
+
+## Package Organization
+
+This repo uses Dotter packages as a layered grouping system rather than a flat list of unrelated folders.
+
+- Base packages hold concrete config payloads for one tool or concern
+- Higher-level packages compose those base packages into reusable environments
+- Current agent-related grouping is intentionally nested:
+  - `agent`: shared entry package for agent-facing configs and common glue
+  - `agent-tunnel`: agent-adjacent remote/service integrations
+  - `agent-runtime`: local runtime support for agent workflows
+
+When changing package names, dependencies, or file mappings, preserve this layered relationship unless the change is explicitly a package-architecture refactor.
 
 ## Dotter Templates
 
@@ -79,9 +100,9 @@ Use `command_success` to detect WSL:
 
 ### Variable Contract
 
-Dotter 变量在本仓库分成两类：`global.toml` / `local.toml` 覆盖变量，以及模板内联 `rbw get` 的共享 secret。
+Dotter variables in this repo fall into two categories: `global.toml` / `local.toml` override variables, and shared secrets injected inline with `rbw get` inside templates.
 
-#### 覆盖顺序
+#### Override Order
 
 ```toml
 # .dotter/global.toml
@@ -97,27 +118,27 @@ scalar_value = "local"
 nested_value = { key_b = "overridden" }
 ```
 
-- `global.toml` 的 `[package.variables]` 是 package 级占位/schema。
-- `local.toml` 不使用 `[package.variables]`；它只使用顶层 `[variables]`。
-- Dotter 先合并选中 packages 的变量，再用 `local.toml` 的 `[variables]` 按变量名递归覆盖。
-- 同名标量会被替换；同名 table 会递归合并子键。
-- 没有合理默认值时，优先在 `global.toml` 放空占位，目的是减少模板分支，不表示推荐默认值。
+- `[package.variables]` in `global.toml` defines package-level placeholders and schema.
+- `local.toml` does not use `[package.variables]`; it only uses top-level `[variables]`.
+- Dotter first merges variables from the selected packages, then recursively overrides them with top-level `[variables]` from `local.toml` by variable name.
+- Scalar values with the same name are replaced; tables with the same name are recursively merged by key.
+- If there is no sensible default, prefer an empty placeholder in `global.toml` to reduce template branching. This is a schema choice, not a recommended default value.
 
-#### 来源规则
+#### Source Rules
 
-- **per-machine / 不跨机器同步**：放进 `global.toml` 占位，由 `.dotter/local.toml` 顶层 `[variables]` 覆盖。
-- **可共享 secret**：继续在模板或脚本里直接 `rbw get`，不进 `local.toml`。
-- `.dotter/pre_deploy.sh` 只负责 `rbw sync`，用于 deploy 前同步 vault；它不是变量初始化机制。
+- **Per-machine / not synced across machines**: define a placeholder in `global.toml`, then override it from top-level `[variables]` in `.dotter/local.toml`.
+- **Shareable secrets**: keep using inline `rbw get` in templates or scripts instead of storing them in `local.toml`.
+- Detailed constraints for `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` live in `.dotter/AGENTS.md`.
 
-#### 当前认可的变量 Schema
+#### Approved Variable Schema
 
 | Variable | Shape | Source | Notes |
 | --- | --- | --- | --- |
-| `slock_api_key` | string | `global + local` | 可空；为空时服务仍可渲染 |
-| `slock_proxy` | string | `global + local` | 可空；为空时走直连 |
-| `git_repo_identities` | table | `global + local` | key 为 identity 名称，value 含 `repo_dir` / `name` / `email` |
-| `skm_local_packages` | array of tables | `global + local` | 每项含 `repo`，可选 `skills` |
-| `mihomo_direct_suffixes` | array of strings | `global + local` | 可空；为空时不渲染附加规则 |
+| `slock_api_key` | string | `global + local` | May be empty; the service should still render |
+| `slock_proxy` | string | `global + local` | May be empty; use direct connection when unset |
+| `git_repo_identities` | table | `global + local` | Keyed by identity name; values include `repo_dir`, `name`, and `email` |
+| `skm_local_packages` | array of tables | `global + local` | Each item includes `repo`, with optional `skills` |
+| `mihomo_direct_suffixes` | array of strings | `global + local` | May be empty; render no extra rules when unset |
 
 #### Git Repo Identities
 
@@ -190,7 +211,6 @@ When a YAML file is both a Dotter template and pre-commit formatted with `yamlfm
 - Put control blocks like `#each` and `#if` in YAML comments so YAML formatters and editors can still parse the file.
 - Quote inline Handlebars values in YAML scalars, for example `repo: "{{repo}}"` and `- "{{this}}"`. Unquoted forms may be rewritten into invalid `{ { repo } }` style text by formatters.
 - Dotter treats any file containing `{{` as a template; `.tmpl` is not a required or special suffix.
-- Dotter hook scripts are also templates. Do not write a literal `{{` inside embedded shell or Python snippets; build it at runtime instead, for example `"{" + "{"`.
 - After deploy, generated YAML files may contain empty `#` lines left by commented control blocks. It is safe to delete lines matching `^[[:space:]]*#[[:space:]]*$` in both the rendered target and the Dotter cache copy so future deploys stay in sync.
 
 ## Commands

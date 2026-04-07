@@ -1,7 +1,7 @@
 [helpers]
 
-[wsl-revise.files]
-'wsl-revise' = '~/.config'
+[wsl-guest.files]
+'wsl-guest' = '~/.config'
 
 [container.files]
 container = '~/.config'
@@ -126,8 +126,8 @@ qoder = '~/.config'
 [atuin.files]
 atuin = '~/.config'
 
-[env.files]
-env = '~/.config'
+[kagi.files]
+kagi = '~/.config'
 
 [ollama.files]
 ollama = '~/.config/fish/functions'
@@ -200,8 +200,11 @@ alma = '~/.config'
 [yt-dlp.files]
 yt-dlp = '~/.config/yt-dlp'
 
+[shell.files]
+shell = '~/.config'
+
 [shell]
-depends = ['env', 'fish', 'yazi', 'atuin', 'mihomo']
+depends = ['fish', 'yazi', 'atuin', 'mihomo']
 
 [wm]
 depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
@@ -209,9 +212,9 @@ depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
 [dev]
 depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
 
-[harness]
+[agent]
 depends = [
-  'harness-infra',
+  'agent-runtime',
   'codex',
   'amp',
   'claude-code',
@@ -221,15 +224,18 @@ depends = [
   'gemini'
 ]
 
-[harness.files]
-'harness/config' = '~/.config'
-'harness/share' = '~/.local/share'
+[agent.files]
+'agent/config' = '~/.config'
+'agent/share' = '~/.local/share'
 
-[harness-remote]
+[agent-tunnel]
 depends = ['skm', 'bub', 'lody', 'alma', 'slock']
 
-[harness-infra]
-depends = ['ollama', 'skm', 'zellij']
+[agent-runtime.files]
+'agent-runtime' = '~/.config'
+
+[agent-runtime]
+depends = ['ollama', 'skm', 'zellij', 'kagi']
 
 [python]
 depends = ['uv', 'conda']

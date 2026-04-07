@@ -94,15 +94,3 @@ if [[ "$ENABLED_PACKAGES" == *" codex "* ]] && cli_available codex; then
 		run_shell_idempotent "codex mcp add context7 -- bunx @upstash/context7-mcp --api-key \"$CONTEXT7_KEY\" >/dev/null"
 	fi
 fi
-
-if [[ "$ENABLED_PACKAGES" == *" gemini "* ]] && cli_available gemini && supports_mcp gemini; then
-	run_shell_allow_fail 'gemini mcp remove -s user morph-mcp >/dev/null 2>&1'
-	run_shell_allow_fail 'gemini mcp remove -s user exa >/dev/null 2>&1'
-	run_shell_allow_fail 'gemini mcp remove -s user context7 >/dev/null 2>&1'
-	if [[ -n "$MORPH_KEY" ]]; then
-		run_shell_idempotent "gemini mcp add -s user -e MORPH_API_KEY=\"$MORPH_KEY\" -e ENABLED_TOOLS=edit_file morph-mcp bunx @morphllm/morphmcp >/dev/null"
-	fi
-	if [[ -n "$CONTEXT7_KEY" ]]; then
-		run_shell_idempotent "gemini mcp add -s user -e CONTEXT7_KEY=\"$CONTEXT7_KEY\" context7 bunx @upstash/context7-mcp --api-key \"$CONTEXT7_KEY\" >/dev/null"
-	fi
-fi
