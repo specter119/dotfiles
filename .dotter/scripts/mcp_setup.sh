@@ -20,6 +20,9 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
+MORPH_KEY=$(rbw get morph-api-key 2>/dev/null)
+CONTEXT7_KEY=$(rbw get context7-api-key 2>/dev/null)
+
 run_shell() {
 	"$SHELL_BIN" -lc "$1"
 }

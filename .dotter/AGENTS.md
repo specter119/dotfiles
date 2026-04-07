@@ -6,4 +6,3 @@ Scope: `.dotter/`
 - In `.dotter/scripts/mcp_setup.sh`, only manage MCP via CLI for `claude` and `codex`.
 - Do not add post-deploy commands that write secrets or tool-generated runtime state back into repo-managed config files.
 - These deploy scripts are also templates. Do not write a literal `{{` inside embedded shell or Python snippets; build it at runtime instead.
-- Treat `.dotter/cache/` and `.dotter/cache.toml` as sensitive rendered artifacts. If cache cleanup is needed, remove both together.
