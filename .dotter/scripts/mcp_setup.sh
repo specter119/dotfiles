@@ -2,7 +2,6 @@
 set -euo pipefail
 
 SHELL_BIN="bash"
-ENABLED_PACKAGES=""
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
@@ -12,10 +11,6 @@ while [[ $# -gt 0 ]]; do
 				echo "missing value for --shell" >&2
 				exit 1
 			fi
-			shift 2
-			;;
-		--enabled-packages)
-			ENABLED_PACKAGES="${2:-}"
 			shift 2
 			;;
 		*)
@@ -70,10 +65,6 @@ supports_mcp() {
 	run_shell "$1 mcp list >/dev/null 2>&1"
 }
 
-read_secret() {
-	rbw get "$1" 2>/dev/null || true
-}
-
 ensure_claude_onboarding() {
 	local claude_json="$HOME/.local/share/claude/.claude.json"
 	if [[ -f "$claude_json" ]] && ! jq -e '.hasCompletedOnboarding == true' "$claude_json" >/dev/null 2>&1; then
@@ -86,7 +77,6 @@ ensure_claude_onboarding() {
 if [[ "$ENABLED_PACKAGES" == *" claude-code "* ]] && cli_available claude; then
 	run_shell_allow_fail 'claude mcp remove --scope user morph-mcp >/dev/null 2>&1'
 	run_shell_allow_fail 'claude mcp remove --scope user exa >/dev/null 2>&1'
-	MORPH_KEY=$(read_secret morph-api-key)
 	if [[ -n "$MORPH_KEY" ]]; then
 		run_shell_idempotent "claude mcp add --scope user morph-mcp -e MORPH_API_KEY=\"$MORPH_KEY\" -e ENABLED_TOOLS=edit_file -- bunx @morphllm/morphmcp >/dev/null"
 		ensure_claude_onboarding
@@ -97,11 +87,9 @@ if [[ "$ENABLED_PACKAGES" == *" codex "* ]] && cli_available codex; then
 	run_shell_allow_fail 'codex mcp remove morph-mcp >/dev/null 2>&1'
 	run_shell_allow_fail 'codex mcp remove exa >/dev/null 2>&1'
 	run_shell_allow_fail 'codex mcp remove context7 >/dev/null 2>&1'
-	MORPH_KEY=$(read_secret morph-api-key)
 	if [[ -n "$MORPH_KEY" ]]; then
 		run_shell_idempotent "codex mcp add morph-mcp --env MORPH_API_KEY=\"$MORPH_KEY\" --env ENABLED_TOOLS=edit_file -- bunx @morphllm/morphmcp >/dev/null"
 	fi
-	CONTEXT7_KEY=$(read_secret context7-api-key)
 	if [[ -n "$CONTEXT7_KEY" ]]; then
 		run_shell_idempotent "codex mcp add context7 -- bunx @upstash/context7-mcp --api-key \"$CONTEXT7_KEY\" >/dev/null"
 	fi
@@ -111,11 +99,9 @@ if [[ "$ENABLED_PACKAGES" == *" gemini "* ]] && cli_available gemini && supports
 	run_shell_allow_fail 'gemini mcp remove -s user morph-mcp >/dev/null 2>&1'
 	run_shell_allow_fail 'gemini mcp remove -s user exa >/dev/null 2>&1'
 	run_shell_allow_fail 'gemini mcp remove -s user context7 >/dev/null 2>&1'
-	MORPH_KEY=$(read_secret morph-api-key)
 	if [[ -n "$MORPH_KEY" ]]; then
 		run_shell_idempotent "gemini mcp add -s user -e MORPH_API_KEY=\"$MORPH_KEY\" -e ENABLED_TOOLS=edit_file morph-mcp bunx @morphllm/morphmcp >/dev/null"
 	fi
-	CONTEXT7_KEY=$(read_secret context7-api-key)
 	if [[ -n "$CONTEXT7_KEY" ]]; then
 		run_shell_idempotent "gemini mcp add -s user -e CONTEXT7_KEY=\"$CONTEXT7_KEY\" context7 bunx @upstash/context7-mcp --api-key \"$CONTEXT7_KEY\" >/dev/null"
 	fi

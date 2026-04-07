@@ -35,6 +35,7 @@ PY
 }
 
 ENABLED_PACKAGES=" $(parse_packages) "
+export ENABLED_PACKAGES
 
 cleanup_rendered_yaml_templates() {
 	python3 - <<'PY' | while IFS= read -r file; do
@@ -74,5 +75,10 @@ rm -rf ~/.config/opencode-cn
 # Clean up rendered YAML templates after deployment.
 cleanup_rendered_yaml_templates
 
+# Shared MCP secrets (do not depend on enabled packages)
+MORPH_KEY=$(rbw get morph-api-key 2>/dev/null)
+CONTEXT7_KEY=$(rbw get context7-api-key 2>/dev/null)
+export MORPH_KEY CONTEXT7_KEY
+
 # Configure MCP servers for agentic CLIs
-bash .dotter/scripts/mcp_setup.sh --shell fish --enabled-packages "$ENABLED_PACKAGES"
+bash .dotter/scripts/mcp_setup.sh --shell fish
