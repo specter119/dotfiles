@@ -3,11 +3,16 @@
     "morph-mcp": {
       "type": "local",
       "command": "bunx",
-      "args": ["@morphllm/morphmcp"],
+      "args": [
+        "@morphllm/morphmcp"
+      ],
       "env": {
         "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}"
       },
-      "tools": ["edit_file"]
+      "tools": [
+        "edit_file",
+        "github_codebase_search"
+      ]
     },
     "context7": {
       "type": "http",
@@ -15,16 +20,22 @@
       "headers": {
         "CONTEXT7_API_KEY": "{{replace (command_output 'rbw get context7-api-key') '\n' ''}}"
       },
-      "tools": ["*"]
+      "tools": [
+        "*"
+      ]
     },
     "fast-context": {
       "type": "local",
       "command": "bunx",
-      "args": ["fast-context-mcp"],
+      "args": [
+        "fast-context-mcp"
+      ],
       "env": {
         "WINDSURF_API_KEY": "{{replace (command_output 'rbw get windsurf-api-key') '\n' ''}}"
       },
-      "tools": ["fast_context_search"]
+      "tools": [
+        "fast_context_search"
+      ]
     }
   }
 }

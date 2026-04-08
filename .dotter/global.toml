@@ -200,6 +200,10 @@ alma = '~/.config'
 [yt-dlp.files]
 yt-dlp = '~/.config/yt-dlp'
 
+[cliamp.files]
+'cliamp/config.toml' = '~/.config/cliamp/config.toml'
+'cliamp/playlists/xiaoyuzhou.toml' = '~/.config/cliamp/playlists/xiaoyuzhou.toml'
+
 [shell.files]
 shell = '~/.config'
 
@@ -215,6 +219,7 @@ depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
 [agent]
 depends = [
   'agent-runtime',
+  'droid',
   'codex',
   'amp',
   'claude-code',
@@ -237,8 +242,16 @@ depends = ['skm', 'bub', 'lody', 'alma', 'slock']
 [agent-runtime.files]
 'agent-runtime' = '~/.config'
 
+[cliproxyapi.files]
+cliproxyapi = '~/.config/cliproxyapi'
+
+[droid]
+
+[droid.files]
+'droid' = '~/.factory'
+
 [agent-runtime]
-depends = ['ollama', 'skm', 'zellij', 'kagi', 'nowledge-mem']
+depends = ['ollama', 'skm', 'zellij', 'kagi', 'nowledge-mem', 'cliproxyapi']
 
 [python]
 depends = ['uv', 'conda']
@@ -253,7 +266,7 @@ depends = ['stylua']
 depends = ['steam']
 
 [media]
-depends = ['yt-dlp']
+depends = ['yt-dlp', 'cliamp']
 
 [fem]
 depends = ['abaqus']

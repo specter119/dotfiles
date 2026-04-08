@@ -1,0 +1,12 @@
+{
+  "custom_models": [
+    {
+      "model_display_name": "MiniMax-M2.7",
+      "model": "MiniMax-M2.7",
+      "base_url": "https://api.minimaxi.com/anthropic",
+      "api_key": "{{replace (command_output "rbw get factory-minimax-api-key") "\n" ""}}",
+      "provider": "anthropic",
+      "max_tokens": 64000
+    }
+  ]
+}

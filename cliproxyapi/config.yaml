@@ -1,0 +1,37 @@
+host: ""
+port: 8317
+auth-dir: "/root/.cli-proxy-api"
+remote-management:
+  allow-remote: true
+  secret-key: "{{replace (command_output 'rbw get cliproxyapi@worklab') '\n' ''}}"
+  disable-control-panel: false
+openai-compatibility:
+  - name: "zai"
+    prefix: "zai"
+    base-url: "https://api.z.ai/api/coding/paas/v4"
+    api-key-entries:
+      - api-key: "{{replace (command_output 'rbw get zai-coding-api-key') '\n' ''}}"
+    models:
+      - name: "glm-4.5-air"
+      - name: "glm-5-turbo"
+      - name: "glm-5.1"
+  - name: "minimax"
+    prefix: "minimax"
+    base-url: "https://api.minimaxi.com/v1"
+    api-key-entries:
+      - api-key: "{{replace (command_output 'rbw get minimax-cn-api-key') '\n' ''}}"
+    models:
+      - name: "MiniMax-M2.7"
+      - name: "MiniMax-M2.7-highspeed"
+claude-api-key:
+  - api-key: "{{replace (command_output 'rbw get codesome-claude-sub-key') '\n' ''}}"
+    base-url: "https://cc.codesome.ai"
+    models:
+      - name: "claude-haiku-4-5-20251001"
+      - name: "claude-opus-4-6"
+      - name: "claude-sonnet-4-6"
+codex-api-key:
+  - api-key: "{{replace (command_output 'rbw get packy-codex-sub-key') '\n' ''}}"
+    base-url: "https://www.packyapi.com/v1"
+    models:
+      - name: "gpt-5.4"

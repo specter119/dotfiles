@@ -1,0 +1,11 @@
+{
+  "logoAnimation": "off",
+  "sessionDefaultSettings": {
+    "model": "custom:MiniMax-M2.7-0",
+    "reasoningEffort": "none",
+    "interactionMode": "auto",
+    "autonomyLevel": "low",
+    "autonomyMode": "auto-low"
+  },
+  "compactionTokenLimit": 100000
+}

@@ -191,8 +191,7 @@
     "bash": {
       "rbw get*": "deny"
     },
-    "morph-mcp_codebase_search": "deny",
-    "morph-mcp_github_codebase_search": "deny"
+    "morph-mcp_codebase_search": "deny"
   },
   "plugin": [
     "oh-my-opencode"

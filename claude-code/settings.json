@@ -93,20 +93,23 @@
       "mcp__morph-mcp__edit_file",
       "Skill(deep-research)",
       "Skill(genimg)",
-      "Skill(onenote-wiki)",
+      "Skill(msgraph-fetch)",
       "Skill(report-building)",
       "Skill(slide-building)",
       "Skill(thorough-digest)",
       "Skill(typst-authoring)",
-      "Skill(skill-creator)"
+      "Skill(skill-creator)",
+      "Skill(onevcat-jj)",
+      "Skill(piglet)",
+      "Skill(xurl)"
     ],
     "deny": [
       "Bash(rbw:get*)",
-      "mcp__morph-mcp__codebase_search",
-      "mcp__morph-mcp__github_codebase_search"
+      "mcp__morph-mcp__codebase_search"
     ]
   },
   "skipWebFetchPreflight": true,
+  "showClearContextOnPlanAccept": true,
   "statusLine": {
     "command": "~/.local/bin/ccline",
     "padding": 0,

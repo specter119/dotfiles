@@ -35,7 +35,6 @@
     }
   ],
   "amp.tools.disable": [
-    "mcp__morph-mcp__codebase_search",
-    "mcp__morph-mcp__github_codebase_search"
+    "mcp__morph-mcp__codebase_search"
   ]
 }

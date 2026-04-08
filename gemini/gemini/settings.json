@@ -15,7 +15,8 @@
         "@morphllm/morphmcp"
       ],
       "includeTools": [
-        "edit_file"
+        "edit_file",
+        "github_codebase_search"
       ],
       "env": {
         "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}"
