@@ -40,6 +40,7 @@
 ### Codex 工具（优先使用）
 
 - 执行命令：`functions.exec_command`
+- 代码搜索：`mcp__fast-context__fast_context_search`
 - 高效编辑：`mcp__morph-mcp__edit_file`（优先）/ `apply_patch`（小改）
 - 并行调用：`multi_tool_use.parallel`
 - 网络浏览：`web.run`

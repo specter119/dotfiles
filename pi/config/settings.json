@@ -14,5 +14,8 @@
   ],
   "extensions": [
     "~/.config/pi/agent/extensions/pi-nmem.ts"
-  ]
+  ],
+  "compaction": {
+    "enabled": false
+  }
 }

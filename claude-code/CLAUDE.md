@@ -60,6 +60,7 @@
 
 | 用途       | 工具                        |
 | ---------- | --------------------------- |
+| 代码搜索   | `mcp__fast-context__fast_context_search` |
 | 网络搜索   | `WebSearch`                 |
 | 网页抓取   | `WebFetch`                  |
 | 库文档查询 | `context7 plugin`           |

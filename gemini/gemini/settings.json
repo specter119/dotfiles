@@ -14,9 +14,23 @@
       "args": [
         "@morphllm/morphmcp"
       ],
+      "includeTools": [
+        "edit_file"
+      ],
       "env": {
-        "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}",
-        "ENABLED_TOOLS": "edit_file"
+        "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}"
+      }
+    },
+    "fast-context": {
+      "command": "bunx",
+      "args": [
+        "fast-context-mcp"
+      ],
+      "includeTools": [
+        "fast_context_search"
+      ],
+      "env": {
+        "WINDSURF_API_KEY": "{{replace (command_output 'rbw get windsurf-api-key') '\n' ''}}"
       }
     },
     "context7": {

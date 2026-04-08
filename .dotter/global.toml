@@ -231,11 +231,14 @@ depends = [
 [agent-tunnel]
 depends = ['skm', 'bub', 'lody', 'alma', 'slock']
 
+[nowledge-mem.files]
+'nowledge-mem' = '~/.config'
+
 [agent-runtime.files]
 'agent-runtime' = '~/.config'
 
 [agent-runtime]
-depends = ['ollama', 'skm', 'zellij', 'kagi']
+depends = ['ollama', 'skm', 'zellij', 'kagi', 'nowledge-mem']
 
 [python]
 depends = ['uv', 'conda']

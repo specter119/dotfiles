@@ -166,8 +166,17 @@
         "@morphllm/morphmcp"
       ],
       "environment": {
-        "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}",
-        "ENABLED_TOOLS": "edit_file"
+        "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}"
+      }
+    },
+    "fast-context": {
+      "type": "local",
+      "command": [
+        "bunx",
+        "fast-context-mcp"
+      ],
+      "environment": {
+        "WINDSURF_API_KEY": "{{replace (command_output 'rbw get windsurf-api-key') '\n' ''}}"
       }
     },
     "context7": {
@@ -181,7 +190,9 @@
   "permission": {
     "bash": {
       "rbw get*": "deny"
-    }
+    },
+    "morph-mcp_codebase_search": "deny",
+    "morph-mcp_github_codebase_search": "deny"
   },
   "plugin": [
     "oh-my-opencode"

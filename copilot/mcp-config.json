@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "morph-mcp": {
+      "type": "local",
+      "command": "bunx",
+      "args": ["@morphllm/morphmcp"],
+      "env": {
+        "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}"
+      },
+      "tools": ["edit_file"]
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "{{replace (command_output 'rbw get context7-api-key') '\n' ''}}"
+      },
+      "tools": ["*"]
+    },
+    "fast-context": {
+      "type": "local",
+      "command": "bunx",
+      "args": ["fast-context-mcp"],
+      "env": {
+        "WINDSURF_API_KEY": "{{replace (command_output 'rbw get windsurf-api-key') '\n' ''}}"
+      },
+      "tools": ["fast_context_search"]
+    }
+  }
+}

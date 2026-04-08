@@ -122,6 +122,9 @@
 - 语法搜索：优先 `ast-grep`
 - 网络连接排查：优先 `ss`，其次 `netstat`
 - DNS 查询：优先 `dig`，其次 `nslookup`
+- 库文档：优先 `context7`
+- 代码搜索：优先 `fast-context`
+- 局部快速编辑：使用 Morph `edit_file`
 - 修改前先搜索相关代码和配置，不凭文件名臆测
 - 需要 custom agent 时，优先使用原生 agent 能力，不用单个 prompt 模拟多角色
 

@@ -89,6 +89,7 @@
       "Bash(pdftoppm:*)",
       "Bash(playwright-cli:*)",
       "mcp__plugin_context7_context7__*",
+      "mcp__fast-context__fast_context_search",
       "mcp__morph-mcp__edit_file",
       "Skill(deep-research)",
       "Skill(genimg)",
@@ -100,7 +101,9 @@
       "Skill(skill-creator)"
     ],
     "deny": [
-      "Bash(rbw:get*)"
+      "Bash(rbw:get*)",
+      "mcp__morph-mcp__codebase_search",
+      "mcp__morph-mcp__github_codebase_search"
     ]
   },
   "skipWebFetchPreflight": true,

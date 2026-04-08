@@ -12,10 +12,53 @@ detect_cli_name() {
 	parent_cmd=$(ps -o comm= -p $PPID 2>/dev/null || echo "")
 	case "$parent_cmd" in
 	*claude*) echo "Claude Code" ;;
+	*codex*) echo "Codex" ;;
 	*amp*) echo "AMP" ;;
 	*opencode*) echo "OpenCode" ;;
 	*) echo "Coding CLI" ;;
 	esac
+}
+
+# Format Codex legacy notify payload into a readable notification message.
+format_codex_notify_payload() {
+	local payload="$1"
+
+	python3 - "$payload" <<'PY'
+import json
+import os
+import sys
+
+
+def compact(value: str, limit: int) -> str:
+    normalized = " ".join(value.split())
+    if len(normalized) <= limit:
+        return normalized
+    return normalized[: limit - 3] + "..."
+
+
+try:
+    data = json.loads(sys.argv[1])
+except Exception:
+    sys.exit(1)
+
+if data.get("type") != "agent-turn-complete":
+    sys.exit(1)
+
+message = (data.get("last_assistant_message") or "").strip()
+if message:
+    print(compact(message, 180))
+    sys.exit(0)
+
+cwd = data.get("cwd") or ""
+workspace = os.path.basename(cwd.rstrip("/")) or cwd or "workspace"
+inputs = [str(item).strip() for item in data.get("input_messages") or [] if str(item).strip()]
+
+if inputs:
+    prompt = compact(" ".join(inputs), 120)
+    print(f"Turn complete in {workspace}: {prompt}")
+else:
+    print(f"Agent turn complete in {workspace}")
+PY
 }
 
 # Configuration
@@ -35,10 +78,21 @@ detect_environment() {
 	fi
 }
 
+escape_powershell_string() {
+	printf "%s" "$1" | sed "s/'/''/g"
+}
+
 # Function to send WSL notification
 send_wsl_notification() {
 	local message="$1"
 	local action_cmd="$2"
+	local escaped_title
+	local escaped_message
+	local escaped_action
+
+	escaped_title=$(escape_powershell_string "$NOTIFICATION_TITLE")
+	escaped_message=$(escape_powershell_string "$message")
+	escaped_action=$(escape_powershell_string "$action_cmd")
 
 	if ! command -v powershell.exe >/dev/null 2>&1; then
 		echo "PowerShell not available. Make sure you're running in WSL with Windows PowerShell accessible." >&2
@@ -50,8 +104,8 @@ send_wsl_notification() {
         Add-Type -AssemblyName System.Windows.Forms;
         \$notification = New-Object System.Windows.Forms.NotifyIcon;
         \$notification.Icon = [System.Drawing.SystemIcons]::Information;
-        \$notification.BalloonTipTitle = '$NOTIFICATION_TITLE';
-        \$notification.BalloonTipText = '$message';
+        \$notification.BalloonTipTitle = '$escaped_title';
+        \$notification.BalloonTipText = '$escaped_message';
         \$notification.Visible = \$true;
     "
 
@@ -59,7 +113,7 @@ send_wsl_notification() {
 	if [ -n "$action_cmd" ]; then
 		ps_cmd+="
         \$notification.Add_BalloonTipClicked({
-            Start-Process powershell -ArgumentList '-Command', '$action_cmd' -WindowStyle Hidden
+            Start-Process powershell -ArgumentList '-Command', '$escaped_action' -WindowStyle Hidden
         });
         "
 	fi
@@ -138,8 +192,19 @@ send_linux_notification() {
 
 # Main function
 main() {
-	local message="${1:-User confirmation needed in Claude Code}"
+	local message="${1:-}"
 	local action="${2:-$CLICK_ACTION}"
+
+	if [ -n "$message" ]; then
+		local formatted_message
+		if formatted_message=$(format_codex_notify_payload "$message" 2>/dev/null); then
+			message="$formatted_message"
+		fi
+	fi
+
+	if [ -z "$message" ]; then
+		message="User confirmation needed in $NOTIFICATION_TITLE"
+	fi
 
 	local env_type
 	env_type=$(detect_environment)
@@ -161,12 +226,12 @@ main() {
 # Help function
 show_help() {
 	cat <<EOF
-Claude Code Hook Notifier (Universal)
+Coding CLI Hook Notifier (Universal)
 
 Usage: $0 [MESSAGE] [CLICK_ACTION]
 
 Arguments:
-  MESSAGE       Optional custom message (default: "User confirmation needed in Claude Code")
+  MESSAGE       Optional custom message or Codex notify JSON payload
   CLICK_ACTION  Optional command to run when notification is clicked
 
 Environment Variables:
@@ -184,6 +249,7 @@ Dependencies:
 Examples:
   $0
   $0 "Please review the changes"
+  $0 '{"type":"agent-turn-complete","cwd":"/tmp/demo","input_messages":["Fix tests"],"last_assistant_message":"Done."}'
   $0 "Waiting for input" "gnome-terminal"
   $0 "Task complete" "wt.exe"
 

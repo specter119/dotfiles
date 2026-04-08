@@ -12,8 +12,16 @@
       ],
       "command": "bunx",
       "environment": {
-        "ENABLED_TOOLS": "edit_file",
         "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}"
+      }
+    },
+    "fast-context": {
+      "args": [
+        "fast-context-mcp"
+      ],
+      "command": "bunx",
+      "environment": {
+        "WINDSURF_API_KEY": "{{replace (command_output 'rbw get windsurf-api-key') '\n' ''}}"
       }
     }
   },
@@ -25,5 +33,9 @@
       },
       "tool": "Bash"
     }
+  ],
+  "amp.tools.disable": [
+    "mcp__morph-mcp__codebase_search",
+    "mcp__morph-mcp__github_codebase_search"
   ]
 }

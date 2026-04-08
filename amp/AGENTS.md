@@ -46,6 +46,7 @@
 - 语法搜索：`ast-grep`
 - 网络搜索：`websearch`
 - 网页抓取：`webfetch`
+- 代码搜索：`fast-context`
 - 库文档：`context7`
 - 高效编辑：`morph edit_file`
 - 浏览器操作（网页截图、表单填写、Web 测试）：`playwright-cli`（比 Playwright MCP 更省 token）

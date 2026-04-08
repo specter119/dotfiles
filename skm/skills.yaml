@@ -2,6 +2,9 @@ agents:
   default:
     - standard
     - claude
+  override:
+    standard:
+      install_mode: symlink
 packages:
   - repo: https://github.com/specter119/skills.git
   - repo: https://github.com/Xuanwo/xurl.git

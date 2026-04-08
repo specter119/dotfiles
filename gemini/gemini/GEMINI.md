@@ -36,6 +36,11 @@
 - **文件操作**：使用 `read_file`, `write_file`。修改文件时，`replace` 必须提供充足的上下文以保证匹配唯一。
 - **检索**：优先使用 `grep_search` 进行全文检索，`glob` 进行文件定位。
 
+### MCP 工具
+- **库文档**：优先使用 `context7`。
+- **代码搜索**：优先使用 `fast-context` 的 `fast_context_search`。
+- **局部快速编辑**：仅在需要精准局部改写时使用 Morph 的 `edit_file`。
+
 ### 系统与外挂工具
 - **搜索**：`rg` > `grep`。
 - **查找**：`fd` > `find`。
