@@ -6,15 +6,10 @@ local launch_menu = {}
 -- config.enable_kitty_keyboard = true
 
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
-  config.wsl_domains = {
-    {
-      name = 'wsl:archlinux',
-      distribution = 'archlinux',
-    },
-  }
+  config.default_domain = 'WSL:archlinux'
 
   -- Start in WSL domain with zellij; new tabs use default shell
-  config.default_gui_startup_args = { 'start', '--domain', 'wsl:archlinux', '--', 'zellij', 'attach', '--create', 'main' }
+  config.default_gui_startup_args = { 'start', '--domain', 'WSL:archlinux', '--', 'zellij', 'attach', '--create', 'main' }
 
   table.insert(launch_menu, {
     label = 'zellij',
@@ -23,11 +18,13 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
 
   table.insert(launch_menu, {
     label = 'PowerShell Core',
+    domain = { DomainName = 'local' },
     args = { os.getenv 'SCOOP' .. '\\apps\\pwsh\\current\\pwsh.exe', '-NoLogo' },
   })
 
   table.insert(launch_menu, {
     label = 'Command Prompt',
+    domain = { DomainName = 'local' },
     args = { 'cmd.exe' },
   })
 
