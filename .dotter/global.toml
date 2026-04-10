@@ -201,8 +201,7 @@ alma = '~/.config'
 yt-dlp = '~/.config/yt-dlp'
 
 [cliamp.files]
-'cliamp/config.toml' = '~/.config/cliamp/config.toml'
-'cliamp/playlists/xiaoyuzhou.toml' = '~/.config/cliamp/playlists/xiaoyuzhou.toml'
+cliamp = '~/.config/cliamp'
 
 [shell.files]
 shell = '~/.config'
