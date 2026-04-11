@@ -20,9 +20,10 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-MORPH_KEY=$(rbw get morph-api-key 2>/dev/null)
-CONTEXT7_KEY=$(rbw get context7-api-key 2>/dev/null)
-WINDSURF_KEY=$(rbw get windsurf-api-key 2>/dev/null)
+MORPH_KEY=$(rbw get morph-api-key 2>/dev/null || true)
+CONTEXT7_KEY=$(rbw get context7-api-key 2>/dev/null || true)
+WINDSURF_KEY=$(rbw get windsurf-api-key 2>/dev/null || true)
+export MORPH_KEY CONTEXT7_KEY WINDSURF_KEY
 
 run_shell() {
 	"$SHELL_BIN" -lc "$1"
@@ -212,11 +213,11 @@ if [[ "$ENABLED_PACKAGES" == *" claude-code "* ]] && cli_available claude; then
 	run_shell_allow_fail 'claude mcp remove --scope user morph-mcp >/dev/null 2>&1'
 	run_shell_allow_fail 'claude mcp remove --scope user exa >/dev/null 2>&1'
 	if [[ -n "$MORPH_KEY" ]]; then
-		run_shell_idempotent "claude mcp add --scope user morph-mcp -e MORPH_API_KEY=\"$MORPH_KEY\" -- bunx @morphllm/morphmcp >/dev/null"
+		run_shell_idempotent 'claude mcp add --scope user morph-mcp -e MORPH_API_KEY="$MORPH_KEY" -- bunx @morphllm/morphmcp >/dev/null'
 		ensure_claude_onboarding
 	fi
 	if [[ -n "$WINDSURF_KEY" ]]; then
-		run_shell_idempotent "claude mcp add --scope user fast-context -e WINDSURF_API_KEY=\"$WINDSURF_KEY\" -- bunx fast-context-mcp >/dev/null"
+		run_shell_idempotent 'claude mcp add --scope user fast-context -e WINDSURF_API_KEY="$WINDSURF_KEY" -- bunx fast-context-mcp >/dev/null'
 		ensure_claude_onboarding
 	fi
 fi
@@ -227,13 +228,13 @@ if [[ "$ENABLED_PACKAGES" == *" codex "* ]] && cli_available codex; then
 	run_shell_allow_fail 'codex mcp remove exa >/dev/null 2>&1'
 	run_shell_allow_fail 'codex mcp remove context7 >/dev/null 2>&1'
 	if [[ -n "$MORPH_KEY" ]]; then
-		run_shell_idempotent "codex mcp add morph-mcp --env MORPH_API_KEY=\"$MORPH_KEY\" -- bunx @morphllm/morphmcp >/dev/null"
+		run_shell_idempotent 'codex mcp add morph-mcp --env MORPH_API_KEY="$MORPH_KEY" -- bunx @morphllm/morphmcp >/dev/null'
 	fi
 	if [[ -n "$CONTEXT7_KEY" ]]; then
-		run_shell_idempotent "codex mcp add context7 -- bunx @upstash/context7-mcp --api-key \"$CONTEXT7_KEY\" >/dev/null"
+		run_shell_idempotent 'codex mcp add context7 -- bunx @upstash/context7-mcp --api-key "$CONTEXT7_KEY" >/dev/null'
 	fi
 	if [[ -n "$WINDSURF_KEY" ]]; then
-		run_shell_idempotent "codex mcp add fast-context --env WINDSURF_API_KEY=\"$WINDSURF_KEY\" -- bunx fast-context-mcp >/dev/null"
+		run_shell_idempotent 'codex mcp add fast-context --env WINDSURF_API_KEY="$WINDSURF_KEY" -- bunx fast-context-mcp >/dev/null'
 	fi
 	patch_codex_mcp_config
 fi
