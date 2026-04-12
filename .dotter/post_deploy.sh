@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 systemctl --user daemon-reload
 
 # Parse enabled packages from local.toml with recursive dependency resolution
@@ -63,7 +63,7 @@ for source, target in templates.items():
     print(Path(".dotter/cache") / source_path)
     print(target)
 PY
-		if [[ -f "$file" ]]; then
+		if [ -f "$file" ]; then
 			sed -i '/^[[:space:]]*#[[:space:]]*$/d' "$file"
 		fi
 	done
