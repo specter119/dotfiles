@@ -3,14 +3,15 @@
   "defaultProvider": "minimax-cn",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": false,
-  "lastChangelogVersion": "0.66.1",
+  "lastChangelogVersion": "0.67.2",
   "npmCommand": [
     "pi_npm_command"
   ],
   "packages": [
+    "https://github.com/aliou/pi-guardrails",
+    "https://github.com/HazAT/pi-interactive-subagents",
     "https://github.com/davebcn87/pi-autoresearch",
-    "git:github.com/aliou/pi-guardrails",
-    "git:github.com/sherif-fanous/pi-rtk"
+    "https://github.com/sherif-fanous/pi-rtk"
   ],
   "extensions": [
     "~/.config/pi/agent/extensions/pi-nmem.ts"

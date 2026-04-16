@@ -9,7 +9,7 @@
     },
     "python": {
       "args": [],
-      "command": "pylsp",
+      "command": "pyright",
       "fileExtensions": {
         ".py": "python"
       }
