@@ -158,7 +158,7 @@ slock = '~/.config'
 
 [slock.variables]
 slock_api_key = ""
-slock_proxy = ""
+slock_wss_proxy = ""
 
 [ipython.files]
 ipython = '~/.ipython'
@@ -225,7 +225,7 @@ depends = [
   'pi',
   'copilot',
   'opencode',
-  'gemini'
+  'gemini',
 ]
 
 [agent.files]

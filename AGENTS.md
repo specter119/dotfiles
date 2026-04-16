@@ -144,7 +144,7 @@ nested_value = { key_b = "overridden" }
 | Variable | Shape | Source | Notes |
 | --- | --- | --- | --- |
 | `slock_api_key` | string | `global + local` | May be empty; the service should still render |
-| `slock_proxy` | string | `global + local` | May be empty; use direct connection when unset |
+| `slock_wss_proxy` | string | `global + local` | May be empty; render no proxy env when unset |
 | `git_repo_identities` | table | `global + local` | Keyed by identity name; values include `repo_dir`, `name`, and `email` |
 | `skm_local_packages` | array of tables | `global + local` | Each item includes `repo`, with optional `skills` |
 | `mihomo_direct_suffixes` | array of strings | `global + local` | May be empty; render no extra rules when unset |
