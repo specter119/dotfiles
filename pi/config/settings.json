@@ -3,7 +3,7 @@
   "defaultProvider": "minimax-cn",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": false,
-  "lastChangelogVersion": "0.67.2",
+  "lastChangelogVersion": "0.68.1",
   "npmCommand": [
     "pi_npm_command"
   ],

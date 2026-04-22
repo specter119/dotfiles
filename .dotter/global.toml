@@ -100,6 +100,9 @@ codex = '~/.config/codex'
 [copilot.files]
 copilot = '~/.config/copilot'
 
+[droid.files]
+droid = '~/.factory'
+
 [amp.files]
 amp = '~/.config/amp'
 
@@ -126,8 +129,17 @@ qoder = '~/.config'
 [atuin.files]
 atuin = '~/.config'
 
+[cliproxyapi.files]
+cliproxyapi = '~/.config/cliproxyapi'
+
+[playwright.files]
+playwright = '~/.config'
+
 [kagi.files]
 kagi = '~/.config'
+
+[nowledge-mem.files]
+'nowledge-mem' = '~/.config'
 
 [ollama.files]
 ollama = '~/.config/fish/functions'
@@ -148,7 +160,7 @@ LazyVim = '~/.config/nvim'
 marimo = '~/.config'
 
 [bub.files]
-'bub/systemd' = '~/.config/systemd'
+bub = '~/.config'
 
 [lody.files]
 lody = '~/.config'
@@ -235,22 +247,21 @@ depends = [
 [agent-tunnel]
 depends = ['skm', 'bub', 'lody', 'alma', 'slock']
 
-[nowledge-mem.files]
-'nowledge-mem' = '~/.config'
+[computer-use]
+depends = ['playwright']
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'
 
-[cliproxyapi.files]
-cliproxyapi = '~/.config/cliproxyapi'
-
-[droid]
-
-[droid.files]
-'droid' = '~/.factory'
-
 [agent-runtime]
-depends = ['ollama', 'skm', 'zellij', 'kagi', 'nowledge-mem', 'cliproxyapi']
+depends = [
+  'computer-use',
+  'skm',
+  'zellij',
+  'kagi',
+  'nowledge-mem',
+  'cliproxyapi',
+]
 
 [python]
 depends = ['uv', 'conda']
