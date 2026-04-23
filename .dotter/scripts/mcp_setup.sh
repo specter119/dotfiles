@@ -20,10 +20,9 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-MORPH_KEY=$(rbw get morph-api-key 2>/dev/null || true)
 CONTEXT7_KEY=$(rbw get context7-api-key 2>/dev/null || true)
 WINDSURF_KEY=$(rbw get windsurf-api-key 2>/dev/null || true)
-export MORPH_KEY CONTEXT7_KEY WINDSURF_KEY
+export CONTEXT7_KEY WINDSURF_KEY
 
 run_shell() {
 	"$SHELL_BIN" -lc "$1"
@@ -86,7 +85,6 @@ patch_codex_mcp_config() {
 	fi
 
 	CONFIG_PATH="$config_path" \
-	MORPH_KEY="$MORPH_KEY" \
 	CONTEXT7_KEY="$CONTEXT7_KEY" \
 	WINDSURF_KEY="$WINDSURF_KEY" \
 	python3 - <<'PY'
@@ -151,23 +149,7 @@ if mcp_servers is None:
 elif not isinstance(mcp_servers, dict):
     raise SystemExit("mcp_servers must be a TOML table")
 
-morph_key = os.environ.get("MORPH_KEY", "")
-if morph_key:
-    mcp_servers["morph-mcp"] = {
-        "command": "bunx",
-        "args": ["@morphllm/morphmcp"],
-        "disabled_tools": ["codebase_search", "github_codebase_search"],
-        "env": {
-            "MORPH_API_KEY": morph_key,
-        },
-        "tools": {
-            "edit_file": {
-                "approval_mode": "approve",
-            }
-        },
-    }
-else:
-    mcp_servers.pop("morph-mcp", None)
+mcp_servers.pop("morph-mcp", None)
 
 context7_key = os.environ.get("CONTEXT7_KEY", "")
 if context7_key:
@@ -212,10 +194,6 @@ if [[ "$ENABLED_PACKAGES" == *" claude-code "* ]] && cli_available claude; then
 	run_shell_allow_fail 'claude mcp remove --scope user fast-context >/dev/null 2>&1'
 	run_shell_allow_fail 'claude mcp remove --scope user morph-mcp >/dev/null 2>&1'
 	run_shell_allow_fail 'claude mcp remove --scope user exa >/dev/null 2>&1'
-	if [[ -n "$MORPH_KEY" ]]; then
-		run_shell_idempotent 'claude mcp add --scope user morph-mcp -e MORPH_API_KEY="$MORPH_KEY" -- bunx @morphllm/morphmcp >/dev/null'
-		ensure_claude_onboarding
-	fi
 	if [[ -n "$WINDSURF_KEY" ]]; then
 		run_shell_idempotent 'claude mcp add --scope user fast-context -e WINDSURF_API_KEY="$WINDSURF_KEY" -- bunx fast-context-mcp >/dev/null'
 		ensure_claude_onboarding
@@ -227,9 +205,6 @@ if [[ "$ENABLED_PACKAGES" == *" codex "* ]] && cli_available codex; then
 	run_shell_allow_fail 'codex mcp remove morph-mcp >/dev/null 2>&1'
 	run_shell_allow_fail 'codex mcp remove exa >/dev/null 2>&1'
 	run_shell_allow_fail 'codex mcp remove context7 >/dev/null 2>&1'
-	if [[ -n "$MORPH_KEY" ]]; then
-		run_shell_idempotent 'codex mcp add morph-mcp --env MORPH_API_KEY="$MORPH_KEY" -- bunx @morphllm/morphmcp >/dev/null'
-	fi
 	if [[ -n "$CONTEXT7_KEY" ]]; then
 		run_shell_idempotent 'codex mcp add context7 -- bunx @upstash/context7-mcp --api-key "$CONTEXT7_KEY" >/dev/null'
 	fi

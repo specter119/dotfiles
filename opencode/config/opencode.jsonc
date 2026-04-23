@@ -159,16 +159,6 @@
     }
   },
   "mcp": {
-    "morph-mcp": {
-      "type": "local",
-      "command": [
-        "bunx",
-        "@morphllm/morphmcp"
-      ],
-      "environment": {
-        "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}"
-      }
-    },
     "fast-context": {
       "type": "local",
       "command": [
@@ -190,8 +180,7 @@
   "permission": {
     "bash": {
       "rbw get*": "deny"
-    },
-    "morph-mcp_codebase_search": "deny"
+    }
   },
   "plugin": [
     "oh-my-opencode"

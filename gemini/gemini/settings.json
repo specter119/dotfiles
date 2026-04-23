@@ -9,19 +9,6 @@
     }
   },
   "mcpServers": {
-    "morph-mcp": {
-      "command": "bunx",
-      "args": [
-        "@morphllm/morphmcp"
-      ],
-      "includeTools": [
-        "edit_file",
-        "github_codebase_search"
-      ],
-      "env": {
-        "MORPH_API_KEY": "{{replace (command_output 'rbw get morph-api-key') '\n' ''}}"
-      }
-    },
     "fast-context": {
       "command": "bunx",
       "args": [

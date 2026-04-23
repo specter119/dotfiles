@@ -3,7 +3,7 @@ import type { Plugin } from "@opencode-ai/plugin";
 const formatterPlugin: Plugin = async ({ $ }) => {
   return {
     "tool.execute.after": async (ctx, output) => {
-      if (!["edit", "write", "morph-mcp_edit_file"].includes(ctx.tool)) return;
+      if (!["edit", "write"].includes(ctx.tool)) return;
 
       const filePath = output.metadata?.filePath || output.metadata?.path;
       if (!filePath) return;

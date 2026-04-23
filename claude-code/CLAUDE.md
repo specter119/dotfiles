@@ -64,7 +64,6 @@
 | 网络搜索   | `WebSearch`                 |
 | 网页抓取   | `WebFetch`                  |
 | 库文档查询 | `context7 plugin`           |
-| 高效编辑   | `mcp__morph-mcp__edit_file` |
 
 ### 跨 Agent 对话 (xurl)
 
