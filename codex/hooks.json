@@ -27,7 +27,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.config/codex/scripts/rtk-codex-hook.sh\"",
+            "command": "sh \"$HOME/.config/codex/scripts/rtk-rewrite.sh\"",
+            "statusMessage": "RTK: Optimizing command output",
             "timeout": 5
           }
         ]
