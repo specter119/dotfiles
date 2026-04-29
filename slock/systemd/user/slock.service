@@ -7,9 +7,9 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=%h/.config/slock
 ExecStartPre=bun update --latest --force @slock-ai/daemon
-ExecStart=bun run slock-daemon --server-url https://api.slock.ai --api-key {{slock_api_key}}
-{{#if slock_wss_proxy}}
-Environment=WSS_PROXY={{slock_wss_proxy}}
+ExecStart=bun run slock-daemon --server-url https://api.slock.ai --api-key {{slock.api_key}}
+{{#if slock.wss_proxy}}
+Environment=WSS_PROXY={{slock.wss_proxy}}
 {{/if}}
 Restart=always
 RestartSec=5

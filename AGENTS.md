@@ -136,6 +136,8 @@ nested_value = { key_b = "overridden" }
 #### Source Rules
 
 - **Per-machine / not synced across machines**: define a placeholder in `global.toml`, then override it from top-level `[variables]` in `.dotter/local.toml`.
+- **服务 / 工具私有变量**：使用 namespaced table，例如 `[slock.variables.slock]` 和 `[variables.slock]`，不要继续使用 `slock_api_key` 这类扁平变量名。
+- **跨 package 共享变量**：使用拥有者工具的 namespace，例如 `git.repo_identities` 由 `git` / `jj` 定义，并同时被 Git 和 Jujutsu 模板消费。
 - **Shareable secrets**: keep using inline `rbw get` in templates or scripts instead of storing them in `local.toml`.
 - Detailed constraints for `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` live in `.dotter/AGENTS.md`.
 
@@ -143,23 +145,23 @@ nested_value = { key_b = "overridden" }
 
 | Variable | Shape | Source | Notes |
 | --- | --- | --- | --- |
-| `slock_api_key` | string | `global + local` | May be empty; the service should still render |
-| `slock_wss_proxy` | string | `global + local` | May be empty; render no proxy env when unset |
-| `git_repo_identities` | table | `global + local` | Keyed by identity name; values include `repo_dir`, `name`, and `email` |
-| `skm_local_packages` | array of tables | `global + local` | Each item includes `repo`, with optional `skills` |
-| `mihomo_direct_suffixes` | array of strings | `global + local` | May be empty; render no extra rules when unset |
+| `slock.api_key` | string | `global + local` | 可为空；服务仍应正常渲染 |
+| `slock.wss_proxy` | string | `global + local` | 可为空；未设置时不渲染 proxy env |
+| `git.repo_identities` | table | `global + local` | 以 identity 名称为 key；值包含 `repo_dir`、`name`、`email` |
+| `skm.local_packages` | array of tables | `global + local` | 每项包含 `repo`，可选 `skills` |
+| `mihomo.direct_suffixes` | array of strings | `global + local` | 可为空；未设置时不渲染额外直连规则 |
 
 #### Git Repo Identities
 
-Add repo-scoped Git identities in `.dotter/local.toml` under `variables.git_repo_identities`:
+Repo-scoped Git identities 写在 `.dotter/local.toml` 的 `variables.git.repo_identities` 下：
 
 ```toml
-[variables.git_repo_identities.company_a]
+[variables.git.repo_identities.company_a]
 repo_dir = "~/Documents/company-a.repos/"
 name = "your-work-name"
 email = "your-work-email@company-a.example"
 
-[variables.git_repo_identities.company_b]
+[variables.git.repo_identities.company_b]
 repo_dir = "~/Documents/company-b.repos/"
 name = "your-other-work-name"
 email = "your-other-work-email@company-b.example"
@@ -206,7 +208,8 @@ This pattern ensures templates render correctly even when `my_items` is not defi
 When a YAML file is both a Dotter template and pre-commit formatted with `yamlfmt`, keep these rules:
 
 ```yaml
-# {{#each skm_local_packages}}
+# {{#if skm.local_packages}}
+# {{#each skm.local_packages}}
 - repo: "{{repo}}"
   # {{#if skills}}
   skills:
@@ -215,6 +218,7 @@ When a YAML file is both a Dotter template and pre-commit formatted with `yamlfm
     # {{/each}}
 # {{/if}}
 # {{/each}}
+# {{/if}}
 ```
 
 - Put control blocks like `#each` and `#if` in YAML comments so YAML formatters and editors can still parse the file.

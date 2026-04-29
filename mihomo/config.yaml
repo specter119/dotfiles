@@ -103,8 +103,8 @@ proxy-groups:
   - {name: 自动选择, type: url-test, include-all-providers: true, tolerance: 10}
 rules:
   - GEOIP,lan,直连,no-resolve
-  # {{#if mihomo_direct_suffixes}}
-  # {{#each mihomo_direct_suffixes}}
+  # {{#if mihomo.direct_suffixes}}
+  # {{#each mihomo.direct_suffixes}}
   - DOMAIN-SUFFIX,{{this}},直连,no-resolve
   # {{/each}}
   # {{/if}}

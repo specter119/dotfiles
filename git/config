@@ -65,8 +65,8 @@
 [includeIf "gitdir:{{env_var "WSL_WIN_HOME"}}/scoop/"]
 	path = ~/.config/git/config-github
 
-# {{#if git_repo_identities}}
-# {{#each git_repo_identities}}
+# {{#if git.repo_identities}}
+# {{#each git.repo_identities}}
 [includeIf "gitdir:{{repo_dir}}"]
 	path = ~/.config/git/generated/{{@key}}.conf
 
