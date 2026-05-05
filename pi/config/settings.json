@@ -1,7 +1,13 @@
 {
+  "compaction": {
+    "enabled": false
+  },
   "defaultModel": "MiniMax-M2.7",
   "defaultProvider": "minimax-cn",
   "defaultThinkingLevel": "high",
+  "extensions": [
+    "~/.config/pi/agent/extensions/pi-nmem.ts"
+  ],
   "hideThinkingBlock": false,
   "lastChangelogVersion": "0.73.0",
   "npmCommand": [
@@ -12,11 +18,5 @@
     "https://github.com/HazAT/pi-interactive-subagents",
     "https://github.com/davebcn87/pi-autoresearch",
     "https://github.com/sherif-fanous/pi-rtk"
-  ],
-  "extensions": [
-    "~/.config/pi/agent/extensions/pi-nmem.ts"
-  ],
-  "compaction": {
-    "enabled": false
-  }
+  ]
 }
