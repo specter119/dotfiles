@@ -15,14 +15,6 @@ openai-compatibility:
       - name: "glm-4.5-air"
       - name: "glm-5-turbo"
       - name: "glm-5.1"
-  - name: "minimax"
-    prefix: "minimax"
-    base-url: "https://api.minimaxi.com/v1"
-    api-key-entries:
-      - api-key: "{{replace (command_output 'rbw get minimax-cn-api-key') '\n' ''}}"
-    models:
-      - name: "MiniMax-M2.7"
-      - name: "MiniMax-M2.7-highspeed"
 claude-api-key:
   - api-key: "{{replace (command_output 'rbw get codesome-claude-sub-key') '\n' ''}}"
     base-url: "https://cc.codesome.ai"

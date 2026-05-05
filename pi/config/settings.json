@@ -2,8 +2,8 @@
   "compaction": {
     "enabled": false
   },
-  "defaultModel": "MiniMax-M2.7",
-  "defaultProvider": "minimax-cn",
+  "defaultModel": "gpt-5.4",
+  "defaultProvider": "openai",
   "defaultThinkingLevel": "high",
   "extensions": [
     "~/.config/pi/agent/extensions/pi-nmem.ts"

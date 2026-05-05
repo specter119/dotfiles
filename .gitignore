@@ -2,4 +2,4 @@
 /.dotter/cache.toml
 /.dotter/cache/*
 /git/generated/
-!/claude-code/claude/CLAUDE.md
+!/claude-code/CLAUDE.md
