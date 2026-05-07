@@ -12,9 +12,10 @@
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "{{replace (command_output 'rbw get codesome-claude-sub-key') '\n' ''}}",
     "ANTHROPIC_BASE_URL": "https://cc.codesome.ai",
+    "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
+    "CLAUDE_CODE_DISABLE_1M_CONTEXT": "1",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "CLAUDE_CODE_DISABLE_1M_CONTEXT": "1",
     "ENABLE_LSP_TOOL": "1"
   },
   "hooks": {
@@ -75,7 +76,7 @@
       "Bash(ss:*)",
       "Bash(ast-grep:*)",
       "Bash(jq:*)",
-      "Bash(git:status,show,diff,grep,branch,tag,log,rev-parse,config)",
+      "Bash(git:status,show,diff,log,rev-parse,config)",
       "Bash(jj:*)",
       "Bash(rtk:*)",
       "Bash(xurl:*)",
@@ -107,11 +108,6 @@
       "Bash(rbw:get*)"
     ]
   },
-  "skipWebFetchPreflight": true,
   "showClearContextOnPlanAccept": true,
-  "statusLine": {
-    "command": "~/.local/bin/ccline",
-    "padding": 0,
-    "type": "command"
-  }
+  "skipWebFetchPreflight": true
 }
