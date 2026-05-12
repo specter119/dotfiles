@@ -2,14 +2,14 @@
   "compaction": {
     "enabled": false
   },
-  "defaultModel": "gpt-5.4",
-  "defaultProvider": "openai",
+  "defaultModel": "gpt-5-mini",
+  "defaultProvider": "github-copilot",
   "defaultThinkingLevel": "high",
   "extensions": [
     "~/.config/pi/agent/extensions/pi-nmem.ts"
   ],
   "hideThinkingBlock": false,
-  "lastChangelogVersion": "0.73.0",
+  "lastChangelogVersion": "0.74.0",
   "npmCommand": [
     "pi_npm_command"
   ],

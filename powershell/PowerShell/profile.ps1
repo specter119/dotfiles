@@ -30,10 +30,10 @@ Import-Module "$env:SCOOP\apps\scoop\current\supporting\completion\Scoop-Complet
 # !! Contents within this block are managed by 'mamba shell init' !!
 # $env:MAMBA_ROOT_PREFIX = "$env:UserProfile\.local\share\mamba"
 # $env:MAMBA_EXE = "$env:SCOOP\apps\micromamba\current\micromamba.exe"
-(& $env:MAMBA_EXE 'shell' 'hook' --shell 'powershell' --root-prefix $env:MAMBA_ROOT_PREFIX) | Out-String | Invoke-Expression
+#(& $env:MAMBA_EXE 'shell' 'hook' --shell 'powershell' --root-prefix $env:MAMBA_ROOT_PREFIX) | Out-String | Invoke-Expression
 #endregion
-New-Alias umamba Invoke-Mamba
-New-Alias conda Invoke-Mamba
+# New-Alias umamba Invoke-Mamba
+# New-Alias conda Invoke-Mamba
 
 # alias
 New-Alias open explorer

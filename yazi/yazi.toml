@@ -3,22 +3,22 @@ ratio = [1, 2, 5]
 
 [plugin]
 prepend_previewers = [
-  {name = "*.csv", run = "duckdb"},
-  {name = "*.tsv", run = "duckdb"},
-  {name = "*.jsonl", run = "duckdb"},
-  {name = "*.parquet", run = "duckdb"},
-  {name = "*.txt", run = "duckdb"},
-  {name = "*.xlsx", run = "duckdb"},
-  {name = "*.db", run = "duckdb"},
-  {name = "*.duckdb", run = "duckdb"}
+  {mime = "text/csv", run = "duckdb"},
+  {mime = "text/tab-separated-values", run = "duckdb"},
+  {mime = "application/x-ndjson", run = "duckdb"},
+  {mime = "application/vnd.apache.parquet", run = "duckdb"},
+  {mime = "text/plain", run = "duckdb"},
+  {mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", run = "duckdb"},
+  {mime = "application/x-sqlite3", run = "duckdb"},
+  {mime = "application/x-duckdb", run = "duckdb"}
 ]
 prepend_preloaders = [
-  {name = "*.csv", run = "duckdb", multi = false},
-  {name = "*.tsv", run = "duckdb", multi = false},
-  {name = "*.jsonl", run = "duckdb", multi = false},
-  {name = "*.parquet", run = "duckdb", multi = false},
-  {name = "*.txt", run = "duckdb", multi = false},
-  {name = "*.xlsx", run = "duckdb", multi = false}
+  {mime = "text/csv", run = "duckdb", multi = false},
+  {mime = "text/tab-separated-values", run = "duckdb", multi = false},
+  {mime = "application/x-ndjson", run = "duckdb", multi = false},
+  {mime = "application/vnd.apache.parquet", run = "duckdb", multi = false},
+  {mime = "text/plain", run = "duckdb", multi = false},
+  {mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", run = "duckdb", multi = false}
 ]
 
 [opener]
