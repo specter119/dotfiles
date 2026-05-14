@@ -215,11 +215,11 @@ yt-dlp = '~/.config/yt-dlp'
 [cliamp.files]
 cliamp = '~/.config/cliamp'
 
-[shell.files]
-shell = '~/.config'
-
 [shell]
 depends = ['fish', 'yazi', 'atuin', 'mihomo']
+
+[shell.files]
+shell = '~/.config'
 
 [wm]
 depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
@@ -238,6 +238,7 @@ depends = [
   'copilot',
   'opencode',
   'gemini',
+  'qoder'
 ]
 
 [agent.files]
@@ -250,9 +251,6 @@ depends = ['skm', 'bub', 'lody', 'alma', 'slock']
 [computer-use]
 depends = ['playwright']
 
-[agent-runtime.files]
-'agent-runtime' = '~/.config'
-
 [agent-runtime]
 depends = [
   'computer-use',
@@ -260,8 +258,11 @@ depends = [
   'zellij',
   'kagi',
   'nowledge-mem',
-  'cliproxyapi',
+  'cliproxyapi'
 ]
+
+[agent-runtime.files]
+'agent-runtime' = '~/.config'
 
 [python]
 depends = ['uv', 'conda']

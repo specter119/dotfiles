@@ -1,7 +1,7 @@
 # pikaur
 /last_installed.txt
 
-# llm ide
+# agentic cli/ext
 **/.claude/settings.local.json
 /.cursor
 /.cursorrules
@@ -10,74 +10,31 @@
 /.roorules
 /.rooignore
 /.augmentignore
-/.github/copilot-instructions.md
 /.serena
 
-# mcp
-/alembic
-/alembic.ini
-
-# emacs project
+# Emacs project
 .dir-locals.el
 
-# Folder view configuration files
-.DS_Store
+# Platform folder/thumbnail
 Desktop.ini
-
-# hive
-metastore_db
-
-# scala
-.metals
-
-# Thumbnail cache files
+.DS_Store
 ._*
 Thumbs.db
-
-# Files that might appear on external disks
 .Spotlight-V100
 .Trashes
 
-# spacemacs history cache
-/transient
-
-# Compiled Python files
+# Python
+.idea/
 __pycache__
 *.pyc
-
-# Compiled C++ files
-*.out
-
-# R
-.Rhistory
-.Rapp.history
-.RData
-.Rproj.user/
-vignettes/*.html
-vignettes/*.pdf
-.httr-oauth
-.cache
-/*_cache/
-/cache/
-*.utf8.md
-*.knit.md
-
-# Application specific files
-.vscode/settings.json
-.idea/
 .python-version
+.venv
 venv
-node_modules
-.sass-cache
 .ipynb_checkpoints
 
-# Added by iloom CLI
-**/.iloom/settings.local.json
+# Nodejs
+node_modules
 
-# Added by iloom CLI
-**/.iloom/package.iloom.local.json
-
-# Added by iloom CLI
-**/.claude/agents/iloom-*
-**/.claude/skills/iloom-*
-**/.claude/iloom-swarm-mcp-config-path
+# Qoder local files (private, not committed)
+AGENTS.local.md
+*.local.md

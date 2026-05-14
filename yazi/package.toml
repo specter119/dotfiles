@@ -1,7 +1,7 @@
 [[plugin.deps]]
-use = "wylie102/duckdb"
-rev = "3f8c863"
-hash = "87b9233a74325e95011670ed20bbd0d4"
+use = "specter119/duckdb"
+rev = "1545f7a"
+hash = "a4887e1bc5e8374ebd651b80ed959338"
 
 [flavor]
 deps = []

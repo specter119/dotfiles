@@ -5,19 +5,23 @@ ratio = [1, 2, 5]
 prepend_previewers = [
   {mime = "text/csv", run = "duckdb"},
   {mime = "text/tab-separated-values", run = "duckdb"},
+  {mime = "application/json", run = "duckdb"},
   {mime = "application/x-ndjson", run = "duckdb"},
   {mime = "application/vnd.apache.parquet", run = "duckdb"},
-  {mime = "text/plain", run = "duckdb"},
+  {url = "*.parquet", run = "duckdb"},
   {mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", run = "duckdb"},
   {mime = "application/x-sqlite3", run = "duckdb"},
-  {mime = "application/x-duckdb", run = "duckdb"}
+  {mime = "application/x-duckdb", run = "duckdb"},
+  {url = "*.db", run = "duckdb"},
+  {url = "*.duckdb", run = "duckdb"}
 ]
 prepend_preloaders = [
   {mime = "text/csv", run = "duckdb", multi = false},
   {mime = "text/tab-separated-values", run = "duckdb", multi = false},
+  {mime = "application/json", run = "duckdb", multi = false},
   {mime = "application/x-ndjson", run = "duckdb", multi = false},
   {mime = "application/vnd.apache.parquet", run = "duckdb", multi = false},
-  {mime = "text/plain", run = "duckdb", multi = false},
+  {url = "*.parquet", run = "duckdb", multi = false},
   {mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", run = "duckdb", multi = false}
 ]
 
