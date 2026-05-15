@@ -1,5 +1,65 @@
 {
   "providers": {
+    "qoder": {
+      "api": "openai-completions",
+      "apiKey": "!podman secret inspect qoder-proxy-api-key --showsecret | jq -r .[0].SecretData",
+      "baseUrl": "https://qoder-proxy.worklab.com/v1",
+      "models": [
+        {
+          "id": "auto",
+          "name": "Auto (Smart Select)",
+          "reasoning": true
+        },
+        {
+          "id": "ultimate",
+          "name": "Ultimate (Best Quality)",
+          "reasoning": true
+        },
+        {
+          "id": "performance",
+          "name": "Performance",
+          "reasoning": true
+        },
+        {
+          "id": "efficient",
+          "name": "Efficient"
+        },
+        {
+          "id": "lite",
+          "name": "Lite"
+        },
+        {
+          "id": "Qwen3.6-Plus",
+          "name": "Qwen 3.6 Plus",
+          "reasoning": true
+        },
+        {
+          "id": "kmodel",
+          "name": "Kimi-K2.6",
+          "reasoning": true
+        },
+        {
+          "id": "mmodel",
+          "name": "MiniMax-M2.7",
+          "reasoning": true
+        },
+        {
+          "id": "deepseek-v4-pro",
+          "name": "Deepseek V4 Pro",
+          "reasoning": true
+        },
+        {
+          "id": "deepseek-v4-flash",
+          "name": "Deepseek V4 Flash",
+          "reasoning": true
+        },
+        {
+          "id": "glm-5.1",
+          "name": "GLM 5.1",
+          "reasoning": true
+        }
+      ]
+    },
     "zai": {
       "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4"
     }

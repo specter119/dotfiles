@@ -13,6 +13,27 @@
           "name": "gpt-5.4"
         }
       }
+    },
+    "qoder": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "qoder",
+      "options": {
+        "baseURL": "https://qoder-proxy.worklab.com/v1",
+        "apiKey": "{{replace (command_output 'podman secret inspect qoder-proxy-api-key --showsecret | jq -r .[0].SecretData') '\n' ''}}"
+      },
+      "models": {
+        "auto": { "name": "auto" },
+        "ultimate": { "name": "ultimate" },
+        "performance": { "name": "performance" },
+        "efficient": { "name": "efficient" },
+        "lite": { "name": "lite" },
+        "Qwen3.6-Plus": { "name": "Qwen3.6-Plus" },
+        "kmodel": { "name": "kmodel" },
+        "mmodel": { "name": "mmodel" },
+        "deepseek-v4-pro": { "name": "deepseek-v4-pro" },
+        "deepseek-v4-flash": { "name": "deepseek-v4-flash" },
+        "glm-5.1": { "name": "glm-5.1" }
+      }
     }
   },
   "mcp": {
