@@ -6,11 +6,12 @@ agents:
     standard:
       install_mode: symlink
 packages:
-  - repo: https://github.com/specter119/skills.git
-  - repo: https://github.com/Xuanwo/xurl.git
-  - repo: https://github.com/PsiACE/skills.git
-  - repo: https://github.com/onevcat/skills.git
+  - repo: https://github.com/specter119/skills
+  - repo: https://github.com/Xuanwo/xurl
+  - repo: https://github.com/PsiACE/skills
+  - repo: https://github.com/onevcat/skills
   - repo: https://github.com/yaojingang/yao-meta-skill
+  - repo: https://github.com/yizhiyanhua-ai/fireworks-tech-graph
   # {{#if skm.local_packages}}
   # {{#each skm.local_packages}}
   - repo: "{{repo}}"

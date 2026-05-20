@@ -7,56 +7,134 @@
       "models": [
         {
           "id": "auto",
-          "name": "Auto (Smart Select)",
-          "reasoning": true
+          "name": "Auto",
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 180000
         },
         {
           "id": "ultimate",
-          "name": "Ultimate (Best Quality)",
-          "reasoning": true
+          "name": "Ultimate",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "minimal": null,
+            "low": "low",
+            "medium": "medium",
+            "high": "high",
+            "xhigh": "xhigh"
+          },
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 200000
         },
         {
           "id": "performance",
           "name": "Performance",
-          "reasoning": true
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "minimal": null,
+            "low": "low",
+            "medium": "medium",
+            "high": "high",
+            "xhigh": "xhigh"
+          },
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 200000
         },
         {
           "id": "efficient",
-          "name": "Efficient"
+          "name": "Efficient",
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 180000
         },
         {
           "id": "lite",
-          "name": "Lite"
+          "name": "Lite",
+          "input": [
+            "text"
+          ],
+          "contextWindow": 180000
         },
         {
-          "id": "Qwen3.6-Plus",
-          "name": "Qwen 3.6 Plus",
-          "reasoning": true
+          "id": "qmodel",
+          "name": "Qwen3.6-Plus",
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 200000
+        },
+        {
+          "id": "dmodel",
+          "name": "DeepSeek-V4-Pro",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "minimal": null,
+            "low": null,
+            "medium": null,
+            "high": "high",
+            "xhigh": "max"
+          },
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 200000
+        },
+        {
+          "id": "dfmodel",
+          "name": "DeepSeek-V4-Flash",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "minimal": null,
+            "low": null,
+            "medium": null,
+            "high": "high",
+            "xhigh": "max"
+          },
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 200000
+        },
+        {
+          "id": "gm51model",
+          "name": "GLM-5.1",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 180000
         },
         {
           "id": "kmodel",
           "name": "Kimi-K2.6",
-          "reasoning": true
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 256000
         },
         {
           "id": "mmodel",
           "name": "MiniMax-M2.7",
-          "reasoning": true
-        },
-        {
-          "id": "deepseek-v4-pro",
-          "name": "Deepseek V4 Pro",
-          "reasoning": true
-        },
-        {
-          "id": "deepseek-v4-flash",
-          "name": "Deepseek V4 Flash",
-          "reasoning": true
-        },
-        {
-          "id": "glm-5.1",
-          "name": "GLM 5.1",
-          "reasoning": true
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 180000
         }
       ]
     },

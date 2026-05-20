@@ -22,17 +22,17 @@
         "apiKey": "{{replace (command_output 'podman secret inspect qoder-proxy-api-key --showsecret | jq -r .[0].SecretData') '\n' ''}}"
       },
       "models": {
-        "auto": { "name": "auto" },
-        "ultimate": { "name": "ultimate" },
-        "performance": { "name": "performance" },
-        "efficient": { "name": "efficient" },
-        "lite": { "name": "lite" },
-        "Qwen3.6-Plus": { "name": "Qwen3.6-Plus" },
-        "kmodel": { "name": "kmodel" },
-        "mmodel": { "name": "mmodel" },
-        "deepseek-v4-pro": { "name": "deepseek-v4-pro" },
-        "deepseek-v4-flash": { "name": "deepseek-v4-flash" },
-        "glm-5.1": { "name": "glm-5.1" }
+        "auto": { "name": "Auto" },
+        "ultimate": { "name": "Ultimate" },
+        "performance": { "name": "Performance" },
+        "efficient": { "name": "Efficient" },
+        "lite": { "name": "Lite" },
+        "qmodel": { "name": "Qwen3.6-Plus" },
+        "kmodel": { "name": "Kimi-K2.6" },
+        "mmodel": { "name": "MiniMax-M2.7" },
+        "dmodel": { "name": "DeepSeek-V4-Pro" },
+        "dfmodel": { "name": "DeepSeek-V4-Flash" },
+        "gm51model": { "name": "GLM-5.1" }
       }
     }
   },

@@ -11,6 +11,7 @@
 /.rooignore
 /.augmentignore
 /.serena
+/.qoder
 
 # Emacs project
 .dir-locals.el

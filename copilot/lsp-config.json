@@ -8,8 +8,8 @@
       }
     },
     "python": {
-      "args": [],
-      "command": "pyright",
+      "args": ["server"],
+      "command": "ty",
       "fileExtensions": {
         ".py": "python"
       }

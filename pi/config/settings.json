@@ -2,14 +2,15 @@
   "compaction": {
     "enabled": false
   },
-  "defaultModel": "gpt-5-mini",
-  "defaultProvider": "github-copilot",
+  "defaultModel": "dfmodel",
+  "defaultProvider": "qoder",
   "defaultThinkingLevel": "high",
   "extensions": [
-    "~/.config/pi/agent/extensions/pi-nmem.ts"
+    "~/.config/pi/agent/extensions/pi-nmem.ts",
+    "~/.config/pi/agent/extensions/qoder-tool.ts"
   ],
   "hideThinkingBlock": false,
-  "lastChangelogVersion": "0.74.0",
+  "lastChangelogVersion": "0.75.4",
   "npmCommand": [
     "pi_npm_command"
   ],
@@ -17,6 +18,7 @@
     "https://github.com/aliou/pi-guardrails",
     "https://github.com/HazAT/pi-interactive-subagents",
     "https://github.com/davebcn87/pi-autoresearch",
-    "https://github.com/sherif-fanous/pi-rtk"
+    "https://github.com/sherif-fanous/pi-rtk",
+    "git:github.com/mprokopov/pi-otel-telemetry"
   ]
 }
