@@ -238,7 +238,7 @@ depends = [
   'copilot',
   'opencode',
   'gemini',
-  'qoder'
+  'qoder',
 ]
 
 [agent.files]
@@ -252,20 +252,13 @@ depends = ['skm', 'bub', 'lody', 'alma', 'slock']
 depends = ['playwright']
 
 [agent-runtime]
-depends = [
-  'computer-use',
-  'skm',
-  'zellij',
-  'kagi',
-  'nowledge-mem',
-  'cliproxyapi'
-]
+depends = ['computer-use', 'skm', 'zellij', 'kagi', 'nowledge-mem']
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'
 
 [python]
-depends = ['uv', 'conda']
+depends = ['uv']
 
 [nodejs]
 depends = ['bun']
