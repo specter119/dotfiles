@@ -18,7 +18,6 @@
     "https://github.com/aliou/pi-guardrails",
     "https://github.com/HazAT/pi-interactive-subagents",
     "https://github.com/davebcn87/pi-autoresearch",
-    "https://github.com/sherif-fanous/pi-rtk",
-    "git:github.com/mprokopov/pi-otel-telemetry"
+    "https://github.com/sherif-fanous/pi-rtk"
   ]
 }
