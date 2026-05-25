@@ -75,6 +75,15 @@
           "contextWindow": 200000
         },
         {
+          "id": "qmodel_latest",
+          "name": "Qwen3.7-Max",
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 200000
+        },
+        {
           "id": "dmodel",
           "name": "DeepSeek-V4-Pro",
           "reasoning": true,

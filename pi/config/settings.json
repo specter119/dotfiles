@@ -10,7 +10,7 @@
     "~/.config/pi/agent/extensions/qoder-tool.ts"
   ],
   "hideThinkingBlock": false,
-  "lastChangelogVersion": "0.75.4",
+  "lastChangelogVersion": "0.75.5",
   "npmCommand": [
     "pi_npm_command"
   ],

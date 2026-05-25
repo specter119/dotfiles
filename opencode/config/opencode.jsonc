@@ -28,6 +28,7 @@
         "efficient": { "name": "Efficient" },
         "lite": { "name": "Lite" },
         "qmodel": { "name": "Qwen3.6-Plus" },
+        "qmodel_latest": { "name": "Qwen3.7-Max" },
         "kmodel": { "name": "Kimi-K2.6" },
         "mmodel": { "name": "MiniMax-M2.7" },
         "dmodel": { "name": "DeepSeek-V4-Pro" },

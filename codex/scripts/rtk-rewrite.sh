@@ -30,14 +30,14 @@ deny() {
 }
 
 case "$status" in
-  0 | 3)
-    [ -z "$rewritten" ] || [ "$rewritten" = "$cmd" ] && exit 0
-    deny "RTK rewrite required. Run this instead: $rewritten"
-    ;;
-  2)
-    deny "Blocked by RTK command policy."
-    ;;
-  *)
-    exit 0
-    ;;
+0 | 3)
+  [ -z "$rewritten" ] || [ "$rewritten" = "$cmd" ] && exit 0
+  deny "RTK rewrite required. Run this instead: $rewritten"
+  ;;
+2)
+  deny "Blocked by RTK command policy."
+  ;;
+*)
+  exit 0
+  ;;
 esac
