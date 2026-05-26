@@ -10,8 +10,8 @@
     "superpowers@claude-plugins-official": true
   },
   "env": {
-    "ANTHROPIC_AUTH_TOKEN": "{{replace (command_output 'rbw get codesome-claude-sub-key') '\n' ''}}",
-    "ANTHROPIC_BASE_URL": "https://cc.codesome.ai",
+    "ANTHROPIC_AUTH_TOKEN": "",
+    "ANTHROPIC_BASE_URL": "",
     "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
     "CLAUDE_CODE_DISABLE_1M_CONTEXT": "1",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",

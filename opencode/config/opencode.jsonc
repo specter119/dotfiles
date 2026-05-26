@@ -1,19 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "packy-codex": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "packy-codex",
-      "options": {
-        "baseURL": "https://codex-api.packycode.com/v1",
-        "apiKey": "{{replace (command_output 'rbw get packy-codex-sub-key') '\n' ''}}"
-      },
-      "models": {
-        "gpt-5.4": {
-          "name": "gpt-5.4"
-        }
-      }
-    },
     "qoder": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "qoder",
@@ -22,18 +9,42 @@
         "apiKey": "{{replace (command_output 'podman secret inspect qoder-proxy-api-key --showsecret | jq -r .[0].SecretData') '\n' ''}}"
       },
       "models": {
-        "auto": { "name": "Auto" },
-        "ultimate": { "name": "Ultimate" },
-        "performance": { "name": "Performance" },
-        "efficient": { "name": "Efficient" },
-        "lite": { "name": "Lite" },
-        "qmodel": { "name": "Qwen3.6-Plus" },
-        "qmodel_latest": { "name": "Qwen3.7-Max" },
-        "kmodel": { "name": "Kimi-K2.6" },
-        "mmodel": { "name": "MiniMax-M2.7" },
-        "dmodel": { "name": "DeepSeek-V4-Pro" },
-        "dfmodel": { "name": "DeepSeek-V4-Flash" },
-        "gm51model": { "name": "GLM-5.1" }
+        "auto": {
+          "name": "Auto"
+        },
+        "ultimate": {
+          "name": "Ultimate"
+        },
+        "performance": {
+          "name": "Performance"
+        },
+        "efficient": {
+          "name": "Efficient"
+        },
+        "lite": {
+          "name": "Lite"
+        },
+        "qmodel": {
+          "name": "Qwen3.6-Plus"
+        },
+        "qmodel_latest": {
+          "name": "Qwen3.7-Max"
+        },
+        "kmodel": {
+          "name": "Kimi-K2.6"
+        },
+        "mmodel": {
+          "name": "MiniMax-M2.7"
+        },
+        "dmodel": {
+          "name": "DeepSeek-V4-Pro"
+        },
+        "dfmodel": {
+          "name": "DeepSeek-V4-Flash"
+        },
+        "gm51model": {
+          "name": "GLM-5.1"
+        }
       }
     }
   },
@@ -62,6 +73,6 @@
     }
   },
   "plugin": [
-    "oh-my-opencode"
+    "oh-my-openagent"
   ]
 }
