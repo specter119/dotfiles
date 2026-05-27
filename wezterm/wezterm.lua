@@ -50,6 +50,8 @@ end
 
 config.launch_menu = launch_menu
 
+config.term = 'wezterm'
+
 config.font = wezterm.font('Sarasa Term SC Nerd', { weight = 'DemiBold' })
 config.font_size = 13.0
 config.window_background_opacity = 0.86

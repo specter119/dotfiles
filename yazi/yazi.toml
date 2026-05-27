@@ -1,8 +1,16 @@
 [mgr]
 ratio = [1, 2, 5]
 
+[preview]
+max_width = 2560
+max_height = 1440
+image_filter = "triangle"
+image_quality = 80
+image_delay = 50
+
 [plugin]
 prepend_previewers = [
+  {mime = "image/svg+xml", run = "image"},
   {mime = "text/csv", run = "duckdb"},
   {mime = "text/tab-separated-values", run = "duckdb"},
   {mime = "application/json", run = "duckdb"},
@@ -26,6 +34,16 @@ prepend_preloaders = [
 ]
 
 [opener]
+edit = [
+  {run = '$EDITOR %s', block = true, for = "unix"},
+  {run = '%EDITOR% %s', block = true, for = "windows"}
+]
+open = [
+  # orphan = true detaches the process so yazi ignores exit codes
+  # (fixes WSL explorer.exe returning non-zero)
+  {run = 'xdg-open %s1', orphan = true, desc = "Open", for = "unix"},
+  {run = 'start "" %s1', orphan = true, desc = "Open", for = "windows"}
+]
 extract = [
   {run = 'ya pub extract --list "$@"', desc = "Extract here", for = "unix"},
   {run = 'ya pub extract --list %*', desc = "Extract here", for = "windows"}
