@@ -2,7 +2,7 @@
   "compaction": {
     "enabled": false
   },
-  "defaultModel": "dfmodel",
+  "defaultModel": "qmodel",
   "defaultProvider": "qoder",
   "defaultThinkingLevel": "high",
   "extensions": [
@@ -10,7 +10,7 @@
     "~/.config/pi/agent/extensions/qoder-tool.ts"
   ],
   "hideThinkingBlock": false,
-  "lastChangelogVersion": "0.75.5",
+  "lastChangelogVersion": "0.76.0",
   "npmCommand": [
     "pi_npm_command"
   ],

@@ -34,17 +34,16 @@ prepend_preloaders = [
 ]
 
 [opener]
+# {{#if (command_success "uname -r | grep -qi wsl")}}
 edit = [
-  {run = '$EDITOR %s', block = true, for = "unix"},
-  {run = '%EDITOR% %s', block = true, for = "windows"}
+  {run = '$EDITOR %s', block = true, for = "unix"}
 ]
 open = [
   # orphan = true detaches the process so yazi ignores exit codes
   # (fixes WSL explorer.exe returning non-zero)
-  {run = 'xdg-open %s1', orphan = true, desc = "Open", for = "unix"},
-  {run = 'start "" %s1', orphan = true, desc = "Open", for = "windows"}
+  {run = 'xdg-open %s1', orphan = true, desc = "Open", for = "unix"}
 ]
+# {{/if}}
 extract = [
-  {run = 'ya pub extract --list "$@"', desc = "Extract here", for = "unix"},
-  {run = 'ya pub extract --list %*', desc = "Extract here", for = "windows"}
+  {run = 'ya pub extract --list "$@"', desc = "Extract here", for = "unix"}
 ]

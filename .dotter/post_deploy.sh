@@ -1,7 +1,7 @@
 #!/bin/sh
 systemctl --user daemon-reload
 
-cleanup_rendered_yaml_templates() {
+cleanup_rendered_templates() {
 	python3 - <<'PY' | while IFS= read -r file; do
 import tomllib
 from pathlib import Path
@@ -15,7 +15,7 @@ with cache_toml.open("rb") as fh:
 
 for source, target in templates.items():
     source_path = Path(source)
-    if source_path.suffix not in {".yaml", ".yml"}:
+    if source_path.suffix not in {".yaml", ".yml", ".toml"}:
         continue
     try:
         text = source_path.read_text(encoding="utf-8")
@@ -33,5 +33,5 @@ PY
 	done
 }
 
-# Clean up rendered YAML templates after deployment.
-cleanup_rendered_yaml_templates
+# Clean up rendered templates (YAML and TOML) after deployment.
+cleanup_rendered_templates
