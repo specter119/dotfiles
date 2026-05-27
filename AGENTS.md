@@ -22,7 +22,7 @@ This repo manages configs for multiple AI coding agents. Their paths follow XDG 
 | Claude  | `CLAUDE_CONFIG_DIR`   | `~/.config/claude`  |
 | Pi      | `PI_CODING_AGENT_DIR` | `~/.config/pi`      |
 | Copilot | `COPILOT_HOME`        | `~/.config/copilot` |
-| Gemini  | `GEMINI_CLI_HOME`     | `~/.config/gemini`  |
+| Antigravity | `ANTIGRAVITY_CLI_HOME` | `~/.config/antigravity` |
 | Qoder   | `QODERCLI_HOME`       | `~/.config/qoder`   |
 
 When reading or writing agent configs, use these paths.
@@ -147,6 +147,9 @@ nested_value = { key_b = "overridden" }
 | --- | --- | --- | --- |
 | `slock.api_key` | string | `global + local` | 可为空；服务仍应正常渲染 |
 | `slock.wss_proxy` | string | `global + local` | 可为空；未设置时不渲染 proxy env |
+| `codex.trusted_projects` | array of strings | `global + local` | 可为空；用于渲染 Codex `[projects]` trust 列表 |
+| `codex.hook_states` | array of tables | `global + local` | 每项包含 `key` 和 `trusted_hash`；用于渲染 Codex hook trust state |
+| `antigravity.trusted_workspaces` | array of strings | `global + local` | 可为空；用于渲染 Antigravity `trustedWorkspaces` |
 | `git.repo_identities` | table | `global + local` | 以 identity 名称为 key；值包含 `repo_dir`、`name`、`email` |
 | `skm.local_packages` | array of tables | `global + local` | 每项包含 `repo`，可选 `skills` |
 | `mihomo.direct_suffixes` | array of strings | `global + local` | 可为空；未设置时不渲染额外直连规则 |

@@ -1,0 +1,12 @@
+{
+  "colorScheme": "colorblind-friendly dark",
+  "enableTelemetry": false,
+  "model": "Gemini 3.5 Flash (High)",
+  "trustedWorkspaces": [
+    {{#if antigravity.trusted_workspaces}}
+    {{#each antigravity.trusted_workspaces}}
+    "{{this}}"{{#unless @last}},{{/unless}}
+    {{/each}}
+    {{/if}}
+  ]
+}

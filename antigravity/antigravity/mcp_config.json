@@ -1,13 +1,4 @@
 {
-  "general": {},
-  "ide": {
-    "hasSeenNudge": true
-  },
-  "security": {
-    "auth": {
-      "selectedType": "gemini-api-key"
-    }
-  },
   "mcpServers": {
     "fast-context": {
       "command": "bunx",

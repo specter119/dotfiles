@@ -93,6 +93,10 @@ stylua = '~/.config/stylua'
 [codex.files]
 codex = '~/.config/codex'
 
+[codex.variables]
+trusted_projects = []
+hook_states = []
+
 [pi.files]
 'pi/config' = '~/.config/pi'
 'pi/bin' = '~/.local/bin'
@@ -106,8 +110,11 @@ droid = '~/.factory'
 [amp.files]
 amp = '~/.config/amp'
 
-[gemini.files]
-gemini = '~/.config'
+[antigravity.files]
+antigravity = '~/.config'
+
+[antigravity.variables]
+trusted_workspaces = []
 
 [opencode.files]
 'opencode/config' = '~/.config/opencode'
@@ -237,7 +244,7 @@ depends = [
   'pi',
   'copilot',
   'opencode',
-  'gemini',
+  'antigravity',
   'qoder',
 ]
 
