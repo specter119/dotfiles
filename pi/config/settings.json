@@ -2,8 +2,8 @@
   "compaction": {
     "enabled": false
   },
-  "defaultModel": "qmodel",
-  "defaultProvider": "qoder",
+  "defaultModel": "glm-5.1",
+  "defaultProvider": "opencode-go",
   "defaultThinkingLevel": "high",
   "extensions": [
     "~/.config/pi/agent/extensions/pi-nmem.ts",
