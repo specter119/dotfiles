@@ -116,26 +116,8 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 
 遵循软件工程基本原则（DRY, KISS, YAGNI, SRP）。
 
-### 语言特定习惯
-
-#### Python API 设计与代码范式
-
-- 以用户体验倒推 API 设计（合理默认值、上下文管理器）
-- 扩展点收敛（注册中心替代 if-else 链）
-- 构造方式清晰（classmethod 替代 flag 参数）
-- 显式优于隐式（避免 `__getattr__` 滥用）
-- 复用生态扩展点（如 `requests.auth.AuthBase`）
-
-#### Python 独立脚本
-
-使用 `uv run` + PEP 723 Inline Script Metadata：
-
-```python
-# /// script
-# requires-python = ">=3.11"
-# dependencies = ["requests", "rich"]
-# ///
-```
+- Python：遵循 One Python Craftsman 的理念（参考 `piglet` / `friendly-python` skill）
+- Python 独立脚本：使用 `uv run` + PEP 723 Inline Script Metadata
 
 ## 测试要求
 
@@ -150,28 +132,3 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 - Type：`feat`, `fix`, `refactor`, `docs`, `test`, `chore`
 - 每次 commit 逻辑完整
 - Push 前确保测试通过
-
-## Skill 设计原则
-
-### 两种内容类型
-
-| 类型                  | 说明                           | 处理方式               |
-| --------------------- | ------------------------------ | ---------------------- |
-| Claude 不知道的       | 内部流程、API schema、业务规则 | 详细写入 `references/` |
-| Claude 已知但需激活的 | 领域理论、设计原则、最佳实践   | 提及权威来源和关键术语 |
-
-### 知识唤醒
-
-| 方法         | ❌ 硬编码规则   | ✅ 知识唤醒                        |
-| ------------ | --------------- | ---------------------------------- |
-| 提及权威来源 | "代码要整洁"    | "遵循 Robert Martin 的 Clean Code" |
-| 使用领域术语 | "函数要短"      | "应用单一职责原则（SRP）"          |
-| 说明 WHY     | "每页 5 个要点" | "考虑认知负荷理论（7±2）"          |
-
-### Skill 反馈循环
-
-1. **先诊断 Skill** - 检查是否定义有缺陷
-2. **询问用户** - "是否先更新 Skill 再重新生成，还是直接优化当前产出？"
-3. **根据选择执行**
-
-**原则**：先治本（Skill），再治标（产出）。

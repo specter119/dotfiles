@@ -12,6 +12,8 @@ packages:
   - repo: https://github.com/onevcat/skills
   - repo: https://github.com/yaojingang/yao-meta-skill
   - repo: https://github.com/yizhiyanhua-ai/fireworks-tech-graph
+  - repo: https://github.com/run-llama/llamaparse-agent-skills
+  - repo: https://github.com/ast-grep/agent-skill
   # {{#if skm.local_packages}}
   # {{#each skm.local_packages}}
   - repo: "{{repo}}"

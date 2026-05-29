@@ -55,6 +55,11 @@
 | `oracle` | 只读顾问，架构、调试、方案裁决 | foreground |
 | `librarian` | 查外部文档、第三方库、OSS 示例 | background |
 
+### 工具前置
+
+- 解析二进制文档（doc/pptx/xlsx/pdf）：先用 `lit <file>` 提取文本，再按内容决定路由
+- Skill 管理（创建/重构/评估）：使用 `waza` CLI
+
 ### 路由规则
 
 路由优先级从上到下，第一个匹配即执行：
@@ -226,26 +231,8 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 
 遵循软件工程基本原则（DRY, KISS, YAGNI, SRP）。
 
-### 语言特定习惯
-
-#### Python API 设计与代码范式
-
-- 以用户体验倒推 API 设计（合理默认值、上下文管理器）
-- 扩展点收敛（注册中心替代 if-else 链）
-- 构造方式清晰（classmethod 替代 flag 参数）
-- 显式优于隐式（避免 `__getattr__` 滥用）
-- 复用生态扩展点（如 `requests.auth.AuthBase`）
-
-#### Python 独立脚本
-
-使用 `uv run` + PEP 723 Inline Script Metadata：
-
-```python
-# /// script
-# requires-python = ">=3.11"
-# dependencies = ["requests", "rich"]
-# ///
-```
+- Python：遵循 One Python Craftsman 的理念（参考 `piglet` / `friendly-python` skill）
+- Python 独立脚本：使用 `uv run` + PEP 723 Inline Script Metadata
 
 ## 测试要求
 
@@ -256,37 +243,8 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 
 ## Git 规范
 
-- 将 `jj` 作为当前的首选本地版本控制工作流；在存在 `.jj/` 的仓库中，默认启用 `onevcat-jj` skill 并优先使用 `jj`
-- 主动使用 `jj log` / `jj diff` / `jj new` 组织工作；需要拆分复杂任务时，优先考虑用 `jj` 的 change-based workflow 管理中间状态
-- 避免在 `jj` 仓库中使用 `git add`、`git commit`、`git stash`、`git checkout` 处理本地变更；仅在远端兼容或只读场景下使用 `git`
-- 需要和远端同步时，优先使用 `jj git fetch`、`jj bookmark`、`jj git push`
-- `jj git init --colocate` 后必须立即 `jj bookmark track <name>@origin` 常用远端 bookmark（如 `master`/`main`），否则后续 `jj git push` 会因 non-tracking 报错
+- 在存在 `.jj/` 的仓库中，遵循 `onevcat-jj` skill 使用 jj
 - Commit message：英文，格式 `<type>: <description>`
 - Type：`feat`, `fix`, `refactor`, `docs`, `test`, `chore`
 - 每次 commit 逻辑完整
 - Push 前确保测试通过
-
-## Skill 设计原则
-
-### 两种内容类型
-
-| 类型                 | 说明                           | 处理方式               |
-| -------------------- | ------------------------------ | ---------------------- |
-| Model 不知道的       | 内部流程、API schema、业务规则 | 详细写入 `references/` |
-| Model 已知但需激活的 | 领域理论、设计原则、最佳实践   | 提及权威来源和关键术语 |
-
-### 知识唤醒
-
-| 方法         | ❌ 硬编码规则   | ✅ 知识唤醒                        |
-| ------------ | --------------- | ---------------------------------- |
-| 提及权威来源 | "代码要整洁"    | "遵循 Robert Martin 的 Clean Code" |
-| 使用领域术语 | "函数要短"      | "应用单一职责原则（SRP）"          |
-| 说明 WHY     | "每页 5 个要点" | "考虑认知负荷理论（7±2）"          |
-
-### Skill 反馈循环
-
-1. **先诊断 Skill** - 检查是否定义有缺陷
-2. **询问用户** - "是否先更新 Skill 再重新生成，还是直接优化当前产出？"
-3. **根据选择执行**
-
-**原则**：先治本（Skill），再治标（产出）。

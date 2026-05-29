@@ -17,6 +17,7 @@
   "packages": [
     "https://github.com/aliou/pi-guardrails",
     "npm:@tintinweb/pi-subagents",
+    "npm:@narumitw/pi-goal",
     "npm:pi-web-access",
     "npm:pi-context-prune",
     "npm:@ff-labs/pi-fff",
