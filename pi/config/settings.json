@@ -10,13 +10,16 @@
     "~/.config/pi/agent/extensions/qoder-tool.ts"
   ],
   "hideThinkingBlock": false,
-  "lastChangelogVersion": "0.76.0",
+  "lastChangelogVersion": "0.77.0",
   "npmCommand": [
     "pi_npm_command"
   ],
   "packages": [
     "https://github.com/aliou/pi-guardrails",
-    "https://github.com/HazAT/pi-interactive-subagents",
+    "npm:@tintinweb/pi-subagents",
+    "npm:pi-web-access",
+    "npm:pi-context-prune",
+    "npm:@ff-labs/pi-fff",
     "https://github.com/davebcn87/pi-autoresearch",
     "https://github.com/sherif-fanous/pi-rtk"
   ]

@@ -7,6 +7,9 @@ local launch_menu = {}
 
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   config.default_domain = 'WSL:archlinux'
+  config.wsl_domains = {
+    { name = 'WSL:archlinux', distribution = 'archlinux', default_cwd = '~' },
+  }
 
   -- Start in WSL domain with zellij; new tabs use default shell
   config.default_gui_startup_args = { 'start', '--domain', 'WSL:archlinux', '--', 'zellij', 'attach', '--create', 'main' }

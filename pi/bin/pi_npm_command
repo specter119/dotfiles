@@ -1,2 +1,43 @@
 #!/bin/bash
-BUN_INSTALL_TRUST=1 bun "$@"
+# Pi npm command wrapper: translates npm-style calls to bun equivalents.
+# Logs all invocations for debugging; remove LOG line to disable.
+LOG="${XDG_STATE_HOME:-$HOME/.local/state}/pi/npm-command.log"
+mkdir -p "$(dirname "$LOG")"
+echo "[$(date -Iseconds)] PWD=$PWD args=$*" >> "$LOG"
+
+args=()
+prefix_dir=""
+is_install=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    install|add|i)
+      args+=("$1" "--trust")
+      is_install=true
+      shift
+      ;;
+    --prefix)
+      prefix_dir="$2"
+      shift 2
+      ;;
+    --prefix=*)
+      prefix_dir="${1#--prefix=}"
+      shift
+      ;;
+    --save|--save-dev|--save-optional|--legacy-peer-deps|--ignore-scripts)
+      # npm-only flags bun ignores or handles differently; skip
+      shift
+      ;;
+    *)
+      args+=("$1")
+      shift
+      ;;
+  esac
+done
+
+if [[ -n "$prefix_dir" ]]; then
+  cd "$prefix_dir" || exit 1
+fi
+
+export BUN_INSTALL_TRUST=1
+exec bun "${args[@]}"

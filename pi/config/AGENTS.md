@@ -1,5 +1,13 @@
 # AGENTS.md
 
+## 目标与边界
+
+- 目标：积极利用 subagent 分工协作，将受益于隔离/并行的任务委派执行
+- 默认策略：trivial 直接完成；moderate 评估是否受益于隔离后决定；complex 必须拆分委派
+- 委派最多一层，同时最多并行 4 个 subagent；subagent 不再继续委派
+- 所有 subagent 使用 DeepSeek V4 Flash（`qoder/dfmodel`）
+- background / foreground 由调用方根据场景决定，不硬编码
+
 ## 交流规范
 
 - 用中文交流、写 spec 和文档
@@ -19,8 +27,8 @@
 ### 基础流程
 
 1. **理解需求** - 有疑问立即提问
-2. **搜索优先** - 修改前先搜索并阅读相关代码
-3. **小步快跑** - 拆分大任务，逐步完成
+2. **快速判断** - 读 AGENTS.md 或小文件做路由决策，不做大范围搜索
+3. **分解委派** - 非 trivial 操作优先委派 subagent，自己只做轻量确认
 4. **目标驱动** - 先定义验收标准，循环验证直到满足
 5. **主动报告** - 完成后报告结果；无法复述当前状态时停下重新陈述
 
@@ -30,28 +38,140 @@
 
 1. **优先级与约束**：显式规则 > 操作顺序 > 前置条件
 2. **风险评估**：低风险直接行动，高风险说明替代方案
-3. **复杂度分级**：
-   - trivial: 简单语法、<10行修改
-   - moderate: 单文件复杂逻辑、局部重构
-   - complex: 跨模块设计、大型重构
+3. **复杂度分级与委派决策**：
+   - trivial（<10行修改）：直接完成
+   - moderate（单文件复杂逻辑、局部重构）：评估是否受益于隔离/并行，是则委派
+   - complex（跨模块设计、大型重构）：必须拆分后并行委派多个 subagent
+
+## 多 Agent 协作
+
+### 可用角色
+
+| 角色 | 用途 | 默认运行方式 |
+|------|------|-------------|
+| `explorer` | 读代码、搜实现、列事实、收集上下文 | background |
+| `task-subagent` | 通用实现子 agent，执行明确范围的修改 | background |
+| `reviewer` | findings-first 的 code review | background |
+| `oracle` | 只读顾问，架构、调试、方案裁决 | foreground |
+| `librarian` | 查外部文档、第三方库、OSS 示例 | background |
+
+### 路由规则
+
+路由优先级从上到下，第一个匹配即执行：
+
+1. **trivial 任务**（<10行、单点修改、非安全相关）→ 直接完成，不委派
+2. **代码搜索、现状梳理、找入口** → 委派 `explorer`（可并行多个）
+3. **外部文档、某库/API 用法** → 委派 `librarian`
+4. **明确实现任务，受益于隔离执行** → 委派 `task-subagent`
+   - "受益于隔离"：需要独立验证、会阻塞主线、或可与其他任务并行
+5. **多个互不依赖的子任务** → 并行委派多个 `task-subagent`（文件范围不重叠）
+6. **实现后复核、发布前审查** → 委派 `reviewer`
+7. **需求含糊、方案冲突、架构权衡大** → 委派 `oracle`（foreground，等待结果）
+8. **两次修复失败、调试无方向** → 委派 `oracle` 诊断
+
+**Tie-breaker**：当任务同时匹配多条规则时：
+- 目标和修改范围已知 → 优先匹配实现规则（rule 4/5）
+- 目标或影响范围未知 → 优先 explorer 收集事实
+- 涉及 security/auth/数据丢失 → 不论行数，不当作 trivial，必须经 reviewer
+
+### 委派后验证
+
+subagent 完成后，主 agent 必须：
+1. 检查 subagent 报告的 `conclusion` 和 `risks`
+2. 对非 trivial 改动：浏览 diff 或关键改动文件
+3. 确认声称"测试通过"时测试确实运行了
+4. 高风险改动（security/auth/public API/数据模型）→ 委派 `reviewer` 做 formal review
+
+### 并行策略
+
+- 识别任务中的独立子问题，尽量并行而非串行
+- 典型并行模式：
+  - `explorer`（搜索模块A）+ `explorer`（搜索模块B）→ 汇总后实现
+  - `task-subagent`（修改前端）+ `task-subagent`（修改后端）→ 汇总验证
+  - `librarian`（查文档）+ `explorer`（读现有实现）→ 对比后裁决
+- 存在依赖的任务必须串行：先 `explorer` 收集事实 → 再 `task-subagent` 实现
+- **并行写入约束**：多个 `task-subagent` 并行时，必须拆分为不重叠的文件/目录范围，禁止多个写 agent 操作同一文件
+
+### Handoff 协议
+
+委派 subagent 时，prompt 中必须包含以下字段：
+
+- `task`: 要做什么
+- `goal`: 期望达成的目标
+- `in_scope`: 范围内的文件/模块
+- `out_of_scope`: 不要碰的部分
+- `context`: 已知背景（代码片段、之前 subagent 的结论等）
+- `constraints`: 技术约束、风格要求
+- `acceptance_criteria`: 如何判断完成
+
+示例：
+
+```
+Agent({
+  subagent_type: "task-subagent",
+  prompt: `
+    task: 将 auth 模块从 session-based 迁移到 JWT
+    goal: 所有 API 端点使用 JWT 验证，旧 session 逻辑移除
+    in_scope: src/auth/, src/middleware/auth.ts
+    out_of_scope: 前端代码、数据库 schema
+    context: 当前使用 express-session，token 存在 cookie 中
+    constraints: 保持向后兼容至少一个版本周期
+    acceptance_criteria: 所有 auth 相关测试通过，无 session 依赖残留
+  `,
+  description: "Migrate auth to JWT",
+  run_in_background: true
+})
+```
+
+### 子 Agent 输出协议
+
+所有 subagent 必须返回以下字段：
+
+- `conclusion`: 做了什么 / 发现了什么
+- `key_evidence`: 关键证据（文件路径、测试结果、引用来源）
+- `risks`: 风险和未覆盖的边界
+- `open_questions`: 需要主 agent 或用户决定的问题
+- `recommended_next_step`: 建议下一步
+
+### 汇总与裁决
+
+- 主 agent 负责最终结论，不能把最终责任转给 subagent
+- 如果多个 subagent 结论冲突，主 agent 必须明确说明冲突点和裁决依据
+- `oracle` 的意见是 consultation only，不自动覆盖实现或评审结论
+- `task-subagent` 是 generic executor，不承担架构裁决职责
+- 汇总结果后，向用户报告时简洁列出各 subagent 贡献，不逐字复述
 
 ## 工具使用偏好
 
-### 内置工具（优先使用）
+### 主 agent 定位：轻量 orchestrator
+
+主 agent 优先做路由和裁决，重型操作委派 subagent：
+
+| 操作 | 主 agent 直接做 | 委派 subagent |
+|------|---------------|--------------|
+| 读单个小文件 | ✅ | — |
+| <10行快速修改 | ✅ | — |
+| 简单 grep 确认 | ✅ | — |
+| 多文件搜索/对比 | — | → explorer |
+| ast-grep 结构搜索 | — | → explorer |
+| 大范围重构 | — | → task-subagent |
+| 外部文档查询 | — | → librarian |
+
+### 内置工具（主 agent 用于轻量操作）
 
 - 读取文件：`read`（不是 `cat`）
 - 编辑文件：`edit`（精确替换，不是 `sed`）
 - 创建文件：`write`（新文件或完全重写）
-- 执行命令：`bash`（ls, grep, find, fd, rg 等）
+- 执行命令：`bash`（简单命令：ls, 单次 rg, fd）
 
-### 系统命令
+### 系统命令（subagent 中优先使用）
 
 - 文本搜索：`rg` > `grep`
 - 文件查找：`fd` > `find`
+- 语法搜索：`ast-grep`（仅 explorer/task-subagent 使用）
 - DNS 查询：`dig` > `nslookup`
 - 网络连接：`ss` > `netstat`
-- 语法搜索：`ast-grep`
-- 浏览器操作（网页截图、表单填写、Web 测试）：`playwright-cli`
+- 浏览器操作：`playwright-cli`
 - PDF 转图片：`pdftoppm`（不要用 Playwright）
 
 > **注意**：PDF 截图 ≠ 浏览器截图。PDF 用 `pdftoppm -png -r 150 file.pdf out/page`，网页用 `playwright-cli screenshot`。
@@ -77,7 +197,7 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 ### 回答前自检
 
 1. 任务复杂度：trivial / moderate / complex？
-2. 是否在解释已知的基础知识？
+2. 是否受益于隔离执行或并行？（是则委派 subagent）
 3. 是否可以直接修复低级错误？
 
 ### 自动修复低级错误
