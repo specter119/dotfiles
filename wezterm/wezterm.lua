@@ -8,7 +8,7 @@ local launch_menu = {}
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   config.default_domain = 'WSL:archlinux'
   config.wsl_domains = {
-    { name = 'WSL:archlinux', distribution = 'archlinux', default_cwd = '~' },
+    { name = 'WSL:archlinux', distribution = 'archlinux', default_cwd = '/home/liuky3' },
   }
 
   -- Start in WSL domain with zellij; new tabs use default shell
@@ -35,6 +35,7 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
     { key = 'v', mods = 'CTRL', action = wezterm.action.Nop },
     { key = 'Enter', mods = 'SHIFT', action = wezterm.action.SendString '\x1b\r' },
   }
+  config.default_cwd = '/home/liuky3'
 elseif wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
   table.insert(launch_menu, {
     label = 'Default Shell',
