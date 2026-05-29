@@ -7,15 +7,13 @@ local launch_menu = {}
 
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   config.default_domain = 'WSL:archlinux'
-  config.wsl_domains = {
-    { name = 'WSL:archlinux', distribution = 'archlinux', default_cwd = '/home/liuky3' },
-  }
 
   -- Start in WSL domain with zellij; new tabs use default shell
-  config.default_gui_startup_args = { 'start', '--domain', 'WSL:archlinux', '--', 'zellij', 'attach', '--create', 'main' }
+  config.default_gui_startup_args =
+    { 'start', '--domain', 'WSL:archlinux', '--', 'zellij', 'attach', '--create', 'main' }
 
   table.insert(launch_menu, {
-    label = 'zellij',
+    label = 'Zellij',
     args = { 'zellij', 'attach', '--create', 'main' },
   })
 
@@ -35,19 +33,14 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
     { key = 'v', mods = 'CTRL', action = wezterm.action.Nop },
     { key = 'Enter', mods = 'SHIFT', action = wezterm.action.SendString '\x1b\r' },
   }
-  config.default_cwd = '/home/liuky3'
 elseif wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
-  table.insert(launch_menu, {
-    label = 'Default Shell',
-  })
-
   table.insert(launch_menu, {
     label = 'Bash',
     args = { 'bash', '-l' },
   })
 
   table.insert(launch_menu, {
-    label = 'zellij',
+    label = 'Zellij',
     args = { 'zellij', 'attach', '--create', 'main' },
   })
 end
@@ -55,7 +48,6 @@ end
 config.launch_menu = launch_menu
 
 config.term = 'wezterm'
-
 config.font = wezterm.font('Sarasa Term SC Nerd', { weight = 'DemiBold' })
 config.font_size = 13.0
 config.window_background_opacity = 0.86
