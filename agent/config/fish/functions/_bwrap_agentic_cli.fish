@@ -11,10 +11,23 @@ function _bwrap_agentic_cli --description 'Run a CLI tool inside a bwrap sandbox
     set -l cmd_args
     set -l sep (contains -i -- -- $argv)
     if test -n "$sep"
-        set bwrap_extra $argv[1..(math $sep - 1)]
+        if test $sep -gt 1
+            set bwrap_extra $argv[1..(math $sep - 1)]
+        end
         set cmd_args $argv[(math $sep + 1)..]
     else
         set cmd_args $argv
+    end
+
+    if test (count $cmd_args) -eq 0
+        echo "Error: missing command" >&2
+        return 127
+    end
+
+    set -l cmd (command -v $cmd_args[1])
+    if test -z "$cmd"
+        echo "Error: command not found: $cmd_args[1]" >&2
+        return 127
     end
 
     # Detect git worktree and prepare extra mounts
@@ -72,5 +85,5 @@ function _bwrap_agentic_cli --description 'Run a CLI tool inside a bwrap sandbox
         $worktree_mounts \
         --setenv HOME $HOME \
         --setenv PATH $HOME/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin \
-        -- (command -v $cmd_args[1]) $cmd_args[2..]
+        -- $cmd $cmd_args[2..]
 end
