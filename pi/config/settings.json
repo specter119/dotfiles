@@ -5,10 +5,7 @@
   "defaultModel": "glm-5.1",
   "defaultProvider": "opencode-go",
   "defaultThinkingLevel": "high",
-  "extensions": [
-    "~/.config/pi/agent/extensions/pi-nmem.ts",
-    "~/.config/pi/agent/extensions/qoder-tool.ts"
-  ],
+  "extensions": [],
   "hideThinkingBlock": false,
   "lastChangelogVersion": "0.78.0",
   "npmCommand": [

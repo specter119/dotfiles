@@ -9,8 +9,8 @@ packages:
   - repo: https://github.com/specter119/skills
   - repo: https://github.com/Xuanwo/xurl
   - repo: https://github.com/PsiACE/skills
-  - repo: https://github.com/onevcat/skills
-  - repo: https://github.com/yaojingang/yao-meta-skill
+  # - repo: https://github.com/onevcat/skills
+  # - repo: https://github.com/yaojingang/yao-meta-skill
   - repo: https://github.com/yizhiyanhua-ai/fireworks-tech-graph
   - repo: https://github.com/run-llama/llamaparse-agent-skills
   - repo: https://github.com/ast-grep/agent-skill

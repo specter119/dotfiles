@@ -1,0 +1,279 @@
+/**
+ * qoder-proxy Pi Extension
+ *
+ * Registers Qoder's native PascalCase tools (Bash, Read, Write, Edit, Glob, Grep)
+ * so pi-agent can execute them when the Qoder model returns native tool_calls.
+ *
+ * Tools are registered unconditionally but only triggered when the model calls
+ * them by PascalCase name. Non-Qoder models won't generate these names.
+ *
+ * Scope: builtin-to-builtin mapping only. Extend for custom tool relay.
+ */
+
+import type {
+  ExtensionAPI,
+  ToolDefinition,
+} from "@earendil-works/pi-coding-agent";
+import { Type, type TSchema } from "typebox";
+import { spawn } from "node:child_process";
+import * as fs from "node:fs";
+import * as path from "node:path";
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const MAX_OUTPUT_BYTES = 64 * 1024; // 64KB output cap
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function runCommand(command: string, cwd: string, signal?: AbortSignal): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const child = spawn("bash", ["-c", command], {
+      cwd,
+      env: { ...process.env, TERM: "dumb" },
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+
+    if (signal) {
+      signal.addEventListener("abort", () => child.kill("SIGTERM"), { once: true });
+    }
+
+    const chunks: Buffer[] = [];
+    let totalBytes = 0;
+
+    child.stdout.on("data", (chunk: Buffer) => {
+      if (totalBytes < MAX_OUTPUT_BYTES) {
+        chunks.push(chunk);
+        totalBytes += chunk.length;
+      }
+    });
+    child.stderr.on("data", (chunk: Buffer) => {
+      if (totalBytes < MAX_OUTPUT_BYTES) {
+        chunks.push(chunk);
+        totalBytes += chunk.length;
+      }
+    });
+
+    child.on("error", reject);
+    child.on("close", (code) => {
+      let output = Buffer.concat(chunks).toString("utf-8");
+      if (totalBytes >= MAX_OUTPUT_BYTES) {
+        output += "\n…[truncated]";
+      }
+      if (code !== 0) {
+        output += `\n[exit code: ${code}]`;
+      }
+      resolve(output);
+    });
+  });
+}
+
+/** Spawn with explicit argv (no shell interpolation — safe from injection). */
+function runSpawn(cmd: string, args: string[], cwd: string, signal?: AbortSignal): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(cmd, args, {
+      cwd,
+      env: { ...process.env, TERM: "dumb" },
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+
+    if (signal) {
+      signal.addEventListener("abort", () => child.kill("SIGTERM"), { once: true });
+    }
+
+    const chunks: Buffer[] = [];
+    let totalBytes = 0;
+
+    child.stdout.on("data", (chunk: Buffer) => {
+      if (totalBytes < MAX_OUTPUT_BYTES) {
+        chunks.push(chunk);
+        totalBytes += chunk.length;
+      }
+    });
+    child.stderr.on("data", (chunk: Buffer) => {
+      if (totalBytes < MAX_OUTPUT_BYTES) {
+        chunks.push(chunk);
+        totalBytes += chunk.length;
+      }
+    });
+
+    child.on("error", reject);
+    child.on("close", (code) => {
+      let output = Buffer.concat(chunks).toString("utf-8");
+      if (totalBytes >= MAX_OUTPUT_BYTES) {
+        output += "\n…[truncated]";
+      }
+      if (code !== 0 && code !== 1) {
+        // exit 1 from rg/find means "no matches" — not an error
+        output += `\n[exit code: ${code}]`;
+      }
+      resolve(output);
+    });
+  });
+}
+
+function resolvePath(filePath: string, cwd: string): string {
+  return path.isAbsolute(filePath) ? filePath : path.resolve(cwd, filePath);
+}
+
+// ---------------------------------------------------------------------------
+// Tool Definitions
+// ---------------------------------------------------------------------------
+
+function createBashTool(): ToolDefinition {
+  return {
+    name: "Bash",
+    label: "Bash (Qoder)",
+    description: "Execute a shell command and return the output.",
+    promptSnippet: "Bash: execute shell commands",
+    parameters: Type.Object({
+      command: Type.String({ description: "The shell command to execute" }),
+    }),
+    async execute(_toolCallId, params, signal, _onUpdate, ctx) {
+      const output = await runCommand(params.command, ctx.cwd, signal ?? undefined);
+      return { content: [{ type: "text", text: output }], details: undefined };
+    },
+  };
+}
+
+function createReadTool(): ToolDefinition {
+  return {
+    name: "Read",
+    label: "Read (Qoder)",
+    description: "Read the contents of a file.",
+    promptSnippet: "Read: read file contents",
+    parameters: Type.Object({
+      file_path: Type.String({ description: "Path to the file to read" }),
+      offset: Type.Optional(Type.Number({ description: "Byte offset to start reading from" })),
+      limit: Type.Optional(Type.Number({ description: "Maximum number of bytes to read" })),
+    }),
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const absPath = resolvePath(params.file_path, ctx.cwd);
+      const buf = await fs.promises.readFile(absPath);
+      const start = params.offset ?? 0;
+      const end = params.limit ? start + params.limit : buf.length;
+      const content = buf.slice(start, end).toString("utf-8");
+      return { content: [{ type: "text", text: content }], details: undefined };
+    },
+  };
+}
+
+function createWriteTool(): ToolDefinition {
+  return {
+    name: "Write",
+    label: "Write (Qoder)",
+    description: "Write content to a file, creating parent directories as needed.",
+    promptSnippet: "Write: create or overwrite files",
+    parameters: Type.Object({
+      file_path: Type.String({ description: "Path to write to" }),
+      content: Type.String({ description: "Content to write" }),
+    }),
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const absPath = resolvePath(params.file_path, ctx.cwd);
+      await fs.promises.mkdir(path.dirname(absPath), { recursive: true });
+      await fs.promises.writeFile(absPath, params.content, "utf-8");
+      return { content: [{ type: "text", text: `Written ${params.content.length} bytes to ${params.file_path}` }], details: undefined };
+    },
+  };
+}
+
+function createEditTool(): ToolDefinition {
+  return {
+    name: "Edit",
+    label: "Edit (Qoder)",
+    description: "Replace text in a file. Finds old_text and replaces with new_text.",
+    promptSnippet: "Edit: find and replace text in files",
+    parameters: Type.Object({
+      file_path: Type.String({ description: "Path to the file to edit" }),
+      old_text: Type.String({ description: "Text to find (must match exactly)" }),
+      new_text: Type.String({ description: "Replacement text" }),
+    }),
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const absPath = resolvePath(params.file_path, ctx.cwd);
+      const original = await fs.promises.readFile(absPath, "utf-8");
+      if (!original.includes(params.old_text)) {
+        throw new Error(`old_text not found in ${params.file_path}`);
+      }
+      const updated = original.replace(params.old_text, params.new_text);
+      await fs.promises.writeFile(absPath, updated, "utf-8");
+      return { content: [{ type: "text", text: `Edited ${params.file_path}: replaced ${params.old_text.length} chars` }], details: undefined };
+    },
+  };
+}
+
+function createGlobTool(): ToolDefinition {
+  return {
+    name: "Glob",
+    label: "Glob (Qoder)",
+    description: "Find files matching a glob pattern.",
+    promptSnippet: "Glob: find files by pattern",
+    parameters: Type.Object({
+      pattern: Type.String({ description: "Glob pattern to match" }),
+      path: Type.Optional(Type.String({ description: "Directory to search in" })),
+    }),
+    async execute(_toolCallId, params, signal, _onUpdate, ctx) {
+      const cwd = params.path ? resolvePath(params.path, ctx.cwd) : ctx.cwd;
+      const output = await runSpawn(
+        "find", [".", "-path", params.pattern, "-type", "f"],
+        cwd, signal ?? undefined,
+      );
+      return { content: [{ type: "text", text: output || "No files found" }], details: undefined };
+    },
+  };
+}
+
+function createGrepTool(): ToolDefinition {
+  return {
+    name: "Grep",
+    label: "Grep (Qoder)",
+    description: "Search file contents using ripgrep.",
+    promptSnippet: "Grep: search text in files",
+    parameters: Type.Object({
+      pattern: Type.String({ description: "Search pattern (regex)" }),
+      path: Type.Optional(Type.String({ description: "Directory or file to search" })),
+      include: Type.Optional(Type.String({ description: "File glob to include" })),
+    }),
+    async execute(_toolCallId, params, signal, _onUpdate, ctx) {
+      const searchPath = params.path ? resolvePath(params.path, ctx.cwd) : ".";
+      const args = ["--no-heading", "--line-number", "--max-count", "50"];
+      if (params.include) args.push("--glob", params.include);
+      args.push("--", params.pattern, searchPath);
+      const output = await runSpawn("rg", args, ctx.cwd, signal ?? undefined);
+      return { content: [{ type: "text", text: output || "No matches found" }], details: undefined };
+    },
+  };
+}
+
+// Stub tools for unmapped Qoder builtins — guide model to alternatives
+function createStubTool(name: string, alternative: string): ToolDefinition {
+  return {
+    name,
+    label: `${name} (Qoder, unavailable)`,
+    description: `This tool is not available in this environment. ${alternative}`,
+    parameters: Type.Object({}),
+    async execute() {
+      throw new Error(`Tool "${name}" is not available. ${alternative}`);
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Extension Entry Point
+// ---------------------------------------------------------------------------
+
+export default function qoderToolsExtension(pi: ExtensionAPI) {
+  // Register all mapped tools
+  pi.registerTool(createBashTool());
+  pi.registerTool(createReadTool());
+  pi.registerTool(createWriteTool());
+  pi.registerTool(createEditTool());
+  pi.registerTool(createGlobTool());
+  pi.registerTool(createGrepTool());
+
+  // Register stubs for unmapped tools
+  pi.registerTool(createStubTool("WebFetch", "Use Bash with curl or wget instead."));
+  pi.registerTool(createStubTool("WebSearch", "Use Bash with curl to query a search API."));
+}
