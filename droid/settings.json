@@ -1,16 +1,28 @@
 {
   "logoAnimation": "off",
   "sessionDefaultSettings": {
-    "model": "custom:MiniMax-M2.7-0",
-    "reasoningEffort": "none",
+    "model": "claude-opus-4-6",
+    "reasoningEffort": "high",
     "interactionMode": "auto",
-    "autonomyLevel": "low",
-    "autonomyMode": "auto-low"
+    "autonomyLevel": "medium",
+    "autonomyMode": "auto-medium"
   },
   "compactionTokenLimit": 100000,
   "modelFavorites": [
     "claude-opus-4-6",
     "gpt-5.5",
     "glm-5.1"
-  ]
+  ],
+  "compactionModel": "gemini-3-flash-preview",
+  "missionModelSettings": {
+    "validationWorkerModel": "gpt-5.3-codex",
+    "validationWorkerReasoningEffort": "high",
+    "skipUserTesting": false,
+    "workerModel": "gpt-5.4",
+    "workerReasoningEffort": "high",
+    "skipScrutiny": true
+  },
+  "includeCoAuthoredByDroid": false,
+  "missionOrchestratorModel": "claude-opus-4-6",
+  "missionOrchestratorReasoningEffort": "high"
 }
