@@ -94,6 +94,7 @@ stylua = '~/.config/stylua'
 codex = '~/.config/codex'
 
 [codex.variables]
+model_provider = ""
 trusted_projects = []
 hook_states = []
 

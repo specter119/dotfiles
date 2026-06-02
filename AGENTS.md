@@ -145,6 +145,7 @@ nested_value = { key_b = "overridden" }
 
 | Variable | Shape | Source | Notes |
 | --- | --- | --- | --- |
+| `codex.model_provider` | string | `global + local` | 可为空；为空时不渲染顶层 `model_provider` |
 | `slock.api_key` | string | `global + local` | 可为空；服务仍应正常渲染 |
 | `slock.wss_proxy` | string | `global + local` | 可为空；未设置时不渲染 proxy env |
 | `codex.trusted_projects` | array of strings | `global + local` | 可为空；用于渲染 Codex `[projects]` trust 列表 |
