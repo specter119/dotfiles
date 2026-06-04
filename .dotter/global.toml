@@ -246,12 +246,15 @@ depends = [
   'copilot',
   'opencode',
   'antigravity',
-  'qoder',
+  'qoder'
 ]
 
 [agent.files]
 'agent/config' = '~/.config'
 'agent/share' = '~/.local/share'
+
+[agent.variables.agent]
+enterprise_llm_base_url = ""
 
 [agent-tunnel]
 depends = ['skm', 'bub', 'lody', 'alma', 'slock']

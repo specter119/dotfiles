@@ -1,49 +1,65 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "qoder": {
+    "gateway-cn": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "qoder",
+      "name": "gateway-cn",
       "options": {
-        "baseURL": "https://qoder-proxy.worklab.com/v1",
-        "apiKey": "{{replace (command_output 'podman secret inspect qoder-proxy-api-key --showsecret | jq -r .[0].SecretData') '\n' ''}}"
+        "baseURL": "{{agent.enterprise_llm_base_url}}",
+        "useDeploymentBasedUrls": true,
+        "apiKey": "{{replace (command_output 'rbw get enterprise-llm-api-key') '\n' ''}}",
+        "setCacheKey": true
       },
       "models": {
-        "auto": {
-          "name": "Auto"
+        "deepseek-v4-pro": {
+          "name": "deepseek-v4-pro",
+          "options": {
+            "max_tokens": 800000,
+            "extra_body": {
+              "stream_options": { "include_usage": true }
+            }
+          }
         },
-        "ultimate": {
-          "name": "Ultimate"
+        "deepseek-v4-flash": {
+          "name": "deepseek-v4-flash",
+          "options": {
+            "max_tokens": 800000,
+            "extra_body": {
+              "stream_options": { "include_usage": true }
+            }
+          }
         },
-        "performance": {
-          "name": "Performance"
+        "glm-5.1": {
+          "name": "glm-5.1",
+          "options": {
+            "max_tokens": 800000,
+            "extra_body": {
+              "stream_options": { "include_usage": true }
+            }
+          }
         },
-        "efficient": {
-          "name": "Efficient"
+        "qwen3.7-max": {
+          "name": "qwen3.7-max",
+          "options": {
+            "max_tokens": 65536,
+            "extra_body": {
+              "stream_options": { "include_usage": true }
+            }
+          }
         },
-        "lite": {
-          "name": "Lite"
-        },
-        "qmodel": {
-          "name": "Qwen3.6-Plus"
-        },
-        "qmodel_latest": {
-          "name": "Qwen3.7-Max"
-        },
-        "kmodel": {
-          "name": "Kimi-K2.6"
-        },
-        "mmodel": {
-          "name": "MiniMax-M2.7"
-        },
-        "dmodel": {
-          "name": "DeepSeek-V4-Pro"
-        },
-        "dfmodel": {
-          "name": "DeepSeek-V4-Flash"
-        },
-        "gm51model": {
-          "name": "GLM-5.1"
+        "kimi-k2.6": {
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "name": "kimi-k2.6",
+          "options": {
+            "max_tokens": 98304,
+            "extra_body": {
+              "enable_thinking": true,
+              "stream_options": { "include_usage": true }
+            }
+          }
         }
       }
     }
