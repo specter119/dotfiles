@@ -1,9 +1,10 @@
+{{#if agent.gateway_cn_base_url}}
 {
   "providers": {
     "gateway-cn": {
       "api": "openai-completions",
-      "apiKey": "!rbw get enterprise-llm-api-key | tr -d '\\n'",
-      "baseUrl": "{{agent.enterprise_llm_base_url}}",
+      "apiKey": "!rbw get gateway-cn-api-key | tr -d '\\n'",
+      "baseUrl": "{{agent.gateway_cn_base_url}}",
       "compat": {
         "maxTokensField": "max_tokens",
         "supportsDeveloperRole": false
@@ -101,3 +102,8 @@
     }
   }
 }
+{{else}}
+{
+  "providers": {}
+}
+{{/if}}

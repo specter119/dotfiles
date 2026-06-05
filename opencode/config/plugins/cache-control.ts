@@ -1,7 +1,7 @@
 import type { Plugin } from "@opencode-ai/plugin";
 
 // Base URLs of providers that support Anthropic-style prompt caching.
-const PROVIDER_BASE_URLS = ["{{agent.enterprise_llm_base_url}}"];
+const PROVIDER_BASE_URLS = ["{{agent.gateway_cn_base_url}}"];
 
 let orig: typeof globalThis.fetch | undefined;
 

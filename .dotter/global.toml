@@ -102,11 +102,18 @@ hook_states = []
 'pi/config' = '~/.config/pi'
 'pi/bin' = '~/.local/bin'
 
+[pi.variables.pi]
+default_model = ""
+default_provider = ""
+
 [copilot.files]
 copilot = '~/.config/copilot'
 
 [droid.files]
 droid = '~/.factory'
+
+[droid.variables.droid]
+default_model = ""
 
 [amp.files]
 amp = '~/.config/amp'
@@ -254,7 +261,7 @@ depends = [
 'agent/share' = '~/.local/share'
 
 [agent.variables.agent]
-enterprise_llm_base_url = ""
+gateway_cn_base_url = ""
 
 [agent-tunnel]
 depends = ['skm', 'bub', 'lody', 'alma', 'slock']

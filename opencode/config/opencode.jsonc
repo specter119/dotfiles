@@ -1,13 +1,14 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
+// {{#if agent.gateway_cn_base_url}}
     "gateway-cn": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "gateway-cn",
       "options": {
-        "baseURL": "{{agent.enterprise_llm_base_url}}",
+        "baseURL": "{{agent.gateway_cn_base_url}}",
         "useDeploymentBasedUrls": true,
-        "apiKey": "{{replace (command_output 'rbw get enterprise-llm-api-key') '\n' ''}}",
+        "apiKey": "{{replace (command_output 'rbw get gateway-cn-api-key') '\n' ''}}",
         "setCacheKey": true
       },
       "models": {
@@ -63,6 +64,7 @@
         }
       }
     }
+// {{/if}}
   },
   "mcp": {
     "fast-context": {

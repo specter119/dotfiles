@@ -9,6 +9,14 @@ Scope: `.dotter/`
   - ❌ Splitting into `package/config.toml` + `package/subdir/file.toml`
 - Principle: write one line when possible; use multiple lines only when prefixes differ.
 
+## Deploy Workflow
+
+- Default to `dotter deploy` (without `--force`).
+- When deploy reports "target contents were changed", inspect the diff first:
+  1. If the difference is a value that varies per machine (model name, API key, path, etc.), extract it into a Dotter variable in `global.toml` / `local.toml` so the template absorbs the change.
+  2. If the difference is a legitimate upstream change that should be committed, accept it into the repo template.
+  3. Only use `--force` as a last resort after understanding the diff.
+
 ## Deploy Scripts
 
 - `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` are for deploy-time glue that should not live in static templates. Keep these entry scripts POSIX `sh` compatible because Dotter may execute the rendered cache scripts through `/bin/sh`; call Bash-only helpers explicitly with `bash ...`.

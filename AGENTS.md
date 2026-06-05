@@ -189,23 +189,26 @@ The `replace ... '\n' ''` removes trailing newline from rbw output.
 
 1. `rbw add my-api-key` - store secret in Bitwarden
 2. Use `{{replace (command_output 'rbw get my-api-key') '\n' ''}}` in template
-3. `dotter deploy --force` - deploy with secrets injected
+3. `dotter deploy` - deploy with secrets injected
 
-#### Optional Variables with `#each`
+#### TOML Template Tips
 
-**Always wrap `#each` with `#if` to handle undefined variables gracefully.**
+**Always wrap `#each` with `#if`** — Dotter's `#each` fails when the variable is undefined. This rule applies to both TOML and YAML templates.
 
-Dotter's `#each` fails when the variable is undefined, breaking template rendering. Wrap it with `#if` to skip the block when the variable is missing:
+Put control blocks in `# ` comments to keep the raw template parseable by TOML-aware editors. **Combine `#if`+`#each` (and `/each`+`/if`) onto a single `# ` line** to minimize residual empty-comment lines after rendering:
 
-```handlebars
-# {{#if my_items}}
-# {{#each my_items}}
-- name: "{{name}}"
-# {{/each}}
-# {{/if}}
+```toml
+[projects]
+# {{#if codex.trusted_projects}}{{#each codex.trusted_projects}}
+
+[projects."{{this}}"]
+trust_level = "trusted"
+# {{/each}}{{/if}}
 ```
 
-This pattern ensures templates render correctly even when `my_items` is not defined in `local.toml`.
+- Each combined control line produces exactly **one** `# ` residue line after rendering (instead of two).
+- `post_deploy.sh` removes these residual `# ` lines from both the deployed target and the Dotter cache so they stay in sync and don't trigger false diffs on subsequent deploys.
+- Dotter treats any file containing `{{` as a template; `.tmpl` is not a required or special suffix.
 
 #### YAML Template Tips
 
@@ -227,8 +230,7 @@ When a YAML file is both a Dotter template and pre-commit formatted with `yamlfm
 
 - Put control blocks like `#each` and `#if` in YAML comments so YAML formatters and editors can still parse the file.
 - Quote inline Handlebars values in YAML scalars, for example `repo: "{{repo}}"` and `- "{{this}}"`. Unquoted forms may be rewritten into invalid `{ { repo } }` style text by formatters.
-- Dotter treats any file containing `{{` as a template; `.tmpl` is not a required or special suffix.
-- After deploy, generated YAML files may contain empty `#` lines left by commented control blocks. It is safe to delete lines matching `^[[:space:]]*#[[:space:]]*$` in both the rendered target and the Dotter cache copy so future deploys stay in sync.
+- After deploy, generated files may contain empty `#` lines left by commented control blocks. `post_deploy.sh` removes lines matching `^[[:space:]]*#[[:space:]]*$` from both the rendered target and the Dotter cache copy so future deploys stay in sync.
 
 ## Commands
 

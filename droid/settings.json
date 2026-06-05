@@ -1,28 +1,28 @@
 {
-  "logoAnimation": "off",
-  "sessionDefaultSettings": {
-    "model": "claude-opus-4-6",
-    "reasoningEffort": "high",
-    "interactionMode": "auto",
-    "autonomyLevel": "medium",
-    "autonomyMode": "auto-medium"
-  },
+  "compactionModel": "gemini-3-flash-preview",
   "compactionTokenLimit": 100000,
+  "includeCoAuthoredByDroid": false,
+  "logoAnimation": "off",
+  "missionModelSettings": {
+    "skipScrutiny": true,
+    "skipUserTesting": false,
+    "validationWorkerModel": "gpt-5.3-codex",
+    "validationWorkerReasoningEffort": "high",
+    "workerModel": "gpt-5.4",
+    "workerReasoningEffort": "high"
+  },
+  "missionOrchestratorModel": "claude-opus-4-6",
+  "missionOrchestratorReasoningEffort": "high",
   "modelFavorites": [
     "claude-opus-4-6",
     "gpt-5.5",
     "glm-5.1"
   ],
-  "compactionModel": "gemini-3-flash-preview",
-  "missionModelSettings": {
-    "validationWorkerModel": "gpt-5.3-codex",
-    "validationWorkerReasoningEffort": "high",
-    "skipUserTesting": false,
-    "workerModel": "gpt-5.4",
-    "workerReasoningEffort": "high",
-    "skipScrutiny": true
-  },
-  "includeCoAuthoredByDroid": false,
-  "missionOrchestratorModel": "claude-opus-4-6",
-  "missionOrchestratorReasoningEffort": "high"
+  "sessionDefaultSettings": {
+    "autonomyLevel": "medium",
+    "autonomyMode": "auto-medium",
+    "interactionMode": "auto",
+    "model": "{{droid.default_model}}",
+    "reasoningEffort": "high"
+  }
 }

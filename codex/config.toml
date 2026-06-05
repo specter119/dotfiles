@@ -68,13 +68,11 @@ enabled = true
 enabled = true
 
 [projects]
-# {{#if codex.trusted_projects}}
-# {{#each codex.trusted_projects}}
+# {{#if codex.trusted_projects}}{{#each codex.trusted_projects}}
 
 [projects."{{this}}"]
 trust_level = "trusted"
-# {{/each}}
-# {{/if}}
+# {{/each}}{{/if}}
 
 [mcp_servers]
 
@@ -108,13 +106,11 @@ source = "~/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-r
 [hooks]
 
 [hooks.state]
-# {{#if codex.hook_states}}
-# {{#each codex.hook_states}}
+# {{#if codex.hook_states}}{{#each codex.hook_states}}
 
 [hooks.state."{{key}}"]
 trusted_hash = "{{trusted_hash}}"
-# {{/each}}
-# {{/if}}
+# {{/each}}{{/if}}
 
 [memories]
 generate_memories = true
