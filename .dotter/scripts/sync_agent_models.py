@@ -2,7 +2,7 @@
 # requires-python = ">=3.11"
 # dependencies = ["tomlkit"]
 # ///
-"""Read current default model/provider from deployed agent configs and sync them
+"""Read current local state from deployed agent configs and sync it
 into .dotter/local.toml so that dotter templates use the live values."""
 
 import json
@@ -58,6 +58,15 @@ def ensure_table(doc: tomlkit.TOMLDocument, *keys: str) -> tomlkit.items.Table:
     return current
 
 
+def sync_string(table: tomlkit.items.Table, key: str, value: object) -> bool:
+    if not isinstance(value, str):
+        return False
+    if table.get(key) == value:
+        return False
+    table[key] = value
+    return True
+
+
 def main() -> None:
     if LOCAL_TOML.exists():
         doc = tomlkit.parse(LOCAL_TOML.read_text())
@@ -66,18 +75,17 @@ def main() -> None:
 
     changed = False
 
-    # pi-agent: defaultModel, defaultProvider
+    # pi-agent: defaultModel, defaultProvider, lastChangelogVersion
     pi_data = read_json(PI_SETTINGS)
     if pi_data:
         pi_table = ensure_table(doc, 'variables', 'pi')
-        model = pi_data.get('defaultModel', '')
-        provider = pi_data.get('defaultProvider', '')
-        if pi_table.get('default_model') != model:
-            pi_table['default_model'] = model
-            changed = True
-        if pi_table.get('default_provider') != provider:
-            pi_table['default_provider'] = provider
-            changed = True
+        changed |= sync_string(pi_table, 'default_model', pi_data.get('defaultModel'))
+        changed |= sync_string(pi_table, 'default_provider', pi_data.get('defaultProvider'))
+        changed |= sync_string(
+            pi_table,
+            'last_changelog_version',
+            pi_data.get('lastChangelogVersion'),
+        )
 
     # droid: sessionDefaultSettings.model
     droid_data = read_json(DROID_SETTINGS)
