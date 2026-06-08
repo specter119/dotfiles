@@ -154,6 +154,12 @@ nested_value = { key_b = "overridden" }
 | `git.repo_identities` | table | `global + local` | 以 identity 名称为 key；值包含 `repo_dir`、`name`、`email` |
 | `skm.local_packages` | array of tables | `global + local` | 每项包含 `repo`，可选 `skills` |
 | `mihomo.direct_suffixes` | array of strings | `global + local` | 可为空；未设置时不渲染额外直连规则 |
+| `agent.enterprise_cn_base_url` | string | `global + local` | 共享 base URL；为空时不渲染 provider |
+| `agent.enterprise_cn_providers` | table of tables | `global + local` | 以 provider 名为 key；值含 `api_key`；用 `#each` 渲染多 provider |
+| `pi.default_model` | string | `global + local` | Pi 默认模型 ID；由 sync 脚本从部署侧同步 |
+| `pi.default_provider` | string | `global + local` | Pi 默认 provider 名；由 sync 脚本从部署侧同步 |
+| `opencode.default_model` | string | `global + local` | opencode 默认模型，格式 `provider/model`；由 sync 脚本同步 |
+| `droid.default_model` | string | `global + local` | Factory Droid 默认模型；由 sync 脚本同步 |
 
 #### Git Repo Identities
 

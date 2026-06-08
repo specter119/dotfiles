@@ -128,6 +128,9 @@ trusted_workspaces = []
 'opencode/config' = '~/.config/opencode'
 'opencode/share' = '~/.local/share/opencode'
 
+[opencode.variables.opencode]
+default_model = ""
+
 [skm.files]
 skm = '~/.config/skm'
 
@@ -261,7 +264,8 @@ depends = [
 'agent/share' = '~/.local/share'
 
 [agent.variables.agent]
-gateway_cn_base_url = ""
+enterprise_cn_base_url = ""
+enterprise_cn_providers = {}
 
 [agent-tunnel]
 depends = ['skm', 'bub', 'lody', 'alma', 'slock']

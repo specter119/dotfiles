@@ -6,6 +6,7 @@
 into .dotter/local.toml so that dotter templates use the live values."""
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -17,6 +18,7 @@ LOCAL_TOML = DOTTER_DIR / 'local.toml'
 
 PI_SETTINGS = Path.home() / '.config/pi/settings.json'
 DROID_SETTINGS = Path.home() / '.factory/settings.json'
+OPENCODE_CONFIG = Path.home() / '.config/opencode/opencode.jsonc'
 
 
 def read_json(path: Path) -> dict | None:
@@ -29,6 +31,21 @@ def read_json(path: Path) -> dict | None:
         return None
     try:
         return json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+def read_jsonc(path: Path) -> dict | None:
+    """Read JSONC (JSON with comments) from path, stripping // comments."""
+    if not path.exists():
+        return None
+    real = path.resolve()
+    if str(DOTTER_DIR.parent) in str(real):
+        return None
+    try:
+        text = path.read_text()
+        lines = [l for l in text.splitlines() if not re.match(r'^\s*//', l)]
+        return json.loads('\n'.join(lines))
     except (json.JSONDecodeError, OSError):
         return None
 
@@ -70,6 +87,15 @@ def main() -> None:
         model = droid_data.get('sessionDefaultSettings', {}).get('model', '')
         if droid_table.get('default_model') != model:
             droid_table['default_model'] = model
+            changed = True
+
+    # opencode: model
+    opencode_data = read_jsonc(OPENCODE_CONFIG)
+    if opencode_data:
+        opencode_table = ensure_table(doc, 'variables', 'opencode')
+        model = opencode_data.get('model', '')
+        if opencode_table.get('default_model') != model:
+            opencode_table['default_model'] = model
             changed = True
 
     if changed:

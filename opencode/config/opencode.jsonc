@@ -1,69 +1,23 @@
 {
   "$schema": "https://opencode.ai/config.json",
+// {{#if opencode.default_model}}
+  "model": "{{opencode.default_model}}",
+// {{/if}}
   "provider": {
-// {{#if agent.gateway_cn_base_url}}
-    "gateway-cn": {
+// {{#if (and agent.enterprise_cn_base_url agent.enterprise_cn_providers)}}
+// {{#each agent.enterprise_cn_providers}}
+    "{{@key}}": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "gateway-cn",
+      "name": "{{@key}}",
       "options": {
-        "baseURL": "{{agent.gateway_cn_base_url}}",
+        "baseURL": "{{@root.agent.enterprise_cn_base_url}}",
+        "apiKey": "{{this.api_key}}",
         "useDeploymentBasedUrls": true,
-        "apiKey": "{{replace (command_output 'rbw get gateway-cn-api-key') '\n' ''}}",
         "setCacheKey": true
       },
-      "models": {
-        "deepseek-v4-pro": {
-          "name": "deepseek-v4-pro",
-          "options": {
-            "max_tokens": 800000,
-            "extra_body": {
-              "stream_options": { "include_usage": true }
-            }
-          }
-        },
-        "deepseek-v4-flash": {
-          "name": "deepseek-v4-flash",
-          "options": {
-            "max_tokens": 800000,
-            "extra_body": {
-              "stream_options": { "include_usage": true }
-            }
-          }
-        },
-        "glm-5.1": {
-          "name": "glm-5.1",
-          "options": {
-            "max_tokens": 800000,
-            "extra_body": {
-              "stream_options": { "include_usage": true }
-            }
-          }
-        },
-        "qwen3.7-max": {
-          "name": "qwen3.7-max",
-          "options": {
-            "max_tokens": 65536,
-            "extra_body": {
-              "stream_options": { "include_usage": true }
-            }
-          }
-        },
-        "kimi-k2.6": {
-          "modalities": {
-            "input": ["text", "image"],
-            "output": ["text"]
-          },
-          "name": "kimi-k2.6",
-          "options": {
-            "max_tokens": 98304,
-            "extra_body": {
-              "enable_thinking": true,
-              "stream_options": { "include_usage": true }
-            }
-          }
-        }
-      }
-    }
+      "models": {{command_output "jq -c '.' opencode/models-cn-meta.json"}}
+    }{{#unless @last}},{{/unless}}
+// {{/each}}
 // {{/if}}
   },
   "mcp": {
