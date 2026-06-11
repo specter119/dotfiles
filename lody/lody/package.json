@@ -1,11 +1,12 @@
 {
   "dependencies": {
-    "lody": "^0.59.1"
+    "lody": "^0.60.1"
   },
   "name": "lody-service",
   "private": true,
   "trustedDependencies": [
     "acp-extension-codex-linux-x64",
-    "better-sqlite3"
+    "better-sqlite3",
+    "node-pty"
   ]
 }
