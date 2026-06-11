@@ -105,6 +105,8 @@ hook_states = []
 [pi.variables.pi]
 default_model = ""
 default_provider = ""
+enterprise_packages = []
+last_changelog_version = ""
 
 [copilot.files]
 copilot = '~/.config/copilot'
@@ -130,6 +132,7 @@ trusted_workspaces = []
 
 [opencode.variables.opencode]
 default_model = ""
+enterprise_tui_plugins = []
 
 [skm.files]
 skm = '~/.config/skm'

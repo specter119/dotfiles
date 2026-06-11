@@ -158,7 +158,11 @@ nested_value = { key_b = "overridden" }
 | `agent.enterprise_cn_providers` | table of tables | `global + local` | 以 provider 名为 key；值含 `api_key`；用 `#each` 渲染多 provider |
 | `pi.default_model` | string | `global + local` | Pi 默认模型 ID；由 sync 脚本从部署侧同步 |
 | `pi.default_provider` | string | `global + local` | Pi 默认 provider 名；由 sync 脚本从部署侧同步 |
+| `pi.enterprise_packages` | array of strings | `global + local` | 可为空；追加到 Pi packages 列表的额外包 |
+| `pi.last_changelog_version` | string | `global + local` | Pi 的 lastChangelogVersion；防止每次部署覆盖本地值 |
 | `opencode.default_model` | string | `global + local` | opencode 默认模型，格式 `provider/model`；由 sync 脚本同步 |
+| `opencode.enterprise_tui_plugins` | array of strings | `global + local` | 可为空；为空时不渲染 TUI plugin 条目 |
+
 | `droid.default_model` | string | `global + local` | Factory Droid 默认模型；由 sync 脚本同步 |
 
 #### Git Repo Identities

@@ -100,9 +100,6 @@ def main() -> None:
 
     if changed:
         LOCAL_TOML.write_text(tomlkit.dumps(doc))
-        print('sync_agent_models: updated local.toml', file=sys.stderr)
-    else:
-        print('sync_agent_models: no changes needed', file=sys.stderr)
 
 
 if __name__ == '__main__':
