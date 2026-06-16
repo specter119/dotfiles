@@ -7,7 +7,6 @@ into .dotter/local.toml so that dotter templates use the live values."""
 
 import json
 import re
-import sys
 from pathlib import Path
 
 import tomlkit

@@ -186,10 +186,10 @@ bub = '~/.config'
 [lody.files]
 lody = '~/.config'
 
-[slock.files]
-slock = '~/.config'
+[raft.files]
+raft = '~/.config'
 
-[slock.variables.slock]
+[raft.variables.raft]
 api_key = ""
 wss_proxy = ""
 
@@ -271,7 +271,7 @@ enterprise_cn_base_url = ""
 enterprise_cn_providers = {}
 
 [agent-tunnel]
-depends = ['skm', 'bub', 'lody', 'alma', 'slock']
+depends = ['skm', 'bub', 'lody', 'alma', 'raft']
 
 [computer-use]
 depends = ['playwright']

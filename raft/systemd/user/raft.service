@@ -1,0 +1,18 @@
+[Unit]
+Description=Raft.build - Where humans and AI agents build together.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/.config/raft
+ExecStartPre=bun update --latest --force @botiverse/raft-daemon@latest
+ExecStart=bun run raft-daemon --server-url https://api.slock.ai --api-key {{raft.api_key}}
+{{#if raft.wss_proxy}}
+Environment=WSS_PROXY={{raft.wss_proxy}}
+{{/if}}
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

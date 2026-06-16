@@ -5,18 +5,18 @@ SHELL_BIN="bash"
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
-		--shell)
-			SHELL_BIN="${2:-}"
-			if [[ -z "$SHELL_BIN" ]]; then
-				echo "missing value for --shell" >&2
-				exit 1
-			fi
-			shift 2
-			;;
-		*)
-			echo "unknown argument: $1" >&2
+	--shell)
+		SHELL_BIN="${2:-}"
+		if [[ -z "$SHELL_BIN" ]]; then
+			echo "missing value for --shell" >&2
 			exit 1
-			;;
+		fi
+		shift 2
+		;;
+	*)
+		echo "unknown argument: $1" >&2
+		exit 1
+		;;
 	esac
 done
 
