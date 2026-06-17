@@ -136,8 +136,9 @@ nested_value = { key_b = "overridden" }
 #### Source Rules
 
 - **Per-machine / not synced across machines**: define a placeholder in `global.toml`, then override it from top-level `[variables]` in `.dotter/local.toml`.
-- **服务 / 工具私有变量**：使用 namespaced table，例如 `[slock.variables.slock]` 和 `[variables.slock]`，不要继续使用 `slock_api_key` 这类扁平变量名。
-- **跨 package 共享变量**：使用拥有者工具的 namespace，例如 `git.repo_identities` 由 `git` / `jj` 定义，并同时被 Git 和 Jujutsu 模板消费。
+- **Tool-private variables**: must use namespaced tables, e.g. `[raft.variables.raft]` and `[variables.raft]`. Never use flat variable names like `raft_api_key`.
+- **Variables must be namespaced**: in `global.toml`, variables must be defined under `[pkg.variables.pkg]` (e.g. `[opencode.variables.opencode]`), not flat under `[pkg.variables]`. Dotter strict mode requires that the template access path `pkg.var_name` matches the variable definition path; un-namespaced variables trigger `Failed to access variable in strict mode` when used in `#each` (`#if` silently skips so it does not error, but the variable is not actually registered correctly).
+- **Cross-package shared variables**: use the owning tool's namespace, e.g. `git.repo_identities` is defined by `git` / `jj` and consumed by both Git and Jujutsu templates.
 - **Shareable secrets**: keep using inline `rbw get` in templates or scripts instead of storing them in `local.toml`.
 - Detailed constraints for `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` live in `.dotter/AGENTS.md`.
 
@@ -145,29 +146,28 @@ nested_value = { key_b = "overridden" }
 
 | Variable | Shape | Source | Notes |
 | --- | --- | --- | --- |
-| `codex.model_provider` | string | `global + local` | 可为空；为空时不渲染顶层 `model_provider` |
-| `slock.api_key` | string | `global + local` | 可为空；服务仍应正常渲染 |
-| `slock.wss_proxy` | string | `global + local` | 可为空；未设置时不渲染 proxy env |
-| `codex.trusted_projects` | array of strings | `global + local` | 可为空；用于渲染 Codex `[projects]` trust 列表 |
-| `codex.hook_states` | array of tables | `global + local` | 每项包含 `key` 和 `trusted_hash`；用于渲染 Codex hook trust state |
-| `antigravity.trusted_workspaces` | array of strings | `global + local` | 可为空；用于渲染 Antigravity `trustedWorkspaces` |
-| `git.repo_identities` | table | `global + local` | 以 identity 名称为 key；值包含 `repo_dir`、`name`、`email` |
-| `skm.local_packages` | array of tables | `global + local` | 每项包含 `repo`，可选 `skills` |
-| `mihomo.direct_suffixes` | array of strings | `global + local` | 可为空；未设置时不渲染额外直连规则 |
-| `agent.enterprise_cn_base_url` | string | `global + local` | 共享 base URL；为空时不渲染 provider |
-| `agent.enterprise_cn_providers` | table of tables | `global + local` | 以 provider 名为 key；值含 `api_key`；用 `#each` 渲染多 provider |
-| `pi.default_model` | string | `global + local` | Pi 默认模型 ID；由 sync 脚本从部署侧同步 |
-| `pi.default_provider` | string | `global + local` | Pi 默认 provider 名；由 sync 脚本从部署侧同步 |
-| `pi.enterprise_packages` | array of strings | `global + local` | 可为空；追加到 Pi packages 列表的额外包 |
-| `pi.last_changelog_version` | string | `global + local` | Pi 已读 changelog 版本；由 sync 脚本从部署侧同步，避免部署覆盖本地值 |
-| `opencode.default_model` | string | `global + local` | opencode 默认模型，格式 `provider/model`；由 sync 脚本同步 |
-| `opencode.enterprise_tui_plugins` | array of strings | `global + local` | 可为空；为空时不渲染 TUI plugin 条目 |
-
-| `droid.default_model` | string | `global + local` | Factory Droid 默认模型；由 sync 脚本同步 |
+| `codex.model_provider` | string | `global + local` | Optional; when empty, top-level `model_provider` is omitted |
+| `raft.api_key` | string | `global + local` | Optional; service renders normally even when empty |
+| `raft.wss_proxy` | string | `global + local` | Optional; proxy env is omitted when unset |
+| `codex.trusted_projects` | array of strings | `global + local` | Optional; renders Codex `[projects]` trust list |
+| `codex.hook_states` | array of tables | `global + local` | Each item has `key` and `trusted_hash`; renders Codex hook trust state |
+| `antigravity.trusted_workspaces` | array of strings | `global + local` | Optional; renders Antigravity `trustedWorkspaces` |
+| `git.repo_identities` | table | `global + local` | Keyed by identity name; values contain `repo_dir`, `name`, `email` |
+| `skm.local_packages` | array of tables | `global + local` | Each item has `repo`, optional `skills` |
+| `mihomo.direct_suffixes` | array of strings | `global + local` | Optional; extra direct rules are omitted when unset |
+| `agent.enterprise_cn_base_url` | string | `global + local` | Shared base URL; provider is omitted when empty |
+| `agent.enterprise_cn_providers` | table of tables | `global + local` | Keyed by provider name; values contain `api_key`; rendered with `#each` |
+| `pi.default_model` | string | `global + local` | Pi default model ID; synced from deploy side by sync script |
+| `pi.default_provider` | string | `global + local` | Pi default provider name; synced from deploy side by sync script |
+| `pi.enterprise_packages` | array of strings | `global + local` | Optional; extra packages appended to Pi packages list |
+| `pi.last_changelog_version` | string | `global + local` | Pi read changelog version; synced by sync script to avoid deploy overwriting local value |
+| `opencode.default_model` | string | `global + local` | opencode default model, format `provider/model`; synced by sync script |
+| `opencode.enterprise_tui_plugins` | array of strings | `global + local` | Optional; TUI plugin entries are omitted when empty |
+| `droid.default_model` | string | `global + local` | Factory Droid default model; synced by sync script |
 
 #### Git Repo Identities
 
-Repo-scoped Git identities 写在 `.dotter/local.toml` 的 `variables.git.repo_identities` 下：
+Repo-scoped Git identities are defined in `.dotter/local.toml` under `variables.git.repo_identities`:
 
 ```toml
 [variables.git.repo_identities.company_a]
@@ -203,21 +203,26 @@ The `replace ... '\n' ''` removes trailing newline from rbw output.
 
 #### TOML Template Tips
 
-**Always wrap `#each` with `#if`** — Dotter's `#each` fails when the variable is undefined. This rule applies to both TOML and YAML templates.
+Put control blocks in `# ` comments to keep the raw template parseable by TOML-aware editors.
 
-Put control blocks in `# ` comments to keep the raw template parseable by TOML-aware editors. **Combine `#if`+`#each` (and `/each`+`/if`) onto a single `# ` line** to minimize residual empty-comment lines after rendering:
+**Reduce redundant `#if` guards**: when `global.toml` provides an empty list/table default, use `#each` directly in the template without an outer `#if` wrapper. `#each` produces zero items for an empty collection and does not error. Only use `#if` when the variable may be completely undefined (no global default).
 
 ```toml
+# global.toml gives trusted_projects = [], loop directly
 [projects]
-# {{#if codex.trusted_projects}}{{#each codex.trusted_projects}}
+# {{#each codex.trusted_projects}}
 
 [projects."{{this}}"]
 trust_level = "trusted"
+# {{/each}}
+
+# combine control lines to reduce residual comment lines
+# {{#if some_undefined_var}}{{#each some_undefined_var}}...
 # {{/each}}{{/if}}
 ```
 
-- Each combined control line produces exactly **one** `# ` residue line after rendering (instead of two).
-- `post_deploy.sh` removes these residual `# ` lines from both the deployed target and the Dotter cache so they stay in sync and don't trigger false diffs on subsequent deploys.
+- Combining `#if`+`#each` (and `/each`+`/if`) onto a single `# ` line reduces residual empty comment lines after rendering.
+- `post_deploy.sh` removes residual `# ` lines from both the rendered target and the Dotter cache.
 - Dotter treats any file containing `{{` as a template; `.tmpl` is not a required or special suffix.
 
 #### YAML Template Tips
@@ -225,7 +230,7 @@ trust_level = "trusted"
 When a YAML file is both a Dotter template and pre-commit formatted with `yamlfmt`, keep these rules:
 
 ```yaml
-# {{#if skm.local_packages}}
+# local_packages has global default [], loop directly; skills is per-item optional, keep #if
 # {{#each skm.local_packages}}
 - repo: "{{repo}}"
   # {{#if skills}}
@@ -233,9 +238,8 @@ When a YAML file is both a Dotter template and pre-commit formatted with `yamlfm
     # {{#each skills}}
     - "{{this}}"
     # {{/each}}
-# {{/if}}
+  # {{/if}}
 # {{/each}}
-# {{/if}}
 ```
 
 - Put control blocks like `#each` and `#if` in YAML comments so YAML formatters and editors can still parse the file.

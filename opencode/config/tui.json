@@ -1,7 +1,9 @@
 {
   "$schema": "https://opencode.ai/tui.json",
-  "theme": "tokyonight",{{#if opencode.enterprise_tui_plugins}}
-  "plugin": [{{#each opencode.enterprise_tui_plugins}}
-    "{{this}}"{{#unless @last}},{{/unless}}{{/each}}
-  ]{{/if}}
+  "theme": "tokyonight",
+  "plugin": [
+    {{#each opencode.enterprise_tui_plugins}}
+    "{{this}}"{{#unless @last}},{{/unless}}
+    {{/each}}
+  ]
 }

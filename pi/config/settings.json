@@ -18,7 +18,8 @@
     "npm:pi-web-access",
     "npm:@ff-labs/pi-fff",
     "https://github.com/davebcn87/pi-autoresearch",
-    "https://github.com/sherif-fanous/pi-rtk"{{#if pi.enterprise_packages}}{{#each pi.enterprise_packages}},
-    "{{this}}"{{/each}}{{/if}}
-  ]
+    "https://github.com/sherif-fanous/pi-rtk"{{#each pi.enterprise_packages}},
+    "{{this}}"{{/each}}
+  ],
+  "theme": "dark"
 }

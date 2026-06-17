@@ -14,7 +14,6 @@ packages:
   - repo: https://github.com/yizhiyanhua-ai/fireworks-tech-graph
   - repo: https://github.com/run-llama/llamaparse-agent-skills
   - repo: https://github.com/ast-grep/agent-skill
-  # {{#if skm.local_packages}}
   # {{#each skm.local_packages}}
   - repo: "{{repo}}"
     # {{#if skills}}
@@ -24,4 +23,3 @@ packages:
       # {{/each}}
     # {{/if}}
 # {{/each}}
-# {{/if}}

@@ -7,7 +7,7 @@ email = "specter119@gmail.com"
 [aliases]
 push = ["util", "exec", "--", "jj-pre-push", "push"]
 
-# {{#if git.repo_identities}}{{#each git.repo_identities}}
+# {{#each git.repo_identities}}
 
 [[--scope]]
 --when.repositories = ["{{repo_dir}}"]
@@ -16,4 +16,4 @@ push = ["util", "exec", "--", "jj-pre-push", "push"]
 name = "{{name}}"
 email = "{{email}}"
 
-# {{/each}}{{/if}}
+# {{/each}}
