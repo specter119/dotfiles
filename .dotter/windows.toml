@@ -12,8 +12,8 @@ powershell = '~/Documents'
 [windows-terminal.files]
 'windows-terminal/settings.json' = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json'
 
-[conda.files]
-conda = '~/.local/share/mamba'
+[condarc.files]
+condarc = '~/.local/share/mamba'
 
 [pip.files]
 'pip/pip.conf' = '~/AppData/Roaming/pip/pip.ini'
@@ -28,7 +28,7 @@ helix = '~/AppData/Roaming/helix'
 'roo-code' = '~/AppData/Roaming/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings/'
 
 [python-windows]
-depends = ['conda', 'pip']
+depends = ['pip']
 
 [shell-windows]
 depends = ['powershell', 'windows-terminal', 'wezterm']

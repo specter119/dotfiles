@@ -63,8 +63,13 @@ ssh = '~/.ssh'
 [pip.files]
 pip = '~/.config/pip'
 
-[conda.files]
-conda = '~/.config/conda'
+[condarc.files]
+condarc = '~/.config/conda'
+
+[mamba]
+depends = ['condarc']
+[mamba.files]
+mamba = '~/.config'
 
 [uv.files]
 uv = '~/.config/uv'
@@ -260,7 +265,7 @@ depends = [
   'copilot',
   'opencode',
   'antigravity',
-  'qoder'
+  'qoder',
 ]
 
 [agent.files]
