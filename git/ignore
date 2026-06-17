@@ -13,7 +13,12 @@
 /.serena
 /.qoder
 
-# Emacs project
+# IDE
+
+## zed
+/.zed
+
+## emacs
 .dir-locals.el
 
 # Platform folder/thumbnail
@@ -36,6 +41,3 @@ venv
 # Nodejs
 node_modules
 
-# Qoder local files (private, not committed)
-AGENTS.local.md
-*.local.md
