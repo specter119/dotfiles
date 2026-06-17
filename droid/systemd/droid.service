@@ -1,0 +1,13 @@
+[Unit]
+Description=Droid Agent Daemon with Remote Access
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/droid daemon --remote-access
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

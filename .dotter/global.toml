@@ -112,7 +112,8 @@ last_changelog_version = ""
 copilot = '~/.config/copilot'
 
 [droid.files]
-droid = '~/.factory'
+'droid/config' = '~/.factory'
+'droid/systemd' = '~/.config/systemd/user'
 
 [droid.variables.droid]
 default_model = ""
