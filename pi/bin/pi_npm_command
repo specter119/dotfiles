@@ -5,6 +5,17 @@ LOG="${XDG_STATE_HOME:-$HOME/.local/state}/pi/npm-command.log"
 mkdir -p "$(dirname "$LOG")"
 echo "[$(date -Iseconds)] PWD=$PWD args=$*" >> "$LOG"
 
+# Handle 'root -g' command: return bun's global node_modules path
+if [[ "$1" == "root" && "$2" == "-g" ]]; then
+  echo "${BUN_INSTALL_GLOBAL_DIR:-${HOME}/.bun/install/global}/node_modules"
+  exit 0
+fi
+
+# Handle 'view' command: delegate to npm for version queries
+if [[ "$1" == "view" ]]; then
+  exec npm "$@"
+fi
+
 args=()
 prefix_dir=""
 is_install=false
