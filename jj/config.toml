@@ -5,7 +5,7 @@ name = "specter119"
 email = "specter119@gmail.com"
 
 [aliases]
-push = ["util", "exec", "--", "jj-pre-push", "push"]
+push = ["util", "exec", "--", "jj-pre-push", "push", "--checker", "prek"]
 
 # {{#each git.repo_identities}}
 

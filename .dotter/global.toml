@@ -68,6 +68,7 @@ condarc = '~/.config/conda'
 
 [mamba]
 depends = ['condarc']
+
 [mamba.files]
 mamba = '~/.config'
 
@@ -265,7 +266,7 @@ depends = [
   'copilot',
   'opencode',
   'antigravity',
-  'qoder',
+  'qoder'
 ]
 
 [agent.files]
@@ -283,7 +284,14 @@ depends = ['skm', 'bub', 'lody', 'alma', 'raft']
 depends = ['playwright']
 
 [agent-runtime]
-depends = ['computer-use', 'skm', 'zellij', 'kagi', 'nowledge-mem']
+depends = [
+  'computer-use',
+  'skm',
+  'zellij',
+  'kagi',
+  'nowledge-mem',
+  'cliproxyapi'
+]
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'

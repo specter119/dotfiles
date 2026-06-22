@@ -10,7 +10,7 @@
         "maxTokensField": "max_tokens",
         "supportsDeveloperRole": false
       },
-      "models": {{command_output "jq -c '.' pi/models-cn-meta.json"}}
+      "models": {{command_output "jq -c '.' pi/gateway-cn-models.json"}}
     }{{#unless @last}},{{/unless}}
 {{/each}}
 {{/if}}

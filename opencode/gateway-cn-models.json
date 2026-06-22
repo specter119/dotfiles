@@ -1,0 +1,99 @@
+{
+  "deepseek-v4-flash": {
+    "name": "deepseek-v4-flash",
+    "options": {
+      "extra_body": {
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "max_tokens": 800000
+    }
+  },
+  "deepseek-v4-pro": {
+    "name": "deepseek-v4-pro",
+    "options": {
+      "extra_body": {
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "max_tokens": 800000
+    }
+  },
+  "glm-5.1": {
+    "name": "glm-5.1",
+    "options": {
+      "extra_body": {
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "max_tokens": 800000
+    }
+  },
+  "glm-5.2": {
+    "name": "glm-5.2",
+    "options": {
+      "extra_body": {
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "max_tokens": 800000
+    }
+  },
+  "kimi-k2.6": {
+    "modalities": {
+      "input": [
+        "text",
+        "image"
+      ],
+      "output": [
+        "text"
+      ]
+    },
+    "name": "kimi-k2.6",
+    "options": {
+      "extra_body": {
+        "enable_thinking": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "max_tokens": 98304
+    }
+  },
+  "kimi-k2.7-code": {
+    "modalities": {
+      "input": [
+        "text",
+        "image"
+      ],
+      "output": [
+        "text"
+      ]
+    },
+    "name": "kimi-k2.7-code",
+    "options": {
+      "extra_body": {
+        "enable_thinking": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "max_tokens": 200000
+    }
+  },
+  "qwen3.7-max": {
+    "name": "qwen3.7-max",
+    "options": {
+      "extra_body": {
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "max_tokens": 65536
+    }
+  }
+}

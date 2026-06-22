@@ -15,7 +15,7 @@
         "useDeploymentBasedUrls": true,
         "setCacheKey": true
       },
-      "models": {{command_output "jq -c '.' opencode/models-cn-meta.json"}}
+      "models": {{command_output "jq -c '.' opencode/gateway-cn-models.json"}}
     }{{#unless @last}},{{/unless}}
 // {{/each}}
 // {{/if}}
