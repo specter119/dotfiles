@@ -262,14 +262,13 @@ depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
 depends = [
   'agent-runtime',
   'droid',
-  'codex',
-  'amp',
-  'claude-code',
   'pi',
+  'codex',
   'copilot',
   'opencode',
+  'claude-code',
   'antigravity',
-  'qoder',
+  'amp',
 ]
 
 [agent.files]
@@ -281,13 +280,13 @@ enterprise_cn_base_url = ""
 enterprise_cn_providers = {}
 
 [agent-tunnel]
-depends = ['skm', 'bub', 'lody', 'alma', 'raft']
+depends = ['bub', 'lody', 'raft']
 
-[computer-use]
+[browser-use]
 depends = ['playwright']
 
 [agent-runtime]
-depends = ['computer-use', 'skm', 'rmux', 'zellij', 'nowledge-mem']
+depends = ['browser-use', 'skm', 'zellij', 'nowledge-mem']
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'

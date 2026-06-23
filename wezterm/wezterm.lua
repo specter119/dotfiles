@@ -7,52 +7,26 @@ local launch_menu = {}
 
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   config.default_domain = 'WSL:archlinux'
-
-  -- Start in WSL domain with rmux; new tabs use default shell
-  config.default_gui_startup_args =
-    { 'start', '--domain', 'WSL:archlinux', '--', 'rmux', 'new-session', '-A', '-s', 'main' }
-
-  table.insert(launch_menu, {
-    label = 'Rmux',
-    args = { 'rmux', 'new-session' },
-  })
-
-  table.insert(launch_menu, {
-    label = 'Zellij',
-    args = { 'zellij', 'attach', '--create', 'main' },
-  })
-
+  -- Start in WSL domain with zellij; new tabs use default shell
+  config.default_gui_startup_args = { 'start', '--', 'zellij', 'attach', '--create', 'main' }
+  table.insert(launch_menu, { label = 'Zellij', args = { 'zellij' } })
   table.insert(launch_menu, {
     label = 'PowerShell Core',
     domain = { DomainName = 'local' },
     args = { os.getenv 'SCOOP' .. '\\apps\\pwsh\\current\\pwsh.exe', '-NoLogo' },
   })
-
   table.insert(launch_menu, {
     label = 'Command Prompt',
     domain = { DomainName = 'local' },
     args = { 'cmd.exe' },
   })
-
   config.keys = {
     { key = 'v', mods = 'CTRL', action = wezterm.action.Nop },
     { key = 'Enter', mods = 'SHIFT', action = wezterm.action.SendString '\x1b\r' },
   }
 elseif wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
-  table.insert(launch_menu, {
-    label = 'Bash',
-    args = { 'bash', '-l' },
-  })
-
-  table.insert(launch_menu, {
-    label = 'Rmux',
-    args = { 'rmux', 'new-session' },
-  })
-
-  table.insert(launch_menu, {
-    label = 'Zellij',
-    args = { 'zellij', 'attach', '--create', 'main' },
-  })
+  table.insert(launch_menu, { label = 'Bash', args = { 'bash', '-l' } })
+  table.insert(launch_menu, { label = 'Zellij', args = { 'zellij' } })
 end
 
 config.launch_menu = launch_menu
