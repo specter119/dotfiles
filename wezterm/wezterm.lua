@@ -10,11 +10,11 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
 
   -- Start in WSL domain with rmux; new tabs use default shell
   config.default_gui_startup_args =
-    { 'start', '--domain', 'WSL:archlinux', '--', 'rmux', 'attach-session', '-A', '-s', 'main' }
+    { 'start', '--domain', 'WSL:archlinux', '--', 'rmux', 'new-session', '-A', '-s', 'main' }
 
   table.insert(launch_menu, {
     label = 'Rmux',
-    args = { 'rmux', 'attach-session', '-A', '-s', 'main' },
+    args = { 'rmux', 'new-session' },
   })
 
   table.insert(launch_menu, {
@@ -46,7 +46,7 @@ elseif wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
 
   table.insert(launch_menu, {
     label = 'Rmux',
-    args = { 'rmux', 'attach-session', '-A', '-s', 'main' },
+    args = { 'rmux', 'new-session' },
   })
 
   table.insert(launch_menu, {
