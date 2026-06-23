@@ -178,6 +178,9 @@ cargo = '~/.local/share/cargo'
 [zellij.files]
 zellij = '~/.config/zellij'
 
+[rmux.files]
+rmux = '~/.config/rmux'
+
 [wezterm.files]
 wezterm = '~/.config/wezterm'
 
@@ -266,7 +269,7 @@ depends = [
   'copilot',
   'opencode',
   'antigravity',
-  'qoder'
+  'qoder',
 ]
 
 [agent.files]
@@ -284,14 +287,7 @@ depends = ['skm', 'bub', 'lody', 'alma', 'raft']
 depends = ['playwright']
 
 [agent-runtime]
-depends = [
-  'computer-use',
-  'skm',
-  'zellij',
-  'kagi',
-  'nowledge-mem',
-  'cliproxyapi'
-]
+depends = ['computer-use', 'skm', 'rmux', 'zellij', 'nowledge-mem']
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'

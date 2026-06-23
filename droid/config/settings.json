@@ -28,5 +28,6 @@
     "specModeModel": "claude-opus-4-6",
     "specModeReasoningEffort": "high"
   },
-  "showTokenUsageIndicator": true
+  "showTokenUsageIndicator": true,
+  "reauthBannerShownTui": true
 }

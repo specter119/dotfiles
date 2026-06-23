@@ -8,9 +8,14 @@ local launch_menu = {}
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   config.default_domain = 'WSL:archlinux'
 
-  -- Start in WSL domain with zellij; new tabs use default shell
+  -- Start in WSL domain with rmux; new tabs use default shell
   config.default_gui_startup_args =
-    { 'start', '--domain', 'WSL:archlinux', '--', 'zellij', 'attach', '--create', 'main' }
+    { 'start', '--domain', 'WSL:archlinux', '--', 'rmux', 'attach-session', '-A', '-s', 'main' }
+
+  table.insert(launch_menu, {
+    label = 'Rmux',
+    args = { 'rmux', 'attach-session', '-A', '-s', 'main' },
+  })
 
   table.insert(launch_menu, {
     label = 'Zellij',
@@ -37,6 +42,11 @@ elseif wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
   table.insert(launch_menu, {
     label = 'Bash',
     args = { 'bash', '-l' },
+  })
+
+  table.insert(launch_menu, {
+    label = 'Rmux',
+    args = { 'rmux', 'attach-session', '-A', '-s', 'main' },
   })
 
   table.insert(launch_menu, {
