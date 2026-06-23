@@ -97,7 +97,7 @@ stylua = '~/.config/stylua'
 'claude-code' = '~/.config/claude'
 
 [codex.files]
-codex = '~/.config/codex'
+codex = '~/.config'
 
 [codex.variables]
 model_provider = ""
