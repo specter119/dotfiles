@@ -6,6 +6,7 @@
 into .dotter/local.toml so that dotter templates use the live values."""
 
 import json
+import os
 import re
 from pathlib import Path
 
@@ -16,11 +17,21 @@ from tomlkit.exceptions import ParseError
 DOTTER_DIR = Path(__file__).resolve().parent.parent
 LOCAL_TOML = DOTTER_DIR / 'local.toml'
 
-PI_SETTINGS = Path.home() / '.config/pi/settings.json'
+
+def expand_path(value: str | Path) -> Path:
+    return Path(os.path.expanduser(os.path.expandvars(str(value))))
+
+
+def agent_path(env_name: str, fallback: str | Path, *parts: str) -> Path:
+    raw = os.environ.get(env_name) or str(fallback)
+    return expand_path(raw).joinpath(*parts)
+
+
+PI_SETTINGS = agent_path('PI_CODING_AGENT_DIR', Path.home() / '.pi', 'settings.json')
 DROID_SETTINGS = Path.home() / '.factory/settings.json'
 OPENCODE_CONFIG = Path.home() / '.config/opencode/opencode.jsonc'
-CODEX_CONFIG = Path.home() / '.config/codex/config.toml'
-COPILOT_SETTINGS = Path.home() / '.config/copilot/settings.json'
+CODEX_CONFIG = agent_path('CODEX_HOME', Path.home() / '.codex', 'config.toml')
+COPILOT_SETTINGS = agent_path('COPILOT_HOME', Path.home() / '.copilot', 'settings.json')
 
 
 def read_json(path: Path) -> dict | None:
