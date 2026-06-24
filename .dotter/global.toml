@@ -100,6 +100,7 @@ stylua = '~/.config/stylua'
 codex = '~/.config'
 
 [codex.variables]
+default_model = ""
 model_provider = ""
 trusted_projects = []
 hook_states = []
@@ -116,6 +117,9 @@ last_changelog_version = ""
 
 [copilot.files]
 copilot = '~/.config/copilot'
+
+[copilot.variables.copilot]
+default_model = ""
 
 [droid.files]
 'droid/config' = '~/.factory'
@@ -268,7 +272,7 @@ depends = [
   'opencode',
   'claude-code',
   'antigravity',
-  'amp',
+  'amp'
 ]
 
 [agent.files]

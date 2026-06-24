@@ -47,13 +47,14 @@
 
 ### 可用角色
 
-| 角色 | 用途 | 默认运行方式 |
-|------|------|-------------|
-| `explorer` | 读代码、搜实现、列事实、收集上下文 | background |
-| `task-subagent` | 通用实现子 agent，执行明确范围的修改 | background |
-| `reviewer` | findings-first 的 code review | background |
-| `oracle` | 只读顾问，架构、调试、方案裁决 | foreground |
-| `librarian` | 查外部文档、第三方库、OSS 示例 | background |
+- 可用 subagent：`explorer`、`librarian`、`task-subagent`、`reviewer`、`oracle`
+- 各 subagent 的具体职责、输入输出约束和边界，以 `pi/config/agents/*.md` 中各自定义为准
+
+### 主 agent 定位
+
+- 主 agent 是轻量 orchestrator，优先负责路由、裁决、汇总和最终验收
+- 重型搜索、多文件现状梳理、可隔离实现，默认交给合适的 subagent
+- 只有 trivial 操作、单文件快速确认、或委派收益明显低于切换成本时，主 agent 才直接执行
 
 ### 工具前置
 
@@ -65,14 +66,15 @@
 路由优先级从上到下，第一个匹配即执行：
 
 1. **trivial 任务**（<10行、单点修改、非安全相关）→ 直接完成，不委派
-2. **代码搜索、现状梳理、找入口** → 委派 `explorer`（可并行多个）
-3. **外部文档、某库/API 用法** → 委派 `librarian`
-4. **明确实现任务，受益于隔离执行** → 委派 `task-subagent`
+2. **读单个小文件、简单 grep 确认** → 直接完成，不委派
+3. **代码搜索、现状梳理、找入口** → 委派 `explorer`（可并行多个）
+4. **外部文档、某库/API 用法** → 委派 `librarian`
+5. **明确实现任务，受益于隔离执行** → 委派 `task-subagent`
    - "受益于隔离"：需要独立验证、会阻塞主线、或可与其他任务并行
-5. **多个互不依赖的子任务** → 并行委派多个 `task-subagent`（文件范围不重叠）
-6. **实现后复核、发布前审查** → 委派 `reviewer`
-7. **需求含糊、方案冲突、架构权衡大** → 委派 `oracle`（foreground，等待结果）
-8. **两次修复失败、调试无方向** → 委派 `oracle` 诊断
+6. **多个互不依赖的子任务** → 并行委派多个 `task-subagent`（文件范围不重叠）
+7. **实现后复核、发布前审查** → 委派 `reviewer`
+8. **需求含糊、方案冲突、架构权衡大** → 委派 `oracle`（foreground，等待结果）
+9. **两次修复失败、调试无方向** → 委派 `oracle` 诊断
 
 **Tie-breaker**：当任务同时匹配多条规则时：
 - 目标和修改范围已知 → 优先匹配实现规则（rule 4/5）
@@ -130,7 +132,7 @@ Agent({
 
 ### 子 Agent 输出协议
 
-所有 subagent 必须返回以下字段：
+所有 subagent 的具体输出格式以各自定义为准；主 agent 至少应期待以下字段：
 
 - `conclusion`: 做了什么 / 发现了什么
 - `key_evidence`: 关键证据（文件路径、测试结果、引用来源）
@@ -173,6 +175,7 @@ Agent({
 
 - 文本搜索：`rg` > `grep`
 - 文件查找：`fd` > `find`
+- 运行 pre-commit hooks：`prek` > `pre-commit`
 - 语法搜索：`ast-grep`（仅 explorer/task-subagent 使用）
 - DNS 查询：`dig` > `nslookup`
 - 网络连接：`ss` > `netstat`

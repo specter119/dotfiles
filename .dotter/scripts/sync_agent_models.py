@@ -10,6 +10,7 @@ import re
 from pathlib import Path
 
 import tomlkit
+from tomlkit.exceptions import ParseError
 
 
 DOTTER_DIR = Path(__file__).resolve().parent.parent
@@ -18,6 +19,8 @@ LOCAL_TOML = DOTTER_DIR / 'local.toml'
 PI_SETTINGS = Path.home() / '.config/pi/settings.json'
 DROID_SETTINGS = Path.home() / '.factory/settings.json'
 OPENCODE_CONFIG = Path.home() / '.config/opencode/opencode.jsonc'
+CODEX_CONFIG = Path.home() / '.config/codex/config.toml'
+COPILOT_SETTINGS = Path.home() / '.config/copilot/settings.json'
 
 
 def read_json(path: Path) -> dict | None:
@@ -46,6 +49,19 @@ def read_jsonc(path: Path) -> dict | None:
         lines = [l for l in text.splitlines() if not re.match(r'^\s*//', l)]
         return json.loads('\n'.join(lines))
     except (json.JSONDecodeError, OSError):
+        return None
+
+
+def read_toml(path: Path) -> tomlkit.TOMLDocument | None:
+    """Read TOML from path, resolving symlinks to skip repo source templates."""
+    if not path.exists():
+        return None
+    real = path.resolve()
+    if str(DOTTER_DIR.parent) in str(real):
+        return None
+    try:
+        return tomlkit.parse(path.read_text())
+    except (ParseError, OSError):
         return None
 
 
@@ -104,6 +120,19 @@ def main() -> None:
         if opencode_table.get('default_model') != model:
             opencode_table['default_model'] = model
             changed = True
+
+    # codex: model, model_provider
+    codex_data = read_toml(CODEX_CONFIG)
+    if codex_data:
+        codex_table = ensure_table(doc, 'variables', 'codex')
+        changed |= sync_string(codex_table, 'default_model', codex_data.get('model'))
+        changed |= sync_string(codex_table, 'model_provider', codex_data.get('model_provider'))
+
+    # copilot: model
+    copilot_data = read_json(COPILOT_SETTINGS)
+    if copilot_data:
+        copilot_table = ensure_table(doc, 'variables', 'copilot')
+        changed |= sync_string(copilot_table, 'default_model', copilot_data.get('model'))
 
     if changed:
         LOCAL_TOML.write_text(tomlkit.dumps(doc))

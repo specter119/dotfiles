@@ -1,0 +1,6 @@
+{
+  "colorMode": "default",
+  "effortLevel": "high",
+  "experimental": true,
+  "model": "{{#if copilot.default_model}}{{copilot.default_model}}{{else}}gpt-5.5{{/if}}"
+}

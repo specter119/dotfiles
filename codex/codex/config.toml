@@ -1,5 +1,7 @@
-model = "gpt-5.5"
-{{#if codex.model_provider}}model_provider = "{{codex.model_provider}}"{{/if}}
+model = "{{#if codex.default_model}}{{codex.default_model}}{{else}}gpt-5.5{{/if}}"
+# {{#if codex.model_provider}}
+model_provider = "{{codex.model_provider}}"
+# {{/if}}
 personality = "pragmatic"
 disable_response_storage = true
 web_search = "live"

@@ -3,7 +3,7 @@
 ## 目标与边界
 
 - 目标：优先利用 Copilot CLI 原生能力完成任务，只额外定义少量 custom agents 与轻量 handoff 规则
-- 默认单 agent 执行；只有搜索、评审、高不确定性判断、复杂实现拆分时才委派
+- 默认策略：trivial 直接完成；moderate 先判断是否受益于隔离执行或并行，受益则委派；complex 必须拆分后委派
 - 不模拟外部框架，不引入 `.sisyphus/` 一类计划文件、hook 链路或多级 orchestration
 - 委派最多一层，同时最多并行 2 个子 agent；子 agent 不再继续委派
 
@@ -26,8 +26,8 @@
 ### 基础流程
 
 1. **理解需求** - 有疑问立即提问
-2. **搜索优先** - 修改前先搜索并阅读相关代码
-3. **小步快跑** - 拆分大任务，逐步完成
+2. **快速判断** - 先读 instructions、单个小文件或最小必要上下文做路由决策，不先做大范围搜索
+3. **分解委派** - 非 trivial 操作优先委派合适的 custom agent，主 agent 只做轻量确认、汇总和裁决
 4. **目标驱动** - 先定义验收标准，循环验证直到满足
 5. **主动报告** - 完成后报告结果；无法复述当前状态时停下重新陈述
 
@@ -46,15 +46,21 @@
 
 ### 可用角色
 
-- `explorer`：读代码、搜实现、列事实、收集上下文
-- `librarian`：查官方文档、第三方库、OSS 示例、迁移资料
-- `task-subagent`：通用实现子 agent，负责明确范围内的执行与验证
-- `reviewer`：findings-first 的评审子 agent
-- `oracle`：只读顾问，用于架构、调试、方案裁决
+- 可用 custom agents：`explorer`、`librarian`、`task-subagent`、`reviewer`、`oracle`
+- 各 custom agent 的具体职责、输入输出约束和边界，以 `copilot/agents/*.agent.md` 中各自定义为准
+
+### 主 agent 定位
+
+- 主 agent 是轻量 orchestrator，优先负责路由、裁决、汇总和最终验收
+- 重型搜索、多文件现状梳理、可隔离实现，默认交给合适的 custom agent
+- 只有 trivial 操作、单文件快速确认、或委派收益明显低于切换成本时，主 agent 才直接执行
 
 ### 路由规则
 
+路由优先级从上到下，第一个匹配即执行：
+
 - trivial 任务：直接完成，不委派
+- 读单个小文件、简单 grep 确认：直接完成，不委派
 - 代码库探索、现状梳理、找入口：优先委派 `explorer`
 - 外部文档、定向查某个库/API 用法、升级迁移：优先委派 `librarian`
 - 需要广度搜索（web + GitHub 多源）的深度调研：用 `/research`，而非 `librarian`
@@ -78,7 +84,7 @@
 
 ### 委派原则
 
-- 能直接完成就不要委派
+- trivial 直接完成，非 trivial 先判断是否受益于隔离执行或并行
 - 不要把一次简单修改拆成多个子 agent
 - 不要为了“看起来更 agentic”而委派
 - 不要让子 agent 做无验收标准的高风险写操作
@@ -100,7 +106,7 @@
 
 ### 子 Agent 输出协议
 
-子 agent 必须返回：
+子 agent 的具体输出格式以各自定义为准；主 agent 至少应期待：
 
 - `conclusion`
 - `key_evidence`
@@ -119,6 +125,7 @@
 
 - 文本搜索：优先 `rg`，其次 `grep`
 - 文件查找：优先 `fd`，其次 `find`
+- 运行 pre-commit hooks：优先 `prek`，其次 `pre-commit`
 - 语法搜索：优先 `ast-grep`
 - 网络连接排查：优先 `ss`，其次 `netstat`
 - DNS 查询：优先 `dig`，其次 `nslookup`
@@ -133,8 +140,9 @@
 ### 回答前自检
 
 1. 任务复杂度：trivial / moderate / complex？
-2. 是否在解释已知的基础知识？
-3. 是否可以直接修复低级错误？
+2. 是否受益于隔离执行或并行？如果是，优先委派 custom agent
+3. 是否在解释已知的基础知识？
+4. 是否可以直接修复低级错误？
 
 ### 自动修复低级错误
 

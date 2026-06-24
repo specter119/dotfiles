@@ -6,7 +6,7 @@ repos:
       - id: check-case-conflict
       - id: check-symlinks
       - id: check-toml
-        exclude: ^(alacritty/alacritty\.toml|codex/config\.toml)$
+        exclude: ^(alacritty/alacritty\.toml|codex/config\.toml|codex/codex/config\.toml)$
       - id: check-yaml
       - id: check-json
         exclude: ^(pi/config/(models|settings)\.json|opencode/config/tui\.json|antigravity/antigravity/settings\.json)$
@@ -35,4 +35,4 @@ repos:
     hooks:
       - id: toml-sort-fix
         args: [--in-place, --no-sort-tables]
-        exclude: ^(alacritty/alacritty\.toml|codex/config\.toml|jj/config\.toml|yazi/yazi\.toml)$
+        exclude: ^(alacritty/alacritty\.toml|codex/config\.toml|codex/codex/config\.toml|jj/config\.toml|yazi/yazi\.toml)$
