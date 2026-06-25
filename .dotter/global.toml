@@ -272,7 +272,7 @@ depends = [
   'opencode',
   'claude-code',
   'antigravity',
-  'amp'
+  'amp',
 ]
 
 [agent.files]

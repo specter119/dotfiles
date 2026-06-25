@@ -7,8 +7,11 @@ local launch_menu = {}
 
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   config.default_domain = 'WSL:archlinux'
-  -- Start in WSL domain with zellij; new tabs use default shell
+  -- Initial GUI window attaches to 'main' session; new tabs start plain zellij
   config.default_gui_startup_args = { 'start', '--', 'zellij', 'attach', '--create', 'main' }
+  config.wsl_domains = wezterm.wsl_domains {
+    { name = 'WSL:archlinux', default_prog = { 'zellij' } },
+  }
   table.insert(launch_menu, { label = 'Zellij', args = { 'zellij' } })
   table.insert(launch_menu, {
     label = 'PowerShell Core',
@@ -25,6 +28,7 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
     { key = 'Enter', mods = 'SHIFT', action = wezterm.action.SendString '\x1b\r' },
   }
 elseif wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
+  config.default_prog = { 'zellij' }
   table.insert(launch_menu, { label = 'Bash', args = { 'bash', '-l' } })
   table.insert(launch_menu, { label = 'Zellij', args = { 'zellij' } })
 end
