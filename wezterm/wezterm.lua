@@ -10,7 +10,7 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   -- Initial GUI window attaches to 'main' session; new tabs start plain zellij
   config.default_gui_startup_args = { 'start', '--', 'zellij', 'attach', '--create', 'main' }
   config.wsl_domains = {
-    { name = 'WSL:archlinux', default_prog = { 'zellij' } },
+    { name = 'WSL:archlinux', distribution = 'archlinux', default_prog = { 'zellij' } },
   }
   table.insert(launch_menu, { label = 'Zellij', args = { 'zellij' } })
   table.insert(launch_menu, {
