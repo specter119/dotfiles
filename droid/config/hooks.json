@@ -4,7 +4,7 @@
       {
         "hooks": [
           {
-            "command": "/home/liuky3/Documents/github.repos/community/nowledge-mem-droid-plugin/hooks/session-start.sh",
+            "command": "bash \"$HOME/.factory/hooks/session-start.sh\"",
             "type": "command"
           }
         ]
@@ -14,7 +14,7 @@
       {
         "hooks": [
           {
-            "command": "/home/liuky3/Documents/github.repos/community/nowledge-mem-droid-plugin/hooks/user-prompt-submit.sh",
+            "command": "bash \"$HOME/.factory/hooks/user-prompt-submit.sh\"",
             "type": "command"
           }
         ]
