@@ -1,5 +1,25 @@
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "/home/liuky3/Documents/github.repos/community/nowledge-mem-droid-plugin/hooks/session-start.sh",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "command": "/home/liuky3/Documents/github.repos/community/nowledge-mem-droid-plugin/hooks/user-prompt-submit.sh",
+            "type": "command"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "hooks": [
