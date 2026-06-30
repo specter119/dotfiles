@@ -27,33 +27,30 @@ function sendNotification(message: string, title = "OpenCode"): void {
 const notificationPlugin: Plugin = async ({ client }) => {
   return {
     event: async ({ event }) => {
-      if (event.type === "session.idle") {
-        const sessionID = event.properties.sessionID;
-        let title = "OpenCode";
-        let message = "Waiting for user input";
+      // session.status carries the real state machine:
+      //   idle  -> plain turn end, user can keep chatting
+      //   busy  -> agent working
+      //   retry -> blocked; with `action` it needs the user to resolve
+      //            (e.g. update a plan/link); without `action` it auto-retries
+      // Only retry-with-action qualifies as "needs User response".
+      if (event.type !== "session.status") return;
+      const status = (event.properties as any).status;
+      if (!status || status.type !== "retry" || !status.action) return;
 
-        try {
-          const session = await client.session.get({ path: { id: sessionID } });
-          if (session.data?.title) {
-            title = `OpenCode: ${session.data.title}`;
-          }
+      const sessionID = (event.properties as any).sessionID;
+      let title = "OpenCode";
+      const message = status.action.message || status.message || "Session needs your input";
 
-          const messagesResp = await client.session.messages({ path: { id: sessionID } });
-          const messages = messagesResp.data || [];
-          const lastAssistantMsg = messages.filter(m => m.info.role === "assistant").pop();
-          if (lastAssistantMsg) {
-            const textParts = lastAssistantMsg.parts.filter((p: any) => p.type === "text");
-            if (textParts.length > 0) {
-              const lastText = (textParts[textParts.length - 1] as any).text || "";
-              message = lastText.slice(0, 100) + (lastText.length > 100 ? "..." : "");
-            }
-          }
-        } catch {
-          // Fallback to defaults
+      try {
+        const session = await client.session.get({ path: { id: sessionID } });
+        if (session.data?.title) {
+          title = `OpenCode: ${session.data.title}`;
         }
-
-        sendNotification(message, title);
+      } catch {
+        // Fallback to defaults
       }
+
+      sendNotification(message, title);
     },
   };
 };
