@@ -126,6 +126,8 @@ appearanceDarkCodeThemeId = "catppuccin"
 reviewDelivery = "inline"
 selected-avatar-id = "seedy"
 conversationDetailMode = "STEPS_COMMANDS"
+preventSleepWhileRunning = true
+keepRemoteControlAwakeWhilePluggedIn = true
 
 [desktop.appearanceLightChromeTheme]
 accent = "#8839ef"

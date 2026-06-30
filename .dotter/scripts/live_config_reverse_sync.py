@@ -162,12 +162,18 @@ def main() -> None:
             opencode_table['default_model'] = model
             changed = True
 
-    # codex: model, model_provider
+    # codex: model, model_provider (skip empty provider to keep template guard effective)
     codex_data = read_toml(CODEX_CONFIG)
     if codex_data:
         codex_table = ensure_table(doc, 'variables', 'codex')
         changed |= sync_string(codex_table, 'default_model', codex_data.get('model'))
-        changed |= sync_string(codex_table, 'model_provider', codex_data.get('model_provider'))
+        provider = codex_data.get('model_provider', '')
+        if provider:
+            changed |= sync_string(codex_table, 'model_provider', provider)
+        elif codex_table.get('model_provider'):
+            # remove stale empty provider from local.toml
+            del codex_table['model_provider']
+            changed = True
 
     # copilot: model
     copilot_data = read_json(COPILOT_SETTINGS)
