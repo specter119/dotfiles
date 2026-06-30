@@ -44,7 +44,5 @@
       "rbw get*": "deny"
     }
   },
-  "plugin": [
-    "oh-my-openagent"
-  ]
+  "plugin": []
 }
