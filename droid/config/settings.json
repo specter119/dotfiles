@@ -1,5 +1,5 @@
 {
-  "compactionModel": "minimax-m3",
+  "compactionModel": "{{#if droid.compaction_model}}{{droid.compaction_model}}{{else}}minimax-m3{{/if}}",
   "compactionTokenLimit": 100000,
   "includeCoAuthoredByDroid": false,
   "logoAnimation": "off",
@@ -29,5 +29,16 @@
     "specModeReasoningEffort": "high"
   },
   "showTokenUsageIndicator": true,
-  "reauthBannerShownTui": true
+  "reauthBannerShownTui": true,
+  "extraKnownMarketplaces": {},
+  "ideExtensionPromptedAt": {
+    {{#each droid.ide_extension_prompted_at}}
+    "{{@key}}": {{this}}{{#unless @last}},{{/unless}}
+    {{/each}}
+  },
+  "enabledPlugins": {
+    "autoresearch@factory-plugins": true,
+    "droid-evolved@factory-plugins": true,
+    "code-review@factory-plugins": true
+  }
 }

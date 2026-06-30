@@ -106,8 +106,7 @@ trusted_projects = []
 hook_states = []
 
 [pi.files]
-'pi/config' = '~/.config/pi'
-'pi/bin' = '~/.local/bin'
+pi = '~/.config/pi'
 
 [pi.variables.pi]
 default_model = ""
@@ -118,15 +117,14 @@ last_changelog_version = ""
 [copilot.files]
 copilot = '~/.config/copilot'
 
-[copilot.variables.copilot]
-default_model = ""
-
 [droid.files]
 'droid/config' = '~/.factory'
 'droid/systemd' = '~/.config/systemd/user'
 
 [droid.variables.droid]
 default_model = ""
+compaction_model = ""
+ide_extension_prompted_at = {}
 
 [amp.files]
 amp = '~/.config/amp'
@@ -160,9 +158,6 @@ qoder = '~/.config'
 
 [atuin.files]
 atuin = '~/.config'
-
-[cliproxyapi.files]
-cliproxyapi = '~/.config/cliproxyapi'
 
 [playwright.files]
 playwright = '~/.config'
@@ -272,7 +267,7 @@ depends = [
   'opencode',
   'claude-code',
   'antigravity',
-  'amp',
+  'amp'
 ]
 
 [agent.files]

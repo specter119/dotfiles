@@ -9,7 +9,7 @@
   "hideThinkingBlock": false,
   "lastChangelogVersion": "{{pi.last_changelog_version}}",
   "npmCommand": [
-    "pi_npm_command"
+    "{{env_var "PI_CODING_AGENT_DIR"}}/bin/pi_update_with_bun"
   ],
   "packages": [
     "https://github.com/aliou/pi-guardrails",

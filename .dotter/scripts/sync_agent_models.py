@@ -27,9 +27,10 @@ def agent_path(env_name: str, fallback: str | Path, *parts: str) -> Path:
     return expand_path(raw).joinpath(*parts)
 
 
+XDG_CONFIG_HOME = expand_path(os.environ.get('XDG_CONFIG_HOME') or Path.home() / '.config')
 PI_SETTINGS = agent_path('PI_CODING_AGENT_DIR', Path.home() / '.pi', 'settings.json')
 DROID_SETTINGS = Path.home() / '.factory/settings.json'
-OPENCODE_CONFIG = Path.home() / '.config/opencode/opencode.jsonc'
+OPENCODE_CONFIG = XDG_CONFIG_HOME / 'opencode' / 'opencode.jsonc'
 CODEX_CONFIG = agent_path('CODEX_HOME', Path.home() / '.codex', 'config.toml')
 COPILOT_SETTINGS = agent_path('COPILOT_HOME', Path.home() / '.copilot', 'settings.json')
 
@@ -94,6 +95,29 @@ def sync_string(table: tomlkit.items.Table, key: str, value: object) -> bool:
     return True
 
 
+def normalize_int_dict(value: object) -> dict[str, int]:
+    if not isinstance(value, dict):
+        return {}
+    result: dict[str, int] = {}
+    for key, item in value.items():
+        if isinstance(key, str) and isinstance(item, int) and not isinstance(item, bool):
+            result[key] = item
+    return result
+
+
+def sync_int_dict(table: tomlkit.items.Table, key: str, value: object) -> bool:
+    normalized = normalize_int_dict(value)
+    existing = normalize_int_dict(table.get(key, {}))
+    if existing == normalized:
+        return False
+
+    inline = tomlkit.inline_table()
+    for item_key, item_value in normalized.items():
+        inline[item_key] = item_value
+    table[key] = inline
+    return True
+
+
 def main() -> None:
     if LOCAL_TOML.exists():
         doc = tomlkit.parse(LOCAL_TOML.read_text())
@@ -122,6 +146,12 @@ def main() -> None:
         if droid_table.get('default_model') != model:
             droid_table['default_model'] = model
             changed = True
+        changed |= sync_string(droid_table, 'compaction_model', droid_data.get('compactionModel'))
+        changed |= sync_int_dict(
+            droid_table,
+            'ide_extension_prompted_at',
+            droid_data.get('ideExtensionPromptedAt', {}),
+        )
 
     # opencode: model
     opencode_data = read_jsonc(OPENCODE_CONFIG)

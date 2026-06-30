@@ -9,7 +9,7 @@ repos:
         exclude: ^(alacritty/alacritty\.toml|codex/config\.toml|codex/codex/config\.toml)$
       - id: check-yaml
       - id: check-json
-        exclude: ^(pi/config/(models|settings)\.json|opencode/config/tui\.json|antigravity/antigravity/settings\.json)$
+        exclude: ^(pi/(models|settings)\.json|droid/config/settings\.json|opencode/config/tui\.json|antigravity/antigravity/settings\.json)$
       - id: detect-aws-credentials
         args: [--allow-missing-credentials]
       - id: detect-private-key
@@ -21,7 +21,7 @@ repos:
       - id: trailing-whitespace
       - id: pretty-format-json
         args: [--autofix]
-        exclude: ^(pi/config/(models|settings)\.json|opencode/config/tui\.json|antigravity/antigravity/settings\.json)$
+        exclude: ^(pi/(models|settings)\.json|droid/config/settings\.json|opencode/config/tui\.json|antigravity/antigravity/settings\.json)$
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.1
     hooks:

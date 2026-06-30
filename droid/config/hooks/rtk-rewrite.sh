@@ -6,7 +6,7 @@
 # Only processes tool_name == "Execute"; all others pass through silently.
 #
 # Exit code protocol for `rtk rewrite`:
-#   0 + stdout  Rewrite found → output updatedInput
+#   0 + stdout  Rewrite found → output updatedInput without forcing allow
 #   1           No RTK equivalent → pass through unchanged
 #   2           Deny rule matched → pass through (Droid native deny handles it)
 #   3 + stdout  Ask rule matched → rewrite but omit permissionDecision
@@ -33,14 +33,13 @@ if [ -n "$RTK_VERSION" ]; then
 fi
 
 INPUT=$(cat)
-TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
+TOOL_NAME=$(printf '%s' "$INPUT" | jq -r '.tool_name // empty' 2>/dev/null || true)
 
-# Only process Execute tool calls.
 if [ "$TOOL_NAME" != "Execute" ]; then
   exit 0
 fi
 
-CMD=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+CMD=$(printf '%s' "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null || true)
 
 if [ -z "$CMD" ]; then
   exit 0
@@ -70,29 +69,25 @@ case $EXIT_CODE in
     ;;
 esac
 
-ORIGINAL_INPUT=$(echo "$INPUT" | jq -c '.tool_input')
-UPDATED_INPUT=$(echo "$ORIGINAL_INPUT" | jq --arg cmd "$REWRITTEN" '.command = $cmd')
+[ -z "$REWRITTEN" ] && exit 0
 
-if [ "$EXIT_CODE" -eq 3 ]; then
-  # Ask: rewrite the command, omit permissionDecision so Droid prompts user.
-  jq -n \
-    --argjson updated "$UPDATED_INPUT" \
-    '{
-      "hookSpecificOutput": {
-        "hookEventName": "PreToolUse",
-        "updatedInput": $updated
-      }
-    }'
-else
-  # Allow: rewrite the command and auto-allow.
-  jq -n \
-    --argjson updated "$UPDATED_INPUT" \
-    '{
-      "hookSpecificOutput": {
-        "hookEventName": "PreToolUse",
-        "permissionDecision": "allow",
-        "permissionDecisionReason": "RTK auto-rewrite",
-        "updatedInput": $updated
-      }
-    }'
+ORIGINAL_INPUT=$(printf '%s' "$INPUT" | jq -c '.tool_input // empty' 2>/dev/null || true)
+
+if [ -z "$ORIGINAL_INPUT" ]; then
+  exit 0
 fi
+
+UPDATED_INPUT=$(printf '%s' "$ORIGINAL_INPUT" | jq --arg cmd "$REWRITTEN" '.command = $cmd' 2>/dev/null || true)
+
+if [ -z "$UPDATED_INPUT" ]; then
+  exit 0
+fi
+
+jq -n \
+  --argjson updated "$UPDATED_INPUT" \
+  '{
+    "hookSpecificOutput": {
+      "hookEventName": "PreToolUse",
+      "updatedInput": $updated
+    }
+  }'
