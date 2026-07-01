@@ -21,7 +21,7 @@ repos:
       - id: trailing-whitespace
       - id: pretty-format-json
         args: [--autofix]
-        exclude: ^(pi/(models|settings)\.json|droid/config/settings\.json|opencode/config/tui\.json|antigravity/antigravity/settings\.json)$
+        exclude: ^(amp/settings\.json|antigravity/antigravity/(mcp_config|settings)\.json|copilot/mcp-config\.json|droid/config/(mcp|settings)\.json|opencode/(config/tui|share/auth)\.json|pi/(auth|models|settings)\.json)$
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.1
     hooks:
