@@ -285,7 +285,7 @@ depends = ['bub', 'lody', 'raft']
 depends = ['playwright']
 
 [agent-runtime]
-depends = ['browser-use', 'skm', 'zellij', 'nowledge-mem']
+depends = ['browser-use', 'skm', 'zellij']
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'
