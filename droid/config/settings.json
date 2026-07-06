@@ -6,12 +6,12 @@
   "missionModelSettings": {
     "skipScrutiny": true,
     "skipUserTesting": false,
-    "validationWorkerModel": "gpt-5.3-codex",
+    "validationWorkerModel": "glm-5.2",
     "validationWorkerReasoningEffort": "high",
-    "workerModel": "gpt-5.4",
+    "workerModel": "claude-sonnet-5",
     "workerReasoningEffort": "high"
   },
-  "missionOrchestratorModel": "claude-opus-4-6",
+  "missionOrchestratorModel": "claude-opus-4-8",
   "missionOrchestratorReasoningEffort": "high",
   "modelFavorites": [
     "claude-opus-4-6",
@@ -25,7 +25,7 @@
     "interactionMode": "auto",
     "model": "{{droid.default_model}}",
     "reasoningEffort": "high",
-    "specModeModel": "claude-opus-4-6",
+    "specModeModel": "claude-opus-4-8",
     "specModeReasoningEffort": "high"
   },
   "showTokenUsageIndicator": true,

@@ -117,6 +117,9 @@ last_changelog_version = ""
 [copilot.files]
 copilot = '~/.config/copilot'
 
+[droid]
+depends = ['agent-tunnel']
+
 [droid.files]
 'droid/config' = '~/.factory'
 'droid/systemd' = '~/.config/systemd/user'
@@ -200,7 +203,6 @@ raft = '~/.config'
 
 [raft.variables.raft]
 api_key = ""
-wss_proxy = ""
 
 [ipython.files]
 ipython = '~/.ipython'
@@ -280,6 +282,9 @@ enterprise_cn_providers = {}
 
 [agent-tunnel]
 depends = ['bub', 'lody', 'raft']
+
+[agent-tunnel.variables.agent_tunnel]
+wss_proxy = ""
 
 [browser-use]
 depends = ['playwright']

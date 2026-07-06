@@ -148,7 +148,7 @@ nested_value = { key_b = "overridden" }
 | --- | --- | --- | --- |
 | `codex.model_provider` | string | `global + local` | Optional; when empty, top-level `model_provider` is omitted |
 | `raft.api_key` | string | `global + local` | Optional; service renders normally even when empty |
-| `raft.wss_proxy` | string | `global + local` | Optional; proxy env is omitted when unset |
+| `agent_tunnel.wss_proxy` | string | `global + local` | Optional; proxy env is omitted when unset |
 | `codex.trusted_projects` | array of strings | `global + local` | Optional; renders Codex `[projects]` trust list |
 | `codex.hook_states` | array of tables | `global + local` | Each item has `key` and `trusted_hash`; renders Codex hook trust state |
 | `antigravity.trusted_workspaces` | array of strings | `global + local` | Optional; renders Antigravity `trustedWorkspaces` |

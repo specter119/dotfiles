@@ -6,7 +6,10 @@ Wants=network-online.target
 [Service]
 Type=simple
 ExecStart=%h/.local/bin/droid daemon --remote-access
-Restart=on-failure
+{{#if agent_tunnel.wss_proxy}}
+Environment=WSS_PROXY={{agent_tunnel.wss_proxy}}
+{{/if}}
+Restart=always
 RestartSec=5
 
 [Install]
