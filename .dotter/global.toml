@@ -75,6 +75,17 @@ mamba = '~/.config'
 [uv.files]
 uv = '~/.config/uv'
 
+[registry-auth.variables.registry-auth]
+host = ""
+user_id = ""
+access_token = ""
+
+[bun]
+depends = ['registry-auth']
+
+[bun.variables.bun]
+registry_auth_npm = ""
+
 [bun.files]
 bun = '~/.config'
 

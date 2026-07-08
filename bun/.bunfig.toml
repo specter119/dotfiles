@@ -1,0 +1,10 @@
+[install]
+# {{#if bun.registry_auth_npm}}
+registry = "https://{{registry-auth.user_id}}:{{registry-auth.access_token}}@{{bun.registry_auth_npm}}"
+# {{else}}
+registry = "https://registry.npmmirror.com"
+# {{/if}}
+globalBinDir = '{{env_var "HOME"}}/.local/bin'
+
+[install.cache]
+dir = '{{env_var "HOME"}}/.cache/bun'
