@@ -8,7 +8,7 @@
     "skipUserTesting": false,
     "validationWorkerModel": "glm-5.2",
     "validationWorkerReasoningEffort": "high",
-    "workerModel": "claude-sonnet-5",
+    "workerModel": "gpt-5.4",
     "workerReasoningEffort": "high"
   },
   "missionOrchestratorModel": "claude-opus-4-8",
