@@ -33,5 +33,5 @@ PY
 	done
 }
 
-# Clean up rendered templates (YAML and TOML) after deployment.
+# Clean up rendered templates (YAML, TOML and JSON) after deployment.
 cleanup_rendered_templates
