@@ -1,0 +1,9 @@
+{
+  "auths": {
+# {{#each docker.registry_hosts}}
+    "{{this}}": {
+      "auth": "{{command_output "cat /tmp/dotter-docker-auth-base64"}}"
+    }{{#unless @last}},{{/unless}}
+# {{/each}}
+  }
+}

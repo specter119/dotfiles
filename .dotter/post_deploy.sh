@@ -15,7 +15,7 @@ with cache_toml.open("rb") as fh:
 
 for source, target in templates.items():
     source_path = Path(source)
-    if source_path.suffix not in {".yaml", ".yml", ".toml"}:
+    if source_path.suffix not in {".yaml", ".yml", ".toml", ".json"}:
         continue
     try:
         text = source_path.read_text(encoding="utf-8")

@@ -89,6 +89,21 @@ registry_auth_npm = ""
 [bun.files]
 bun = '~/.config'
 
+[netrc]
+depends = ['registry-auth']
+
+[netrc.files]
+netrc = '~'
+
+[docker]
+depends = ['registry-auth']
+
+[docker.variables.docker]
+registry_hosts = []
+
+[docker.files]
+docker = '~/.docker'
+
 [go.files]
 go = '~/.config'
 
