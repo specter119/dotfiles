@@ -1,9 +1,5 @@
 [install]
-# {{#if npmrc.registry_auth_npm}}
 # registry is managed by .npmrc
-# {{else}}
-registry = "https://registry.npmmirror.com"
-# {{/if}}
 globalBinDir = '{{env_var "HOME"}}/.local/bin'
 
 [install.cache]
