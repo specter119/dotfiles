@@ -25,3 +25,9 @@ Scope: `.dotter/`
 - Do not call `.dotter/scripts/mcp_setup.sh` from deploy hooks.
 - Do not add post-deploy commands that write secrets or tool-generated runtime state back into repo-managed config files.
 - These deploy scripts are also templates. Do not write a literal `{{` inside embedded shell or Python snippets; build it at runtime instead.
+
+## Runtime Artifacts
+
+- When multiple templates need the same deploy-time derived value, prefer writing a machine-local artifact under `$XDG_RUNTIME_DIR/dotter/` from `.dotter/pre_deploy.sh` instead of duplicating generation logic in each template.
+- Treat files in `$XDG_RUNTIME_DIR/dotter/` as disposable runtime artifacts. Templates may read them with `command_output`, but they must not be committed back into repo-managed config.
+- Current registry flow: `.dotter/pre_deploy.sh` writes `registry-auth-encode` from `registry-auth.user_id` and `registry-auth.access_token`, `npmrc/.npmrc` reads it for npm auth, and Bun inherits that auth through the deployed `~/.npmrc`.

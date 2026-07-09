@@ -1,5 +1,5 @@
 [install]
-# registry is managed by .npmrc
+# Registry and auth live in ~/.npmrc so bun and npm share one source of truth.
 globalBinDir = '{{env_var "HOME"}}/.local/bin'
 
 [install.cache]

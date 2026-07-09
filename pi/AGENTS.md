@@ -27,7 +27,7 @@
 
 1. **理解需求** - 有疑问立即提问
 2. **快速判断** - 读 AGENTS.md 或小文件做路由决策，不做大范围搜索
-3. **分解委派** - 非 trivial 操作优先委派 subagent，自己只做轻量确认
+3. **分解委派** - 受益于隔离或并行的非 trivial 操作，优先委派给合适的 subagent，自己只做轻量确认
 4. **目标驱动** - 先定义验收标准，循环验证直到满足
 5. **主动报告** - 完成后报告结果；无法复述当前状态时停下重新陈述
 
@@ -44,9 +44,10 @@
 
 ## 多 Agent 协作
 
-### 可用角色
+### 可用类型
 
-- `explorer`、`librarian`、`worker`、`oracle`
+- 以当前会话里实际可用的 subagent 为准，按能力类型选择最合适的那个
+- 常见类型包括：事实收集型、文档研究型、实现型，以及前台咨询或审查型
 
 ### 主 agent 定位
 
@@ -65,20 +66,20 @@
 
 1. **trivial 任务**（<10行、单点修改、非安全相关）→ 直接完成，不委派
 2. **读单个小文件、简单 grep 确认** → 直接完成，不委派
-3. **代码搜索、现状梳理、找入口** → 委派 `explorer`（可并行多个）
-4. **外部文档、某库/API 用法** → 委派 `librarian`
-5. **明确实现任务，受益于隔离执行** → 委派 `worker`
+3. **代码搜索、现状梳理、找入口** → 委派合适的事实收集型 subagent（可并行多个）
+4. **外部文档、某库/API 用法** → 委派合适的文档研究型 subagent
+5. **明确实现任务，受益于隔离执行** → 委派合适的实现型 subagent
    - "受益于隔离"：需要独立验证、会阻塞主线、或可与其他任务并行
-6. **多个互不依赖的子任务** → 并行委派多个 `worker`（文件范围不重叠）
-7. **实现后复核、发布前审查** → 由主 agent 自行复核，或委托 `oracle` 评估
-8. **需求含糊、方案冲突、架构权衡大** → 委派 `oracle`（foreground，等待结果）
-9. **两次修复失败、调试无方向** → 委派 `oracle` 诊断
+6. **多个互不依赖的子任务** → 并行委派多个合适的 subagent（文件范围不重叠）
+7. **实现后复核、发布前审查** → 由主 agent 自行复核，或委托合适的前台咨询或审查型 subagent
+8. **需求含糊、方案冲突、架构权衡大** → 委派合适的前台咨询型 subagent，等待结果后裁决
+9. **两次修复失败、调试无方向** → 委派最适合诊断当前问题的 subagent
 
 **Tie-breaker**：当任务同时匹配多条规则时：
 
 - 目标和修改范围已知 → 优先匹配实现规则（rule 4/5）
-- 目标或影响范围未知 → 优先 explorer 收集事实
-- 涉及 security/auth/数据丢失 → 不论行数，不当作 trivial，必须经 `oracle` 评估
+- 目标或影响范围未知 → 优先让事实收集最强的 subagent 收集事实
+- 涉及 security/auth/数据丢失 → 不论行数，不当作 trivial，优先交给具备合适审查能力的路径处理
 
 ### 委派后验证
 
@@ -87,17 +88,17 @@ subagent 完成后，主 agent 必须：
 1. 检查 subagent 报告的 `conclusion` 和 `risks`
 2. 对非 trivial 改动：浏览 diff 或关键改动文件
 3. 确认声称"测试通过"时测试确实运行了
-4. 高风险改动（security/auth/public API/数据模型）→ 委派 `oracle` 做 formal review
+4. 高风险改动（security/auth/public API/数据模型）→ 由主 agent 复核，必要时再委派具备合适审查能力的 subagent 做 formal review
 
 ### 并行策略
 
 - 识别任务中的独立子问题，尽量并行而非串行
 - 典型并行模式：
-  - `explorer`（搜索模块A）+ `explorer`（搜索模块B）→ 汇总后实现
-  - `worker`（修改前端）+ `worker`（修改后端）→ 汇总验证
-  - `librarian`（查文档）+ `explorer`（读现有实现）→ 对比后裁决
-- 存在依赖的任务必须串行：先 `explorer` 收集事实 → 再 `worker` 实现
-- **并行写入约束**：多个 `worker` 并行时，必须拆分为不重叠的文件/目录范围，禁止多个写 agent 操作同一文件
+  - 两个事实收集型 subagent 并行探索不同模块，汇总后实现
+  - 两个实现型 subagent 分头修改互不重叠的范围，最后汇总验证
+  - 一个文档研究型 subagent 查文档，另一个事实收集型 subagent 读现有实现，对比后裁决
+- 存在依赖的任务必须串行：先让合适的 subagent 收集事实，再交给合适的实现型 subagent 实现
+- **并行写入约束**：多个实现型 subagent 并行时，必须拆分为不重叠的文件/目录范围，禁止多个写 agent 操作同一文件
 
 ### Handoff 协议
 
@@ -115,7 +116,7 @@ subagent 完成后，主 agent 必须：
 
 ```
 Agent({
-  subagent_type: "worker",
+  subagent_type: "<best-fit-subagent>",
   prompt: `
     task: 将 auth 模块从 session-based 迁移到 JWT
     goal: 所有 API 端点使用 JWT 验证，旧 session 逻辑移除
@@ -203,7 +204,7 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 ### 回答前自检
 
 1. 任务复杂度：trivial / moderate / complex？
-2. 是否受益于隔离执行或并行？（是则委派 subagent）
+2. 是否受益于隔离执行或并行？（是则委派给合适的 subagent）
 3. 是否可以直接修复低级错误？
 
 ### 自动修复低级错误
