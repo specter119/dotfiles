@@ -5,7 +5,6 @@
 - 目标：积极利用 subagent 分工协作，将受益于隔离/并行的任务委派执行
 - 默认策略：trivial 直接完成；moderate 评估是否受益于隔离后决定；complex 必须拆分委派
 - 委派最多一层，同时最多并行 4 个 subagent；subagent 不再继续委派
-- 所有执行类 subagent 使用 DeepSeek V4 Flash（`qoder/dfmodel`）；oracle 使用其自身定义的模型
 - background / foreground 由调用方根据场景决定，不硬编码
 
 ## 交流规范
