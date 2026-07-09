@@ -2,7 +2,7 @@
   "auths": {
 # {{#each docker.registry_hosts}}
     "{{this}}": {
-      "auth": "{{command_output "cat /tmp/dotter-docker-auth-base64"}}"
+      "auth": "{{command_output "cat \"$XDG_RUNTIME_DIR\"/dotter/registry-auth-encode"}}"
     }{{#unless @last}},{{/unless}}
 # {{/each}}
   }

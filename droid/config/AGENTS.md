@@ -77,13 +77,14 @@
 
 #### 角色
 
-| 角色 | 用途 | 模型 | 工具限制 |
-|---|---|---|---|
-| `explorer` | 读代码、搜实现、列事实、收集上下文 | gemini-3-flash (0.2×) | read-only + fast-context |
-| `librarian` | 查外部文档、第三方库、API 用法 | gemini-3-flash (0.2×) | Read + web + context7 |
-| `worker` | 通用实现，执行明确范围的修改 | inherit（主模型） | 全部工具 |
+| 角色        | 用途                               | 模型                  | 工具限制                 |
+| ----------- | ---------------------------------- | --------------------- | ------------------------ |
+| `explorer`  | 读代码、搜实现、列事实、收集上下文 | gemini-3-flash (0.2×) | read-only + fast-context |
+| `librarian` | 查外部文档、第三方库、API 用法     | gemini-3-flash (0.2×) | Read + web + context7    |
+| `worker`    | 通用实现，执行明确范围的修改       | inherit（主模型）     | 全部工具                 |
 
 不需要独立 droid 的角色：
+
 - **reviewer**：内置 `review` skill 已覆盖；mission 场景有 `scrutiny-feature-reviewer`
 - **oracle**：主 agent 本身即前台裁决者，无需额外咨询通道
 
@@ -122,6 +123,7 @@ subagent 完成后，主 agent 必须：
 #### Handoff 协议
 
 委派时使用结构化 prompt：
+
 - **task**: 要做什么
 - **goal**: 期望达成的目标
 - **in_scope**: 范围内的文件/模块

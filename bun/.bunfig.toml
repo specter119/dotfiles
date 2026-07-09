@@ -1,6 +1,6 @@
 [install]
-# {{#if bun.registry_auth_npm}}
-registry = "https://{{registry-auth.user_id}}:{{registry-auth.access_token}}@{{bun.registry_auth_npm}}"
+# {{#if npmrc.registry_auth_npm}}
+# registry is managed by .npmrc
 # {{else}}
 registry = "https://registry.npmmirror.com"
 # {{/if}}

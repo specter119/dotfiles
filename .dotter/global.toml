@@ -81,13 +81,19 @@ user_id = ""
 access_token = ""
 
 [bun]
-depends = ['registry-auth']
-
-[bun.variables.bun]
-registry_auth_npm = ""
+depends = ['npmrc']
 
 [bun.files]
 bun = '~/.config'
+
+[npmrc]
+depends = ['registry-auth']
+
+[npmrc.variables.npmrc]
+registry_auth_npm = ""
+
+[npmrc.files]
+npmrc = '~'
 
 [netrc]
 depends = ['registry-auth']

@@ -11,6 +11,7 @@ rbw sync
 # so we pre-compute the value here (pre_deploy is also a template).
 # The docker/config.json template reads this file via command_output.
 if [ -n "{{registry-auth.user_id}}" ] && [ -n "{{registry-auth.access_token}}" ]; then
+  mkdir -p "$XDG_RUNTIME_DIR/dotter"
   printf '%s:%s' "{{registry-auth.user_id}}" "{{registry-auth.access_token}}" \
-    | base64 | tr -d '\n' > /tmp/dotter-docker-auth-base64
+    | base64 | tr -d '\n' > "$XDG_RUNTIME_DIR/dotter/registry-auth-encode"
 fi

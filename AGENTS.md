@@ -44,11 +44,11 @@ When changing package names, dependencies, or file mappings, preserve this layer
 
 ### Blackhole Mapping
 
-When a package should remain in the default package groups but must not overwrite the real live config on a specific machine, remap its deploy target to a blackhole directory such as `~/.cache/dotter-blackhole/<package>` in a machine-specific include like `.dotter/wsl.toml`.
+When a package should remain in the default package groups but must not overwrite the real live config on a specific machine, remap its deploy target to a blackhole directory such as `$XDG_RUNTIME_DIR/dotter/blackhole-<package>` in a machine-specific include like `.dotter/wsl.toml`.
 
 - Use this when the package is still part of shared package composition, but the actual live path is intentionally managed locally and should not be overwritten by Dotter.
 - Prefer this over removing the package from global groups when you still want dependency structure, variables, and repo defaults to stay intact.
-- Keep the blackhole target obviously non-live and disposable, typically under `~/.cache/dotter-blackhole/`.
+- Keep the blackhole target obviously non-live and disposable, in `$XDG_RUNTIME_DIR/dotter/blackhole-<package>`.
 - Document the real live config ownership nearby so future changes do not accidentally assume Dotter still controls the production path.
 
 ### Template Basics
