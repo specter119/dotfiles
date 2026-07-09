@@ -5,7 +5,7 @@
 - 目标：积极利用 subagent 分工协作，将受益于隔离/并行的任务委派执行
 - 默认策略：trivial 直接完成；moderate 评估是否受益于隔离后决定；complex 必须拆分委派
 - 委派最多一层，同时最多并行 4 个 subagent；subagent 不再继续委派
-- 所有 subagent 使用 DeepSeek V4 Flash（`qoder/dfmodel`）
+- 所有执行类 subagent 使用 DeepSeek V4 Flash（`qoder/dfmodel`）；oracle 使用其自身定义的模型
 - background / foreground 由调用方根据场景决定，不硬编码
 
 ## 交流规范
@@ -47,8 +47,7 @@
 
 ### 可用角色
 
-- 可用 subagent：`explorer`、`librarian`、`task-subagent`、`reviewer`、`oracle`
-- 各 subagent 的具体职责、输入输出约束和边界，以 `pi/config/agents/*.md` 中各自定义为准
+- `explorer`、`librarian`、`worker`、`oracle`
 
 ### 主 agent 定位
 
@@ -69,35 +68,37 @@
 2. **读单个小文件、简单 grep 确认** → 直接完成，不委派
 3. **代码搜索、现状梳理、找入口** → 委派 `explorer`（可并行多个）
 4. **外部文档、某库/API 用法** → 委派 `librarian`
-5. **明确实现任务，受益于隔离执行** → 委派 `task-subagent`
+5. **明确实现任务，受益于隔离执行** → 委派 `worker`
    - "受益于隔离"：需要独立验证、会阻塞主线、或可与其他任务并行
-6. **多个互不依赖的子任务** → 并行委派多个 `task-subagent`（文件范围不重叠）
-7. **实现后复核、发布前审查** → 委派 `reviewer`
+6. **多个互不依赖的子任务** → 并行委派多个 `worker`（文件范围不重叠）
+7. **实现后复核、发布前审查** → 由主 agent 自行复核，或委托 `oracle` 评估
 8. **需求含糊、方案冲突、架构权衡大** → 委派 `oracle`（foreground，等待结果）
 9. **两次修复失败、调试无方向** → 委派 `oracle` 诊断
 
 **Tie-breaker**：当任务同时匹配多条规则时：
+
 - 目标和修改范围已知 → 优先匹配实现规则（rule 4/5）
 - 目标或影响范围未知 → 优先 explorer 收集事实
-- 涉及 security/auth/数据丢失 → 不论行数，不当作 trivial，必须经 reviewer
+- 涉及 security/auth/数据丢失 → 不论行数，不当作 trivial，必须经 `oracle` 评估
 
 ### 委派后验证
 
 subagent 完成后，主 agent 必须：
+
 1. 检查 subagent 报告的 `conclusion` 和 `risks`
 2. 对非 trivial 改动：浏览 diff 或关键改动文件
 3. 确认声称"测试通过"时测试确实运行了
-4. 高风险改动（security/auth/public API/数据模型）→ 委派 `reviewer` 做 formal review
+4. 高风险改动（security/auth/public API/数据模型）→ 委派 `oracle` 做 formal review
 
 ### 并行策略
 
 - 识别任务中的独立子问题，尽量并行而非串行
 - 典型并行模式：
   - `explorer`（搜索模块A）+ `explorer`（搜索模块B）→ 汇总后实现
-  - `task-subagent`（修改前端）+ `task-subagent`（修改后端）→ 汇总验证
+  - `worker`（修改前端）+ `worker`（修改后端）→ 汇总验证
   - `librarian`（查文档）+ `explorer`（读现有实现）→ 对比后裁决
-- 存在依赖的任务必须串行：先 `explorer` 收集事实 → 再 `task-subagent` 实现
-- **并行写入约束**：多个 `task-subagent` 并行时，必须拆分为不重叠的文件/目录范围，禁止多个写 agent 操作同一文件
+- 存在依赖的任务必须串行：先 `explorer` 收集事实 → 再 `worker` 实现
+- **并行写入约束**：多个 `worker` 并行时，必须拆分为不重叠的文件/目录范围，禁止多个写 agent 操作同一文件
 
 ### Handoff 协议
 
@@ -115,7 +116,7 @@ subagent 完成后，主 agent 必须：
 
 ```
 Agent({
-  subagent_type: "task-subagent",
+  subagent_type: "worker",
   prompt: `
     task: 将 auth 模块从 session-based 迁移到 JWT
     goal: 所有 API 端点使用 JWT 验证，旧 session 逻辑移除
@@ -144,8 +145,6 @@ Agent({
 
 - 主 agent 负责最终结论，不能把最终责任转给 subagent
 - 如果多个 subagent 结论冲突，主 agent 必须明确说明冲突点和裁决依据
-- `oracle` 的意见是 consultation only，不自动覆盖实现或评审结论
-- `task-subagent` 是 generic executor，不承担架构裁决职责
 - 汇总结果后，向用户报告时简洁列出各 subagent 贡献，不逐字复述
 
 ## 工具使用偏好
@@ -154,15 +153,15 @@ Agent({
 
 主 agent 优先做路由和裁决，重型操作委派 subagent：
 
-| 操作 | 主 agent 直接做 | 委派 subagent |
-|------|---------------|--------------|
-| 读单个小文件 | ✅ | — |
-| <10行快速修改 | ✅ | — |
-| 简单 grep 确认 | ✅ | — |
-| 多文件搜索/对比 | — | → explorer |
-| ast-grep 结构搜索 | — | → explorer |
-| 大范围重构 | — | → task-subagent |
-| 外部文档查询 | — | → librarian |
+| 操作              | 主 agent 直接做 | 委派 subagent |
+| ----------------- | --------------- | ------------- |
+| 读单个小文件      | ✅              | —             |
+| <10行快速修改     | ✅              | —             |
+| 简单 grep 确认    | ✅              | —             |
+| 多文件搜索/对比   | —               | → explorer    |
+| ast-grep 结构搜索 | —               | → explorer    |
+| 大范围重构        | —               | → worker      |
+| 外部文档查询      | —               | → librarian   |
 
 ### 内置工具（主 agent 用于轻量操作）
 
@@ -176,7 +175,7 @@ Agent({
 - 文本搜索：`rg` > `grep`
 - 文件查找：`fd` > `find`
 - 运行 pre-commit hooks：`prek` > `pre-commit`
-- 语法搜索：`ast-grep`（仅 explorer/task-subagent 使用）
+- 语法搜索：`ast-grep`（仅 explorer/worker 使用）
 - DNS 查询：`dig` > `nslookup`
 - 网络连接：`ss` > `netstat`
 - 浏览器操作：`playwright-cli`
@@ -246,7 +245,7 @@ xurl <provider>/<session_id> -d "msg"  # 继续对话
 
 ## Git 规范
 
-- 在存在 `.jj/` 的仓库中，遵循 `onevcat-jj` skill 使用 jj
+- 在存在 `.jj/` 的仓库中，遵循 `jj` skill 使用 jj
 - Commit message：英文，格式 `<type>: <description>`
 - Type：`feat`, `fix`, `refactor`, `docs`, `test`, `chore`
 - 每次 commit 逻辑完整

@@ -15,7 +15,7 @@ with cache_toml.open("rb") as fh:
 
 for source, target in templates.items():
     source_path = Path(source)
-    if source_path.suffix not in {".yaml", ".yml", ".toml", ".json"}:
+    if source_path.suffix not in {".yaml", ".yml", ".toml", ".json", ".md"}:
         continue
     try:
         text = source_path.read_text(encoding="utf-8")
@@ -33,5 +33,5 @@ PY
 	done
 }
 
-# Clean up rendered templates (YAML, TOML and JSON) after deployment.
+# Clean up rendered templates (YAML, TOML, JSON and Markdown) after deployment.
 cleanup_rendered_templates

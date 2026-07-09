@@ -1,6 +1,9 @@
 ---
 description: 提供只读咨询，用于架构取舍、困难调试和高不确定性裁决
 tools: read, bash, grep, find, ls
+# {{#if pi.subagent_model.oracle}}
+model: {{pi.subagent_model.oracle}}
+# {{/if}}
 thinking: high
 max_turns: 15
 prompt_mode: replace

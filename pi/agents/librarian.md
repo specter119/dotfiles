@@ -1,7 +1,9 @@
 ---
 description: 查询官方文档、第三方库、OSS 示例和迁移资料，提供外部参考结论
 tools: read, bash, grep, find, ls
-model: opencode-go/deepseek-v4-flash
+# {{#if pi.subagent_model.librarian}}
+model: {{pi.subagent_model.librarian}}
+# {{/if}}
 thinking: high
 max_turns: 20
 prompt_mode: replace
@@ -39,4 +41,4 @@ disallowed_tools: Agent, edit, write
 - `key_evidence`: 官方文档、迁移说明或 OSS 例子的关键点
 - `risks`: 采用外部方案时的兼容性或迁移风险
 - `open_questions`: 还需要仓库内确认的问题
-- `recommended_next_step`: 建议主 agent 继续实现、补搜索，或转交 reviewer/oracle
+- `recommended_next_step`: 建议主 agent 继续实现、补搜索，或转交 oracle

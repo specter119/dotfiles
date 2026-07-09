@@ -139,6 +139,7 @@ default_model = ""
 default_provider = ""
 enterprise_packages = []
 last_changelog_version = ""
+subagent_model = {}
 
 [copilot.files]
 copilot = '~/.config/copilot'

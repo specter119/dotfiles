@@ -1,7 +1,9 @@
 ---
 description: 搜索代码、读取实现、归纳事实，只做上下文收集与现状说明
 tools: read, bash, grep, find, ls
-model: opencode-go/deepseek-v4-flash
+# {{#if pi.subagent_model.explorer}}
+model: {{pi.subagent_model.explorer}}
+# {{/if}}
 thinking: high
 max_turns: 20
 prompt_mode: replace
