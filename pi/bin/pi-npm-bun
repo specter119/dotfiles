@@ -50,5 +50,25 @@ if [[ -n "$prefix_dir" ]]; then
   cd "$prefix_dir" || exit 1
 fi
 
-export BUN_INSTALL_TRUST=1
+# Auto-trust blocked lifecycle scripts (postinstall etc.) for pi-managed installs.
+# Bun blocks lifecycle scripts by default; `--trust` only records named packages
+# added via `bun add`, not transitive deps of a bare `bun install`. `bun pm trust
+# --all` runs any still-blocked scripts and records them in package.json.
+# This is pi-scoped (this wrapper IS pi's npm command), not a global trust.
+# pi wipes git extension repos with `git reset --hard` + `git clean -fdx` on each
+# update, so the recorded trustedDependencies are ephemeral and re-applied every
+# install — idempotent and safe.
+if [[ "$is_install" == true ]]; then
+  bun "${args[@]}"
+  rc=$?
+  if [[ $rc -eq 0 ]]; then
+    trust_out=$(bun pm trust --all 2>&1)
+    # Only surface output when scripts actually ran; suppress the noisy "0 scripts ran" case.
+    if [[ "$trust_out" == *"scripts ran across"* ]]; then
+      printf '%s\n' "$trust_out" >&2
+    fi
+  fi
+  exit $rc
+fi
+
 exec bun "${args[@]}"
