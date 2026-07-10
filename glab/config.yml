@@ -1,0 +1,39 @@
+# What protocol to use when performing Git operations. Supported values: ssh, https.
+git_protocol: ssh
+# What editor glab should run when creating issues, merge requests, etc. This global config cannot be overridden by hostname.
+editor:
+# What browser glab should run when opening links. This global config cannot be overridden by hostname.
+browser:
+# Set your desired Markdown renderer style. Available options are [dark, light, notty]. To set a custom style, refer to https://github.com/charmbracelet/glamour#styles
+glamour_style: dark
+# Allow glab to automatically check for updates and notify you when there are new updates.
+check_update: true
+# Last update check timestamp, used for checking when the last update check was performed.
+# {{#if glab.last_update_check_timestamp}}
+last_update_check_timestamp: "{{glab.last_update_check_timestamp}}"
+# {{/if}}
+# Whether or not to display hyperlink escape characters when listing items like issues or merge requests. Set to TRUE to display hyperlinks in TTYs only. Force hyperlinks by setting FORCE_HYPERLINKS=1 as an environment variable.
+display_hyperlinks: false
+# Default GitLab hostname to use.
+# {{#if glab.default_host}}
+host: "{{glab.default_host}}"
+# {{/if}}
+# Set to true (1) to disable prompts, or false (0) to enable them.
+no_prompt: false
+# Set to false (0) to disable sending usage data to your GitLab instance or true (1) to enable.
+# See https://docs.gitlab.com/administration/settings/usage_statistics/
+# for more information
+telemetry: true
+# Configuration specific for GitLab instances.
+hosts:
+  # {{#each glab.hosts}}
+    "{{this.host}}":
+    # {{#each this}}
+    # {{#if (replace @key "host" "")}}
+        "{{@key}}": "{{this}}"
+    # {{/if}}
+    # {{/each}}
+  # {{/each}}
+# {{#if glab.last_seen_version}}
+last_seen_version: "{{glab.last_seen_version}}"
+# {{/if}}

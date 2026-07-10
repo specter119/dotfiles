@@ -1,0 +1,8 @@
+# {{#if ssh.hkg.user}}
+# {{#each ssh.hkg.hosts}}
+Host hkg_{{this.alias}}
+	HostName {{this.hostname}}
+# {{/each}}
+Host hkg_*
+	User {{ssh.hkg.user}}
+# {{/if}}

@@ -60,6 +60,11 @@ repo_identities = {}
 [ssh.files]
 ssh = '~/.ssh'
 
+[ssh.variables.ssh]
+hkg = {user = "", hosts = []}
+zha = {user = "", hosts = []}
+azure = {user = "", hosts = []}
+
 [pip.files]
 pip = '~/.config/pip'
 
@@ -136,6 +141,15 @@ default_model = ""
 model_provider = ""
 trusted_projects = []
 hook_states = []
+
+[glab.files]
+glab = '~/.config/glab-cli'
+
+[glab.variables.glab]
+default_host = ""
+hosts = []
+last_update_check_timestamp = ""
+last_seen_version = ""
 
 [pi.files]
 pi = '~/.config/pi'

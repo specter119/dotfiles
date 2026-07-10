@@ -165,6 +165,12 @@ nested_value = { key_b = "overridden" }
 | `opencode.enterprise_tui_plugins` | array of strings | `global + local` | Optional; TUI plugin entries are omitted when empty |
 | `droid.default_model` | string | `global + local` | Factory Droid default model; synced by sync script |
 | `droid.trusted_folders` | array of tables | `global + local` | Optional; each item has `dir` (folder path) and `trustedAt` (timestamp); renders Droid `trustedFolders` |
+| `glab.default_host` | string | `global + local` | Optional; glab default GitLab hostname; omitted when empty |
+| `glab.hosts` | array of tables | `global + local` | Each item has `host`, `token`, `user`, optional `container_registry_domains`; renders glab host config |
+| `glab.last_update_check_timestamp` | string | `global + local` | Reverse-synced from live config; avoids deploy overwriting update check state |
+| `glab.last_seen_version` | string | `global + local` | Reverse-synced from live config; avoids deploy overwriting version marker |
+| `ssh.{site}.user` | string | `global + local` | Per-site SSH wildcard user (e.g. `ssh.hkg.user`); omitted when empty |
+| `ssh.{site}.hosts` | array of tables | `global + local` | Each item has `alias` and `hostname`; renders specific Host entries under site prefix |
 
 #### Git Repo Identities
 
@@ -329,6 +335,12 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 | codex | `default_model` | string | `config.toml.model` |
 | codex | `model_provider` | string (conditional) | `config.toml.model_provider` |
 | antigravity | `trusted_workspaces` | `string[]` | `settings.json.trustedWorkspaces` |
+| glab | `default_host` | string | `config.yml.host` |
+| glab | `hosts` | `[[aot]]` | `config.yml.hosts` |
+| glab | `last_update_check_timestamp` | string | `config.yml.last_update_check_timestamp` |
+| glab | `last_seen_version` | string | `config.yml.last_seen_version` |
+| ssh | `{site}.user` | string | `config.d/{site}` wildcard `User` |
+| ssh | `{site}.hosts` | `[[aot]]` | `config.d/{site}` specific `Host`/`HostName` pairs |
 
 ## Commands"}]
 

@@ -1,0 +1,8 @@
+# {{#if ssh.azure.user}}
+# {{#each ssh.azure.hosts}}
+Host azure_{{this.alias}}
+	HostName {{this.hostname}}
+# {{/each}}
+Host azure_*
+	User {{ssh.azure.user}}
+# {{/if}}
