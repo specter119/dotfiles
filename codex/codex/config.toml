@@ -128,6 +128,7 @@ selected-avatar-id = "seedy"
 conversationDetailMode = "STEPS_COMMANDS"
 preventSleepWhileRunning = true
 keepRemoteControlAwakeWhilePluggedIn = true
+followUpQueueMode = "queue"
 
 [desktop.appearanceLightChromeTheme]
 accent = "#8839ef"
@@ -159,3 +160,6 @@ skill = "#cba6f7"
 
 [desktop.open-in-target-preferences]
 global = "systemDefault"
+
+[notice]
+hide_rate_limit_model_nudge = true
