@@ -164,6 +164,7 @@ nested_value = { key_b = "overridden" }
 | `opencode.default_model` | string | `global + local` | opencode default model, format `provider/model`; synced by sync script |
 | `opencode.enterprise_tui_plugins` | array of strings | `global + local` | Optional; TUI plugin entries are omitted when empty |
 | `droid.default_model` | string | `global + local` | Factory Droid default model; synced by sync script |
+| `droid.trusted_folders` | array of tables | `global + local` | Optional; each item has `dir` (folder path) and `trustedAt` (timestamp); renders Droid `trustedFolders` |
 
 #### Git Repo Identities
 
@@ -246,7 +247,90 @@ When a YAML file is both a Dotter template and pre-commit formatted with `yamlfm
 - Quote inline Handlebars values in YAML scalars, for example `repo: "{{repo}}"` and `- "{{this}}"`. Unquoted forms may be rewritten into invalid `{ { repo } }` style text by formatters.
 - After deploy, generated files may contain empty `#` lines left by commented control blocks. `post_deploy.sh` removes lines matching `^[[:space:]]*#[[:space:]]*$` from both the rendered target and the Dotter cache copy so future deploys stay in sync.
 
-## Commands
+## Live Config Reverse Sync Pattern
+
+When an agent tool modifies its own config file at runtime (e.g., adding trusted folders, switching models), and the Dotter template renders from the same variable source, deploy will overwrite local changes. Solution: reverse-sync live config changes into `local.toml` before deploy, then let the template read from `local.toml`.
+
+See `.dotter/AGENTS.md` for constraints on deploy scripts (POSIX sh, no literal `{{` in embedded code, runtime artifact conventions).
+
+### Flow
+
+```
+live config changes (tool modifies at runtime)
+      ↓
+pre_deploy.sh → live_config_reverse_sync.py
+      ↓
+local.toml variables updated
+      ↓
+Dotter template rendering (reads from local.toml)
+      ↓
+deployed config preserves changes
+```
+
+### Decision Framework: When to Add a Local Variable + Reverse Sync
+
+Two sequential decisions: **should it be a local variable**, then **should it be reverse-synced**.
+
+#### Step 1: Does it need a local variable?
+
+Make a value a Dotter variable in `local.toml` (rather than hardcoding in the template or `global.toml`) when:
+
+- **Differs across machines** — the same template must produce different results on different machines (e.g., enterprise model at work, public model at home)
+- **Should not be in the repo** — secrets, credentials, personal tokens must not be committed
+- **Tool modifies at runtime** — the agent tool will change this value locally; the template must reflect the live value, not a repo default
+
+If the value is the same on all machines and never changes, hardcode it in the template — no local variable needed.
+
+#### Step 2: Does it need reverse sync?
+
+Once a value is a local variable, decide whether it should be reverse-synced from the live config back to `local.toml`:
+
+**Needs reverse sync — tool modifies the value, deploy would lose it:**
+
+1. **Machine-specific config** — same setting differs across machines (e.g., default model). The user may switch it via the tool UI on machine A; deploy must preserve that choice, not overwrite with another machine's or the repo's default.
+2. **Tool-side-effect "non-config"** — the user doesn't treat it as config, but the agent tool writes it casually (e.g., trusted folders, dismissal banners). Losing it isn't fatal, but re-setting it after every deploy is annoying.
+3. **Time-sensitive markers** — version numbers, read receipts, changelog versions. They have almost no impact on usage, but deploy rollback is confusing ("I already read this changelog, why is it showing again?").
+4. **Temporary workaround** — switching models because a quota is exhausted, planning to switch back later. Reverse sync ensures deploy doesn't overwrite the workaround before you switch back.
+
+**Does NOT need reverse sync — user maintains the value deliberately:**
+- **Intentionally maintained config** — API keys, trusted project lists, plugin lists that the user explicitly manages in `local.toml`. The tool never modifies them.
+- **Static content** — hardcoded in the template, no variable reference.
+
+### Implementation Steps
+
+1. **Declare the variable** — add an empty placeholder in `global.toml`, register in the Approved Variable Schema in this file
+2. **Reference in template** — render with `{{#each}}` / `{{#if}}` in the corresponding template
+3. **Add sync function** — write a normalize-compare-write function in `live_config_reverse_sync.py`
+4. **Register in main()** — call the sync function in the corresponding agent block
+
+### Variable Types and Sync Functions
+
+| live config format | local.toml format | recommended approach | reference function |
+|---|---|---|---|
+| string | string | `sync_string(table, 'key', data.get('field'))` | pi `default_model` |
+| string (nested / nullable) | string | `sync_string(table, 'key', val, fallback='')` | droid `default_model` |
+| string (conditional) | string | `sync_string(table, 'key', val, fallback='', remove_if_empty=True)` | codex `model_provider` |
+| `dict[str, int]` | inline table | `sync_int_dict(table, 'key', data.get('field'))` | droid `ide_extension_prompted_at` |
+| `dict[str, {trustedAt: str}]` | `[[aot]]` array of tables | `sync_trusted_folders` — uses `normalize_trusted_folders` (live) + `normalize_existing_trusted_folders` (TOML) | droid `trusted_folders` |
+| `string[]` | inline array | `sync_trusted_workspaces` — uses `normalize_trusted_workspaces` for both sides | antigravity `trusted_workspaces` |
+
+### Current Coverage
+
+| Agent | Variable | Format | Source |
+|---|---|---|---|
+| pi | `default_model` | string | `settings.json.defaultModel` |
+| pi | `default_provider` | string | `settings.json.defaultProvider` |
+| pi | `last_changelog_version` | string | `settings.json.lastChangelogVersion` |
+| droid | `default_model` | string | `settings.json.sessionDefaultSettings.model` |
+| droid | `compaction_model` | string | `settings.json.compactionModel` |
+| droid | `ide_extension_prompted_at` | `dict[str, int]` | `settings.json.ideExtensionPromptedAt` |
+| droid | `trusted_folders` | `[[aot]]` | `settings.json.trustedFolders` |
+| opencode | `default_model` | string | `opencode.jsonc.model` |
+| codex | `default_model` | string | `config.toml.model` |
+| codex | `model_provider` | string (conditional) | `config.toml.model_provider` |
+| antigravity | `trusted_workspaces` | `string[]` | `settings.json.trustedWorkspaces` |
+
+## Commands"}]
 
 ```bash
 dotter deploy           # deploy dotfiles

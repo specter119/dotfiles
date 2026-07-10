@@ -161,6 +161,7 @@ depends = ['agent-tunnel']
 default_model = ""
 compaction_model = ""
 ide_extension_prompted_at = {}
+trusted_folders = []
 
 [amp.files]
 amp = '~/.config/amp'

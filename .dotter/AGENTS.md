@@ -20,6 +20,7 @@ Scope: `.dotter/`
 ## Deploy Scripts
 
 - `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` are for deploy-time glue that should not live in static templates. Keep these entry scripts POSIX `sh` compatible because Dotter may execute the rendered cache scripts through `/bin/sh`; call Bash-only helpers explicitly with `bash ...`.
+- `.dotter/scripts/live_config_reverse_sync.py` is invoked from `.dotter/pre_deploy.sh` to reverse-sync tool-modified config values (e.g., trusted folders, default model) from live configs back into `local.toml`. See repo-level `AGENTS.md` for the decision framework and variable coverage.
 - `.dotter/scripts/mcp_setup.sh` is only a manual backup for setting Claude MCP entries. It is not part of the normal deploy path.
 - Keep `.dotter/scripts/mcp_setup.sh` scoped to Claude MCP only; do not add other agent setup there.
 - Do not call `.dotter/scripts/mcp_setup.sh` from deploy hooks.

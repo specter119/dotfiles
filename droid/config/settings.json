@@ -36,6 +36,13 @@
     "{{@key}}": {{this}}{{#unless @last}},{{/unless}}
     {{/each}}
   },
+  "trustedFolders": {
+    {{#each droid.trusted_folders}}
+    "{{this.dir}}": {
+      "trustedAt": "{{this.trustedAt}}"
+    }{{#unless @last}},{{/unless}}
+    {{/each}}
+  },
   "enabledPlugins": {
     "autoresearch@factory-plugins": true,
     "droid-evolved@factory-plugins": true,

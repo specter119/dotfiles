@@ -32,7 +32,7 @@ PI_SETTINGS = agent_path('PI_CODING_AGENT_DIR', Path.home() / '.pi', 'settings.j
 DROID_SETTINGS = Path.home() / '.factory/settings.json'
 OPENCODE_CONFIG = XDG_CONFIG_HOME / 'opencode' / 'opencode.jsonc'
 CODEX_CONFIG = agent_path('CODEX_HOME', Path.home() / '.codex', 'config.toml')
-COPILOT_SETTINGS = agent_path('COPILOT_HOME', Path.home() / '.copilot', 'settings.json')
+ANTIGRAVITY_SETTINGS = agent_path('ANTIGRAVITY_CLI_HOME', Path.home() / '.config/antigravity', 'settings.json')
 
 
 def read_json(path: Path) -> dict | None:
@@ -86,12 +86,88 @@ def ensure_table(doc: tomlkit.TOMLDocument, *keys: str) -> tomlkit.items.Table:
     return current
 
 
-def sync_string(table: tomlkit.items.Table, key: str, value: object) -> bool:
+def sync_string(table: tomlkit.items.Table, key: str, value: object, fallback: str | None = None, remove_if_empty: bool = False) -> bool:
+    """Sync a string value into local.toml.
+
+    fallback: used when value is None or not a string (default: None = skip).
+    remove_if_empty: if True and the final value is empty, delete the key instead.
+    """
     if not isinstance(value, str):
+        if fallback is None:
+            return False
+        value = fallback
+    if isinstance(value, str) and table.get(key) == value:
         return False
-    if table.get(key) == value:
+    if remove_if_empty and isinstance(value, str) and not value:
+        if key in table:
+            del table[key]
+            return True
         return False
     table[key] = value
+    return True
+
+
+def normalize_trusted_folders(value: object) -> list[dict[str, str]]:
+    """Normalize trustedFolders dict to sorted list of {dir, trustedAt}."""
+    if not isinstance(value, dict):
+        return []
+    result: list[dict[str, str]] = []
+    for path, meta in value.items():
+        if isinstance(path, str) and isinstance(meta, dict):
+            trusted_at = meta.get('trustedAt')
+            if isinstance(trusted_at, str):
+                result.append({'dir': path, 'trustedAt': trusted_at})
+    result.sort(key=lambda x: x['dir'])
+    return result
+
+
+def normalize_existing_trusted_folders(value: object) -> list[dict[str, str]]:
+    """Normalize TOML array-of-tables to sorted list of {dir, trustedAt}."""
+    if not isinstance(value, list):
+        return []
+    result: list[dict[str, str]] = []
+    for item in value:
+        if isinstance(item, dict):
+            result.append({
+                'dir': str(item.get('dir', '')),
+                'trustedAt': str(item.get('trustedAt', '')),
+            })
+    result.sort(key=lambda x: x['dir'])
+    return result
+
+
+def sync_trusted_folders(table: tomlkit.items.Table, key: str, value: object) -> bool:
+    live = normalize_trusted_folders(value)
+    existing = normalize_existing_trusted_folders(table.get(key, []))
+    if existing == live:
+        return False
+
+    # Build array of tables preserving TOML block style
+    aot = tomlkit.aot()
+    for entry in live:
+        t = tomlkit.table()
+        t.add('dir', entry['dir'])
+        t.add('trustedAt', entry['trustedAt'])
+        aot.append(t)
+    table[key] = aot
+    return True
+
+
+def normalize_trusted_workspaces(value: object) -> list[str]:
+    """Normalize trustedWorkspaces list to sorted list of strings."""
+    if not isinstance(value, list):
+        return []
+    result = sorted(str(item) for item in value if isinstance(item, str))
+    return result
+
+
+def sync_trusted_workspaces(table: tomlkit.items.Table, key: str, value: object) -> bool:
+    """Sync trustedWorkspaces (array of strings) into local.toml."""
+    live = normalize_trusted_workspaces(value)
+    existing = normalize_trusted_workspaces(table.get(key, []))
+    if existing == live:
+        return False
+    table[key] = live
     return True
 
 
@@ -142,44 +218,52 @@ def main() -> None:
     droid_data = read_json(DROID_SETTINGS)
     if droid_data:
         droid_table = ensure_table(doc, 'variables', 'droid')
-        model = droid_data.get('sessionDefaultSettings', {}).get('model', '')
-        if droid_table.get('default_model') != model:
-            droid_table['default_model'] = model
-            changed = True
+        changed |= sync_string(
+            droid_table,
+            'default_model',
+            droid_data.get('sessionDefaultSettings', {}).get('model'),
+            fallback='',
+        )
         changed |= sync_string(droid_table, 'compaction_model', droid_data.get('compactionModel'))
         changed |= sync_int_dict(
             droid_table,
             'ide_extension_prompted_at',
             droid_data.get('ideExtensionPromptedAt', {}),
         )
+        changed |= sync_trusted_folders(
+            droid_table,
+            'trusted_folders',
+            droid_data.get('trustedFolders', {}),
+        )
 
     # opencode: model
     opencode_data = read_jsonc(OPENCODE_CONFIG)
     if opencode_data:
         opencode_table = ensure_table(doc, 'variables', 'opencode')
-        model = opencode_data.get('model', '')
-        if opencode_table.get('default_model') != model:
-            opencode_table['default_model'] = model
-            changed = True
+        changed |= sync_string(opencode_table, 'default_model', opencode_data.get('model'))
 
     # codex: model, model_provider (skip empty provider to keep template guard effective)
     codex_data = read_toml(CODEX_CONFIG)
     if codex_data:
         codex_table = ensure_table(doc, 'variables', 'codex')
         changed |= sync_string(codex_table, 'default_model', codex_data.get('model'))
-        provider = codex_data.get('model_provider', '')
-        if provider:
-            changed |= sync_string(codex_table, 'model_provider', provider)
-        elif codex_table.get('model_provider'):
-            # remove stale empty provider from local.toml
-            del codex_table['model_provider']
-            changed = True
+        changed |= sync_string(
+            codex_table,
+            'model_provider',
+            codex_data.get('model_provider'),
+            fallback='',
+            remove_if_empty=True,
+        )
 
-    # copilot: model
-    copilot_data = read_json(COPILOT_SETTINGS)
-    if copilot_data:
-        copilot_table = ensure_table(doc, 'variables', 'copilot')
-        changed |= sync_string(copilot_table, 'default_model', copilot_data.get('model'))
+    # antigravity: trustedWorkspaces
+    antigravity_data = read_json(ANTIGRAVITY_SETTINGS)
+    if antigravity_data:
+        antigravity_table = ensure_table(doc, 'variables', 'antigravity')
+        changed |= sync_trusted_workspaces(
+            antigravity_table,
+            'trusted_workspaces',
+            antigravity_data.get('trustedWorkspaces', []),
+        )
 
     if changed:
         LOCAL_TOML.write_text(tomlkit.dumps(doc))
