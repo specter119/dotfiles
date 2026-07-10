@@ -1,0 +1,36 @@
+# Rio terminal configuration
+# https://rioterm.com/docs/config
+
+theme = "dracula"
+
+[fonts]
+size = 14
+use-drawable-chars = true
+
+[fonts.regular]
+family = "CaskaydiaCove Nerd Font"
+style = "default"
+
+[fonts.bold]
+family = "CaskaydiaCove Nerd Font"
+style = "default"
+
+[fonts.italic]
+family = "CaskaydiaCove Nerd Font"
+style = "default"
+
+[fonts.bold-italic]
+family = "CaskaydiaCove Nerd Font"
+style = "default"
+
+[cursor]
+shape = "beam"
+blinking = false
+
+[navigation]
+mode = "Plain"
+use-split = true
+hide-if-single = true
+
+[window]
+opacity = 0.95

@@ -163,6 +163,9 @@ compaction_model = ""
 ide_extension_prompted_at = {}
 trusted_folders = []
 
+[rio.files]
+rio = '~/.config/rio'
+
 [amp.files]
 amp = '~/.config/amp'
 
