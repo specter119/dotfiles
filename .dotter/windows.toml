@@ -19,6 +19,9 @@ condarc = '~/.local/share/mamba'
 [alacritty.files]
 alacritty = '~/AppData/Roaming/alacritty'
 
+[yt-dlp.files]
+yt-dlp = '~/AppData/Roaming/yt-dlp'
+
 [helix.files]
 helix = '~/AppData/Roaming/helix'
 

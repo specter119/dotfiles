@@ -8,8 +8,8 @@ Type=simple
 WorkingDirectory=%h/.config/raft
 ExecStartPre=bun update --latest --force @botiverse/raft-daemon@latest
 ExecStart=bun run raft-daemon --server-url https://api.raft.build --api-key {{raft.api_key}}
-{{#if agent_tunnel.wss_proxy}}
-Environment=WSS_PROXY={{agent_tunnel.wss_proxy}}
+{{#if enterprise_proxy.url}}
+Environment=WSS_PROXY={{enterprise_proxy.url}}
 {{/if}}
 Restart=always
 RestartSec=5

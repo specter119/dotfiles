@@ -148,7 +148,8 @@ nested_value = { key_b = "overridden" }
 | --- | --- | --- | --- |
 | `codex.model_provider` | string | `global + local` | Optional; when empty, top-level `model_provider` is omitted |
 | `raft.api_key` | string | `global + local` | Optional; service renders normally even when empty |
-| `agent_tunnel.wss_proxy` | string | `global + local` | Optional; proxy env is omitted when unset |
+| `enterprise_proxy.url` | string | `global + local` | Optional; provided by the `enterprise-proxy` variable-only package, used by raft via `WSS_PROXY` and by yt-dlp when set |
+| `yt-dlp.output_dir` | string | `global + local` | yt-dlp output root; defaults to `~/Videos` and can be overridden per machine |
 | `codex.trusted_projects` | array of strings | `global + local` | Optional; renders Codex `[projects]` trust list |
 | `codex.hook_states` | array of tables | `global + local` | Each item has `key` and `trusted_hash`; renders Codex hook trust state |
 | `antigravity.trusted_workspaces` | array of strings | `global + local` | Optional; renders Antigravity `trustedWorkspaces` |

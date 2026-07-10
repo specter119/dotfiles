@@ -249,6 +249,12 @@ bub = '~/.config'
 [lody.files]
 lody = '~/.config'
 
+[enterprise-proxy.variables.enterprise_proxy]
+url = ""
+
+[raft]
+depends = ['enterprise-proxy']
+
 [raft.files]
 raft = '~/.config'
 
@@ -292,8 +298,14 @@ steam = '~/.config'
 [alma.files]
 alma = '~/.config'
 
+[yt-dlp]
+depends = ['enterprise-proxy']
+
 [yt-dlp.files]
 yt-dlp = '~/.config/yt-dlp'
+
+[yt-dlp.variables.yt-dlp]
+output_dir = "~/Videos"
 
 [cliamp.files]
 cliamp = '~/.config/cliamp'
@@ -333,9 +345,6 @@ enterprise_cn_providers = {}
 
 [agent-tunnel]
 depends = ['bub', 'lody', 'raft']
-
-[agent-tunnel.variables.agent_tunnel]
-wss_proxy = ""
 
 [browser-use]
 depends = ['playwright']
