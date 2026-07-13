@@ -1,5 +1,17 @@
 {
   "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "bash \"$HOME/.factory/hooks/rtk-rewrite.sh\"",
+            "timeout": 5,
+            "type": "command"
+          }
+        ],
+        "matcher": "Execute"
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [
@@ -18,18 +30,6 @@
             "type": "command"
           }
         ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "hooks": [
-          {
-            "command": "bash \"$HOME/.factory/hooks/rtk-rewrite.sh\"",
-            "timeout": 5,
-            "type": "command"
-          }
-        ],
-        "matcher": "Execute"
       }
     ]
   }

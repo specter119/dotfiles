@@ -8,7 +8,9 @@
       }
     },
     "python": {
-      "args": ["server"],
+      "args": [
+        "server"
+      ],
       "command": "ty",
       "fileExtensions": {
         ".py": "python"
