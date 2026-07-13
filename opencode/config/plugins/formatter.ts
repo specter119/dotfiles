@@ -13,8 +13,12 @@ const formatterPlugin: Plugin = async ({ $ }) => {
         if (filePath.match(/\.py$/)) {
           await $`ruff format ${filePath}`.quiet();
         }
-        // Web + Config + Markup → prettier
-        else if (filePath.match(/\.(ts|tsx|js|jsx|json|md|yaml|yml|css|scss|html)$/)) {
+        // JS/TS/JSON/CSS → biome (fast Rust-based formatter)
+        else if (filePath.match(/\.(ts|tsx|js|jsx|json|css)$/)) {
+          await $`bunx @biomejs/biome format --write ${filePath}`.quiet();
+        }
+        // Markup/Config → prettier (biome lacks md/yaml/scss/html support)
+        else if (filePath.match(/\.(md|yaml|yml|scss|html)$/)) {
           await $`bunx prettier --write ${filePath}`.quiet();
         }
         // Rust → rustfmt
