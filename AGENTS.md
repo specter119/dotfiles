@@ -172,6 +172,8 @@ nested_value = { key_b = "overridden" }
 | `glab.last_seen_version` | string | `global + local` | Reverse-synced from live config; avoids deploy overwriting version marker |
 | `ssh.{site}.user` | string | `global + local` | Per-site SSH wildcard user (e.g. `ssh.hkg.user`); omitted when empty |
 | `ssh.{site}.hosts` | array of tables | `global + local` | Each item has `alias` and `hostname`; renders specific Host entries under site prefix |
+| `scoop.last_update` | string | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop last_update timestamp |
+| `scoop.lastupdate` | string | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop lastupdate timestamp |
 
 #### Git Repo Identities
 
@@ -342,6 +344,8 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 | glab | `last_seen_version` | string | `config.yml.last_seen_version` |
 | ssh | `{site}.user` | string | `config.d/{site}` wildcard `User` |
 | ssh | `{site}.hosts` | `[[aot]]` | `config.d/{site}` specific `Host`/`HostName` pairs |
+| scoop | `last_update` | string | `config.json.last_update` (Windows only) |
+| scoop | `lastupdate` | string | `config.json.lastupdate` (Windows only) |
 
 ## Commands"}]
 

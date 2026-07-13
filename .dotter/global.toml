@@ -65,6 +65,10 @@ hkg = {user = "", hosts = []}
 zha = {user = "", hosts = []}
 azure = {user = "", hosts = []}
 
+[scoop.variables.scoop]
+last_update = ""
+lastupdate = ""
+
 [pip.files]
 pip = '~/.config/pip'
 
