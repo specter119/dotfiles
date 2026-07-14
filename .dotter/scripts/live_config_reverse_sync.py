@@ -193,29 +193,6 @@ def sync_trusted_workspaces(table: tomlkit.items.Table, key: str, value: object)
     return True
 
 
-def normalize_int_dict(value: object) -> dict[str, int]:
-    if not isinstance(value, dict):
-        return {}
-    result: dict[str, int] = {}
-    for key, item in value.items():
-        if isinstance(key, str) and isinstance(item, int) and not isinstance(item, bool):
-            result[key] = item
-    return result
-
-
-def sync_int_dict(table: tomlkit.items.Table, key: str, value: object) -> bool:
-    normalized = normalize_int_dict(value)
-    existing = normalize_int_dict(table.get(key, {}))
-    if existing == normalized:
-        return False
-
-    inline = tomlkit.inline_table()
-    for item_key, item_value in normalized.items():
-        inline[item_key] = item_value
-    table[key] = inline
-    return True
-
-
 def _is_live_file(path: Path) -> bool:
     """Check that a file exists and is not symlinked back to repo source."""
     if not path.exists():
@@ -486,22 +463,10 @@ def main() -> None:
             pi_data.get('lastChangelogVersion'),
         )
 
-    # droid: sessionDefaultSettings.model
+    # droid: tool-managed trusted folders only
     droid_data = read_json(DROID_SETTINGS)
     if droid_data:
         droid_table = ensure_table(doc, 'variables', 'droid')
-        changed |= sync_string(
-            droid_table,
-            'default_model',
-            droid_data.get('sessionDefaultSettings', {}).get('model'),
-            fallback='',
-        )
-        changed |= sync_string(droid_table, 'compaction_model', droid_data.get('compactionModel'))
-        changed |= sync_int_dict(
-            droid_table,
-            'ide_extension_prompted_at',
-            droid_data.get('ideExtensionPromptedAt', {}),
-        )
         changed |= sync_trusted_folders(
             droid_table,
             'trusted_folders',

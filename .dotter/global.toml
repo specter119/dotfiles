@@ -175,9 +175,6 @@ depends = ['agent-tunnel']
 'droid/systemd' = '~/.config/systemd/user'
 
 [droid.variables.droid]
-default_model = ""
-compaction_model = ""
-ide_extension_prompted_at = {}
 trusted_folders = []
 
 [rio.files]

@@ -16,6 +16,13 @@ Scope: `.dotter/`
   1. If the difference is a value that varies per machine (model name, API key, path, etc.), extract it into a Dotter variable in `global.toml` / `local.toml` so the template absorbs the change.
   2. If the difference is a legitimate upstream change that should be committed, accept it into the repo template.
   3. Only use `--force` as a last resort after understanding the diff.
+- Follow the repo-level reverse-sync decision framework before adding a variable. In particular, only Droid `trustedFolders` is templated and reverse-synced; manually reconcile all other Droid drift.
+
+## Deployment Cache
+
+- `.dotter/cache.toml` and `.dotter/cache/` are Dotter-owned state. Never edit or remove their entries manually.
+- Add, modify, or remove source templates, then let a normal `dotter deploy` update cache state and clean obsolete targets.
+- Use `dotter deploy --dry-run --verbose` to inspect the resulting target and cache operations before deploying.
 
 ## Deploy Scripts
 

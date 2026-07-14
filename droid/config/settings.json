@@ -1,5 +1,5 @@
 {
-  "compactionModel": "{{#if droid.compaction_model}}{{droid.compaction_model}}{{else}}minimax-m3{{/if}}",
+  "compactionModel": "minimax-m3",
   "compactionTokenLimit": 100000,
   "includeCoAuthoredByDroid": false,
   "logoAnimation": "off",
@@ -8,8 +8,8 @@
     "skipUserTesting": false,
     "validationWorkerModel": "glm-5.2",
     "validationWorkerReasoningEffort": "high",
-    "workerModel": "gpt-5.4",
-    "workerReasoningEffort": "high"
+    "workerModel": "gpt-5.6-sol",
+    "workerReasoningEffort": "xhigh"
   },
   "missionOrchestratorModel": "claude-opus-4-8",
   "missionOrchestratorReasoningEffort": "high",
@@ -23,18 +23,16 @@
     "autonomyLevel": "medium",
     "autonomyMode": "auto-medium",
     "interactionMode": "auto",
-    "model": "{{droid.default_model}}",
-    "reasoningEffort": "high",
+    "model": "gpt-5.6-terra",
+    "reasoningEffort": "xhigh",
     "specModeModel": "claude-opus-4-8",
-    "specModeReasoningEffort": "high"
+    "specModeReasoningEffort": "xhigh"
   },
   "showTokenUsageIndicator": true,
   "reauthBannerShownTui": true,
   "extraKnownMarketplaces": {},
   "ideExtensionPromptedAt": {
-    {{#each droid.ide_extension_prompted_at}}
-    "{{@key}}": {{this}}{{#unless @last}},{{/unless}}
-    {{/each}}
+    "vscode": 1782694674288
   },
   "trustedFolders": {
     {{#each droid.trusted_folders}}

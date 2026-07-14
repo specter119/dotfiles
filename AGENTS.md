@@ -164,7 +164,6 @@ nested_value = { key_b = "overridden" }
 | `pi.last_changelog_version` | string | `global + local` | Pi read changelog version; synced by sync script to avoid deploy overwriting local value |
 | `opencode.default_model` | string | `global + local` | opencode default model, format `provider/model`; synced by sync script |
 | `opencode.enterprise_tui_plugins` | array of strings | `global + local` | Optional; TUI plugin entries are omitted when empty |
-| `droid.default_model` | string | `global + local` | Factory Droid default model; synced by sync script |
 | `droid.trusted_folders` | array of tables | `global + local` | Optional; each item has `dir` (folder path) and `trustedAt` (timestamp); renders Droid `trustedFolders` |
 | `glab.default_host` | string | `global + local` | Optional; glab default GitLab hostname; omitted when empty |
 | `glab.hosts` | array of tables | `global + local` | Each item has `host`, `token`, `user`, optional `container_registry_domains`; renders glab host config |
@@ -261,6 +260,17 @@ When an agent tool modifies its own config file at runtime (e.g., adding trusted
 
 See `.dotter/AGENTS.md` for constraints on deploy scripts (POSIX sh, no literal `{{` in embedded code, runtime artifact conventions).
 
+### Droid Settings Boundary
+
+`droid/config/settings.json` is source-managed static configuration except for `trustedFolders`.
+`droid.trusted_folders` is a local variable reverse-synced from the live file because Droid
+writes trust records as a machine-specific side effect. All other Droid settings have
+meaningful behavior and are intentionally not Dotter variables or reverse-synced.
+
+When any other Droid setting differs between the repository and `~/.factory/settings.json`,
+resolve that drift manually by choosing the intended source or live value. Do not turn a
+field into a template variable merely because it differs.
+
 ### Flow
 
 ```
@@ -316,9 +326,7 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 | live config format | local.toml format | recommended approach | reference function |
 |---|---|---|---|
 | string | string | `sync_string(table, 'key', data.get('field'))` | pi `default_model` |
-| string (nested / nullable) | string | `sync_string(table, 'key', val, fallback='')` | droid `default_model` |
 | string (conditional) | string | `sync_string(table, 'key', val, fallback='', remove_if_empty=True)` | codex `model_provider` |
-| `dict[str, int]` | inline table | `sync_int_dict(table, 'key', data.get('field'))` | droid `ide_extension_prompted_at` |
 | `dict[str, {trustedAt: str}]` | `[[aot]]` array of tables | `sync_trusted_folders` — uses `normalize_trusted_folders` (live) + `normalize_existing_trusted_folders` (TOML) | droid `trusted_folders` |
 | `string[]` | inline array | `sync_trusted_workspaces` — uses `normalize_trusted_workspaces` for both sides | antigravity `trusted_workspaces` |
 
@@ -329,9 +337,6 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 | pi | `default_model` | string | `settings.json.defaultModel` |
 | pi | `default_provider` | string | `settings.json.defaultProvider` |
 | pi | `last_changelog_version` | string | `settings.json.lastChangelogVersion` |
-| droid | `default_model` | string | `settings.json.sessionDefaultSettings.model` |
-| droid | `compaction_model` | string | `settings.json.compactionModel` |
-| droid | `ide_extension_prompted_at` | `dict[str, int]` | `settings.json.ideExtensionPromptedAt` |
 | droid | `trusted_folders` | `[[aot]]` | `settings.json.trustedFolders` |
 | opencode | `default_model` | string | `opencode.jsonc.model` |
 | codex | `default_model` | string | `config.toml.model` |
