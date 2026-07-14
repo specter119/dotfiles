@@ -33,6 +33,7 @@ Scope: `.dotter/`
 - Do not call `.dotter/scripts/mcp_setup.sh` from deploy hooks.
 - Do not add post-deploy commands that write secrets or tool-generated runtime state back into repo-managed config files.
 - These deploy scripts are also templates. Do not write a literal `{{` inside embedded shell or Python snippets; build it at runtime instead.
+- `post_deploy.sh` identifies templates with comment-wrapped Handlebars controls by content, not filename extension, before removing residual blank `#` lines from their target and cache copies.
 
 ## Runtime Artifacts
 

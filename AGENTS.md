@@ -189,7 +189,20 @@ name = "your-other-work-name"
 email = "your-other-work-email@company-b.example"
 ```
 
-Each entry generates `git/generated/<key>.conf`, then Dotter links it to `~/.config/git/generated/<key>.conf`.
+Each entry renders a matching Git conditional include and Jujutsu repository scope. The matching Git leaf config is deployed from `git/generated/<key>.conf` to `~/.config/git/generated/<key>.conf`.
+
+#### Root-and-Leaf Subconfiguration Pattern
+
+Use a root-and-leaf layout for a single configuration with multiple independent scopes:
+
+1. Define a namespaced collection in `global.toml` and its per-machine values in `local.toml`.
+2. Render a root dispatcher that includes or selects the relevant leaf configuration, for example Git `includeIf` or SSH `Include`.
+3. Render each leaf configuration from one of two sources:
+   - **Fixed instances**: keep a tracked leaf template, such as `ssh/config.d/<site>`.
+   - **Dynamic instances**: generate ignored leaf artifacts in `pre_deploy.sh` from the variable collection, then deploy them through the package's directory mapping.
+4. Reverse-sync only leaves that users or tools can modify at runtime.
+
+Do not treat an ignored leaf as disposable unless a pre-deploy generator exists. Without one, it is still required source state and deleting it breaks the root dispatcher's selected configuration.
 
 ### Template Patterns
 
@@ -230,7 +243,7 @@ trust_level = "trusted"
 ```
 
 - Combining `#if`+`#each` (and `/each`+`/if`) onto a single `# ` line reduces residual empty comment lines after rendering.
-- `post_deploy.sh` removes residual `# ` lines from both the rendered target and the Dotter cache.
+- `post_deploy.sh` identifies templates containing comment-wrapped `#if` or `#each` controls by content, then removes residual `# ` lines from both the rendered target and the Dotter cache regardless of filename extension. Use `# ---` for a comment separator that must remain.
 - Dotter treats any file containing `{{` as a template; `.tmpl` is not a required or special suffix.
 
 #### YAML Template Tips
@@ -252,7 +265,6 @@ When a YAML file is both a Dotter template and pre-commit formatted with `yamlfm
 
 - Put control blocks like `#each` and `#if` in YAML comments so YAML formatters and editors can still parse the file.
 - Quote inline Handlebars values in YAML scalars, for example `repo: "{{repo}}"` and `- "{{this}}"`. Unquoted forms may be rewritten into invalid `{ { repo } }` style text by formatters.
-- After deploy, generated files may contain empty `#` lines left by commented control blocks. `post_deploy.sh` removes lines matching `^[[:space:]]*#[[:space:]]*$` from both the rendered target and the Dotter cache copy so future deploys stay in sync.
 
 ## Live Config Reverse Sync Pattern
 

@@ -5,6 +5,7 @@ cleanup_rendered_templates() {
 	python3 - <<'PY' | while IFS= read -r file; do
 import tomllib
 from pathlib import Path
+import re
 
 cache_toml = Path(".dotter/cache.toml")
 if not cache_toml.exists():
@@ -13,15 +14,19 @@ if not cache_toml.exists():
 with cache_toml.open("rb") as fh:
     templates = tomllib.load(fh).get("templates", {})
 
+open_tag = "{" + "{"
+commented_control = re.compile(
+    rf"^[ \t]*#[ \t]*{re.escape(open_tag)}[~]?(?:#|/)(?:if|each)\b",
+    re.MULTILINE,
+)
+
 for source, target in templates.items():
     source_path = Path(source)
-    if source_path.suffix not in {".yaml", ".yml", ".toml", ".json", ".md"}:
-        continue
     try:
         text = source_path.read_text(encoding="utf-8")
     except (FileNotFoundError, UnicodeDecodeError):
         continue
-    if "{" + "{" not in text:
+    if not commented_control.search(text):
         continue
 
     print(Path(".dotter/cache") / source_path)
@@ -31,6 +36,69 @@ PY
 			sed -i '/^[[:space:]]*#[[:space:]]*$/d' "$file"
 		fi
 	done
+}
+
+audit_pre_commit_parser_coverage() {
+	python3 - <<'PY'
+import re
+import tomllib
+from pathlib import Path
+
+cache_toml = Path(".dotter/cache.toml")
+pre_commit_config = Path(".pre-commit-config.yaml")
+if not cache_toml.exists() or not pre_commit_config.exists():
+    raise SystemExit(0)
+
+with cache_toml.open("rb") as fh:
+    templates = tomllib.load(fh).get("templates", {})
+
+open_tag = "{" + "{"
+hooks_by_suffix = {
+    ".json": ("check-json", "pretty-format-json"),
+    ".toml": ("check-toml", "toml-sort-fix"),
+    ".yaml": ("check-yaml", "yamlfmt"),
+    ".yml": ("check-yaml", "yamlfmt"),
+}
+
+excludes = {}
+current_hook = None
+for line in pre_commit_config.read_text(encoding="utf-8").splitlines():
+    hook = re.match(r"^\s*-\s+id:\s*([\w-]+)\s*$", line)
+    if hook:
+        current_hook = hook.group(1)
+        continue
+    exclude = re.match(r"^\s+exclude:\s*(.+?)\s*$", line)
+    if exclude and current_hook in {
+        hook for hooks in hooks_by_suffix.values() for hook in hooks
+    }:
+        try:
+            excludes[current_hook] = re.compile(exclude.group(1))
+        except re.error as error:
+            print(
+                f"[WARN] pre-commit coverage: invalid {current_hook} exclude regex: {error}"
+            )
+
+for source in templates:
+    source_path = Path(source)
+    hooks = hooks_by_suffix.get(source_path.suffix)
+    if hooks is None:
+        continue
+    try:
+        text = source_path.read_text(encoding="utf-8")
+    except (FileNotFoundError, UnicodeDecodeError):
+        continue
+    if open_tag not in text:
+        continue
+
+    for hook in hooks:
+        exclude = excludes.get(hook)
+        if exclude and exclude.search(source):
+            continue
+        print(
+            f"[WARN] pre-commit coverage: template {source} is not excluded from "
+            f"{hook}; review .pre-commit-config.yaml."
+        )
+PY
 }
 
 normalize_glab_yaml_keys() {
@@ -97,6 +165,7 @@ fix_glab_permissions() {
 
 # Clean up rendered templates (YAML, TOML, JSON and Markdown) after deployment.
 cleanup_rendered_templates
+audit_pre_commit_parser_coverage
 normalize_glab_yaml_keys
 fix_ssh_permissions
 fix_glab_permissions

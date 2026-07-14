@@ -59,9 +59,6 @@
 
 {{#if (command_success "uname -r | grep -qi wsl")}}
 
-[includeIf "gitdir:~/Documents/github.repos/"]
-	path = ~/.config/git/config-github
-
 [includeIf "gitdir:{{env_var "WSL_WIN_HOME"}}/scoop/"]
 	path = ~/.config/git/config-github
 
