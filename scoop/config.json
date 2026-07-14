@@ -1,5 +1,5 @@
 {
-"lastupdate": "258|2026-06-22 08:54:49",
+  "lastupdate": "{{scoop.lastupdate}}",
   "scoop_branch": "main",
   "scoop_repo": "https://github.com/specter119/Shovel-Core",
   "use_lessmsi": true

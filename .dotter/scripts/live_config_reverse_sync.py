@@ -35,6 +35,7 @@ CODEX_CONFIG = agent_path('CODEX_HOME', Path.home() / '.codex', 'config.toml')
 ANTIGRAVITY_SETTINGS = agent_path('ANTIGRAVITY_CLI_HOME', Path.home() / '.config/antigravity', 'settings.json')
 GLAB_CONFIG = XDG_CONFIG_HOME / 'glab-cli' / 'config.yml'
 SSH_CONFIG_D = Path.home() / '.ssh' / 'config.d'
+SCOOP_CONFIG = XDG_CONFIG_HOME / 'scoop' / 'config.json'
 
 
 def read_json(path: Path) -> dict | None:
@@ -535,6 +536,12 @@ def main() -> None:
             'trusted_workspaces',
             antigravity_data.get('trustedWorkspaces', []),
         )
+
+    # scoop: lastupdate
+    scoop_data = read_json(SCOOP_CONFIG)
+    if scoop_data:
+        scoop_table = ensure_table(doc, 'variables', 'scoop')
+        changed |= sync_string(scoop_table, 'lastupdate', scoop_data.get('lastupdate'))
 
     # glab: runtime state + host container_registry_domains
     glab_changed = sync_glab_config(doc)

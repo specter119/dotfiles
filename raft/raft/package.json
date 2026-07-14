@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@botiverse/raft-daemon": "^0.72.3"
+    "@botiverse/raft-daemon": "^0.72.8"
   },
   "name": "slock-service",
   "private": true
