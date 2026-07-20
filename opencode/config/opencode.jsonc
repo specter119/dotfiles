@@ -3,7 +3,7 @@
 // {{#if opencode.default_model}}
   "model": "{{opencode.default_model}}",
 // {{/if}}
-  "provider": {{command_output "cat \"$XDG_RUNTIME_DIR\"/dotter/opencode-model-providers.json"}},
+  "provider": {{command_output "uv run .dotter/scripts/render_gateway_providers.py opencode"}},
   "mcp": {
     "fast-context": {
       "type": "local",

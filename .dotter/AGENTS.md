@@ -35,8 +35,28 @@ Scope: `.dotter/`
 - These deploy scripts are also templates. Do not write a literal `{{` inside embedded shell or Python snippets; build it at runtime instead.
 - `post_deploy.sh` identifies templates with comment-wrapped Handlebars controls by content, not filename extension, before removing residual blank `#` lines from their target and cache copies.
 
+## Enterprise Provider Rendering
+
+Enterprise provider data is rendered inline rather than written as a runtime artifact:
+
+```text
+variables.agent.enterprise_clients × variables.agent.enterprise_deployments
+    ↓
+.dotter/scripts/render_gateway_providers.py
+    ├── pi/gateway-providers.json.j2
+    └── opencode/gateway-providers.json.j2
+    ↓
+command_output in pi/models.json or opencode/config/opencode.jsonc
+```
+
+- The Python script only loads `.dotter/local.toml`, selects the consumer template, supplies the client/deployment context, and validates its JSON stdout. Keep consumer schema conversion in the adjacent Jinja template.
+- Jinja templates use `[% ... %]` and `[[ ... ]]` delimiters, not `{{ ... }}`, so Dotter does not parse their source as Handlebars.
+- Jinja templates are build inputs, not live configuration. The explicit `pi.files` mappings intentionally exclude `pi/gateway-providers.json.j2`; preserve that exclusion when changing Pi mappings.
+- The deployment key is semantic: `azure` selects the OpenAI SDK and its `-sdlc-gs` deployment-name transform; other deployments use the OpenAI-compatible SDK.
+- Validate before deployment with `uv run .dotter/scripts/render_gateway_providers.py pi | jq empty` and the equivalent `opencode` command.
+
 ## Runtime Artifacts
 
-- When multiple templates need the same deploy-time derived value, prefer writing a machine-local artifact under `$XDG_RUNTIME_DIR/dotter/` from `.dotter/pre_deploy.sh` instead of duplicating generation logic in each template.
+- Runtime artifacts are deploy-time files, distinct from the inline enterprise provider rendering above. When multiple templates need the same derived value, prefer writing a machine-local artifact under `$XDG_RUNTIME_DIR/dotter/` from `.dotter/pre_deploy.sh` instead of duplicating generation logic in each template.
 - Treat files in `$XDG_RUNTIME_DIR/dotter/` as disposable runtime artifacts. Templates may read them with `command_output`, but they must not be committed back into repo-managed config.
 - Current registry flow: `.dotter/pre_deploy.sh` writes `registry-auth-encode` from `registry-auth.user_id` and `registry-auth.access_token`, `npmrc/.npmrc` reads it for npm auth, and Bun inherits that auth through the deployed `~/.npmrc`.

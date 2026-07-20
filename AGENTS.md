@@ -156,8 +156,18 @@ nested_value = { key_b = "overridden" }
 | `git.repo_identities` | table | `global + local` | Keyed by identity name; values contain `repo_dir`, `name`, `email` |
 | `skm.local_packages` | array of tables | `global + local` | Each item has `repo`, optional `skills` |
 | `mihomo.direct_suffixes` | array of strings | `global + local` | Optional; extra direct rules are omitted when unset |
-| `agent.enterprise_clients` | table of tables | `global + local` | Enterprise gateway client identities; each entry keyed by client name contains `api_key`; used in nested `#each` with deployments |
-| `agent.enterprise_deployments` | table of tables | `global + local` | Enterprise gateway deployment paths; each entry keyed by deployment name contains `base_url`, `models_file`, optional `npm`; used in nested `#each` with clients |
+| `agent.enterprise_clients` | table of tables | `global + local` | Enterprise gateway client identities; each entry keyed by client name contains `api_key`; paired with every deployment by the provider renderer |
+| `agent.enterprise_deployments` | table of tables | `global + local` | Enterprise gateway deployments keyed by name; each contains `base_url` and a `models` array of consumer-relevant model metadata |
+
+### Enterprise Gateway Provider Data
+
+Enterprise gateway provider data is machine-local and is maintained entirely in `.dotter/local.toml`.
+
+- Define each deployment as `[variables.agent.enterprise_deployments.<name>]`; place its models below it as `[[variables.agent.enterprise_deployments.<name>.models]]`.
+- The client × deployment relationship is source data: each configured client is rendered against every configured deployment.
+- Keep model capabilities and limits in the model table. Do not create a second tracked model catalog or duplicate consumer-specific model files.
+- For the Dotter/Jinja lifecycle, delimiter rules, Pi mapping boundary, and validation command, read [`.dotter/AGENTS.md` — Enterprise Provider Rendering](./.dotter/AGENTS.md#enterprise-provider-rendering) before modifying the renderer or either consumer template.
+
 | `pi.default_model` | string | `global + local` | Pi default model ID; synced from deploy side by sync script |
 | `pi.default_provider` | string | `global + local` | Pi default provider name; synced from deploy side by sync script |
 | `pi.enterprise_packages` | array of strings | `global + local` | Optional; extra packages appended to Pi packages list |

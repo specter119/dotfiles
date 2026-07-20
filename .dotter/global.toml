@@ -54,9 +54,6 @@ repo_identities = {}
 [jj.files]
 jj = '~/.config/jj'
 
-[jj.variables.git]
-repo_identities = {}
-
 [ssh.files]
 ssh = '~/.ssh'
 
@@ -155,7 +152,14 @@ last_update_check_timestamp = ""
 last_seen_version = ""
 
 [pi.files]
-pi = '~/.config/pi'
+'pi/AGENTS.md' = '~/.config/pi/AGENTS.md'
+'pi/agents' = '~/.config/pi/agents'
+'pi/auth.json' = '~/.config/pi/auth.json'
+'pi/bin' = '~/.config/pi/bin'
+'pi/extensions' = '~/.config/pi/extensions'
+'pi/models.json' = '~/.config/pi/models.json'
+'pi/settings.json' = '~/.config/pi/settings.json'
+'pi/web-search.json' = '~/.config/pi/web-search.json'
 
 [pi.variables.pi]
 default_model = ""

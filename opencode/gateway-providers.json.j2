@@ -1,0 +1,52 @@
+[% set providers = {} %]
+[% for client_key, client in clients.items() %]
+  [% for deployment in deployments %]
+    [% set models = {} %]
+    [% for model in deployment.models %]
+      [% set options = {
+        "extra_body": {
+          "stream_options": {"include_usage": true}
+        }
+      } %]
+      [% set is_gpt5 = "gpt-5" in model.id | lower %]
+      [% if model.opencode_max_tokens is defined or is_gpt5 %]
+        [% set token_limit = model.opencode_max_tokens | default(model.pi_max_tokens) %]
+        [% set max_tokens_field = "max_completion_tokens" if is_gpt5 else "max_tokens" %]
+        [% set _ = options.update({max_tokens_field: token_limit}) %]
+      [% endif %]
+      [% if model.reasoning_format is defined and model.reasoning_format %]
+        [% set _ = options.extra_body.update({"enable_thinking": true}) %]
+      [% endif %]
+      [% set model_name = model.id %]
+      [% if deployment.name == "azure" %]
+        [% set model_name = model.id ~ "-sdlc-gs" %]
+      [% endif %]
+      [% set entry = {
+        "name": model_name,
+        "options": options
+      } %]
+      [% if model.opencode_image_input | default(false) %]
+        [% set _ = entry.update({
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          }
+        }) %]
+      [% endif %]
+      [% set _ = models.update({model.id: entry}) %]
+    [% endfor %]
+    [% set provider_key = client_key ~ "|" ~ deployment.name %]
+    [% set _ = providers.update({provider_key: {
+      "npm": "@ai-sdk/openai" if deployment.name == "azure" else "@ai-sdk/openai-compatible",
+      "name": provider_key,
+      "options": {
+        "baseURL": deployment.base_url,
+        "apiKey": client.api_key,
+        "useDeploymentBasedUrls": true,
+        "setCacheKey": true
+      },
+      "models": models
+    }}) %]
+  [% endfor %]
+[% endfor %]
+[[ providers | tojson ]]

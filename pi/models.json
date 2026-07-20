@@ -1,3 +1,3 @@
 {
-  "providers": {{command_output "cat \"$XDG_RUNTIME_DIR\"/dotter/pi-model-providers.json"}}
+  "providers": {{command_output "uv run .dotter/scripts/render_gateway_providers.py pi"}}
 }

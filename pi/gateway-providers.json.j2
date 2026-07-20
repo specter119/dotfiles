@@ -1,0 +1,50 @@
+[% set providers = {} %]
+[% for client_key, client in clients.items() %]
+  [% set pi_provider = {
+    "api": "openai-completions",
+    "apiKey": client.api_key,
+    "baseUrl": deployments[0].base_url,
+    "compat": {
+      "maxTokensField": "max_tokens",
+      "supportsDeveloperRole": false
+    },
+    "models": []
+  } %]
+  [% for deployment in deployments %]
+    [% for model in deployment.models %]
+      [% set model_base_url = deployment.base_url.rstrip('/') %]
+      [% if deployment.name == "azure" %]
+        [% set model_base_url = model_base_url.removesuffix('/v1') ~ "/deployments/" ~ model.id ~ "-sdlc-gs" %]
+      [% endif %]
+      [% set compat = {"cacheControlFormat": "anthropic"} %]
+      [% if deployment.name == "azure" or "gpt-5" in model.id | lower %]
+        [% set compat = {"maxTokensField": "max_completion_tokens"} %]
+      [% endif %]
+      [% set pi_model = {
+        "id": model.id,
+        "name": model.name,
+        "contextWindow": model.context_window,
+        "maxTokens": model.pi_max_tokens,
+        "input": model.input,
+        "compat": compat,
+        "baseUrl": model_base_url
+      } %]
+      [% if model.reasoning_format is defined and model.reasoning_format %]
+        [% set _ = pi_model.update({
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": "high",
+            "low": none,
+            "medium": none,
+            "minimal": none,
+            "xhigh": "max"
+          }
+        }) %]
+        [% set _ = pi_model.compat.update({"thinkingFormat": model.reasoning_format}) %]
+      [% endif %]
+      [% set _ = pi_provider.models.append(pi_model) %]
+    [% endfor %]
+  [% endfor %]
+  [% set _ = providers.update({client_key: pi_provider}) %]
+[% endfor %]
+[[ providers | tojson ]]
