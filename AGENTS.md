@@ -156,8 +156,8 @@ nested_value = { key_b = "overridden" }
 | `git.repo_identities` | table | `global + local` | Keyed by identity name; values contain `repo_dir`, `name`, `email` |
 | `skm.local_packages` | array of tables | `global + local` | Each item has `repo`, optional `skills` |
 | `mihomo.direct_suffixes` | array of strings | `global + local` | Optional; extra direct rules are omitted when unset |
-| `agent.enterprise_cn_base_url` | string | `global + local` | Shared base URL; provider is omitted when empty |
-| `agent.enterprise_cn_providers` | table of tables | `global + local` | Keyed by provider name; values contain `api_key`; rendered with `#each` |
+| `agent.enterprise_clients` | table of tables | `global + local` | Enterprise gateway client identities; each entry keyed by client name contains `api_key`; used in nested `#each` with deployments |
+| `agent.enterprise_deployments` | table of tables | `global + local` | Enterprise gateway deployment paths; each entry keyed by deployment name contains `base_url`, `models_file`, optional `npm`; used in nested `#each` with clients |
 | `pi.default_model` | string | `global + local` | Pi default model ID; synced from deploy side by sync script |
 | `pi.default_provider` | string | `global + local` | Pi default provider name; synced from deploy side by sync script |
 | `pi.enterprise_packages` | array of strings | `global + local` | Optional; extra packages appended to Pi packages list |

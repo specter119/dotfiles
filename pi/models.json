@@ -1,18 +1,3 @@
 {
-  "providers": {
-{{#if (and agent.enterprise_cn_base_url agent.enterprise_cn_providers)}}
-{{#each agent.enterprise_cn_providers}}
-    "{{@key}}": {
-      "api": "openai-completions",
-      "apiKey": "{{this.api_key}}",
-      "baseUrl": "{{@root.agent.enterprise_cn_base_url}}",
-      "compat": {
-        "maxTokensField": "max_tokens",
-        "supportsDeveloperRole": false
-      },
-      "models": {{command_output "jq -c '.' pi/gateway-cn-models.json"}}
-    }{{#unless @last}},{{/unless}}
-{{/each}}
-{{/if}}
-  }
+  "providers": {{command_output "cat \"$XDG_RUNTIME_DIR\"/dotter/pi-model-providers.json"}}
 }

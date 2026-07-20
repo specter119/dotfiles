@@ -3,23 +3,7 @@
 // {{#if opencode.default_model}}
   "model": "{{opencode.default_model}}",
 // {{/if}}
-  "provider": {
-// {{#if (and agent.enterprise_cn_base_url agent.enterprise_cn_providers)}}
-// {{#each agent.enterprise_cn_providers}}
-    "{{@key}}": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "{{@key}}",
-      "options": {
-        "baseURL": "{{@root.agent.enterprise_cn_base_url}}",
-        "apiKey": "{{this.api_key}}",
-        "useDeploymentBasedUrls": true,
-        "setCacheKey": true
-      },
-      "models": {{command_output "jq -c '.' opencode/gateway-cn-models.json"}}
-    }{{#unless @last}},{{/unless}}
-// {{/each}}
-// {{/if}}
-  },
+  "provider": {{command_output "cat \"$XDG_RUNTIME_DIR\"/dotter/opencode-model-providers.json"}},
   "mcp": {
     "fast-context": {
       "type": "local",

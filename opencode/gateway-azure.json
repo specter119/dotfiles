@@ -1,0 +1,22 @@
+{
+  "gpt-5.6-luna": {
+    "name": "gpt-5.6-luna-sdlc-gs",
+    "options": {
+      "extra_body": {
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    }
+  },
+  "gpt-5.6-terra": {
+    "name": "gpt-5.6-terra-sdlc-gs",
+    "options": {
+      "extra_body": {
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    }
+  }
+}

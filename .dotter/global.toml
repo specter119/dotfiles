@@ -340,8 +340,8 @@ depends = [
 'agent/share' = '~/.local/share'
 
 [agent.variables.agent]
-enterprise_cn_base_url = ""
-enterprise_cn_providers = {}
+enterprise_clients = {}
+enterprise_deployments = {}
 
 [agent-tunnel]
 depends = ['bub', 'lody', 'raft']
