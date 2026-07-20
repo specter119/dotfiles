@@ -1,20 +1,28 @@
 [
   {
+    "compat": {
+      "maxTokensField": "max_completion_tokens"
+    },
     "contextWindow": 200000,
-    "id": "gpt-5.6-luna-sdlc-gs",
+    "id": "gpt-5.6-luna",
     "input": [
       "text",
       "image"
     ],
+    "maxTokens": 128000,
     "name": "GPT-5.6 Luna"
   },
   {
+    "compat": {
+      "maxTokensField": "max_completion_tokens"
+    },
     "contextWindow": 200000,
-    "id": "gpt-5.6-terra-sdlc-gs",
+    "id": "gpt-5.6-terra",
     "input": [
       "text",
       "image"
     ],
+    "maxTokens": 128000,
     "name": "GPT-5.6 Terra"
   }
 ]

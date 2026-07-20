@@ -10,6 +10,7 @@
       "text",
       "image"
     ],
+    "maxTokens": 384000,
     "name": "DeepSeek V4 Pro",
     "reasoning": true,
     "thinkingLevelMap": {
@@ -31,6 +32,7 @@
       "text",
       "image"
     ],
+    "maxTokens": 384000,
     "name": "DeepSeek V4 Flash",
     "reasoning": true,
     "thinkingLevelMap": {
@@ -51,6 +53,7 @@
       "text",
       "image"
     ],
+    "maxTokens": 8000,
     "name": "GLM-5.1",
     "reasoning": true
   },
@@ -64,6 +67,7 @@
       "text",
       "image"
     ],
+    "maxTokens": 8000,
     "name": "GLM-5.2",
     "reasoning": true
   },
@@ -77,6 +81,7 @@
       "text",
       "image"
     ],
+    "maxTokens": 65536,
     "name": "Qwen3.7-Max"
   },
   {
@@ -90,6 +95,7 @@
       "text",
       "image"
     ],
+    "maxTokens": 131072,
     "name": "Kimi-K2.6",
     "reasoning": true,
     "thinkingLevelMap": {
@@ -111,6 +117,7 @@
       "text",
       "image"
     ],
+    "maxTokens": 131072,
     "name": "Kimi-K2.7-Code",
     "reasoning": true,
     "thinkingLevelMap": {

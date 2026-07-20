@@ -24,18 +24,19 @@ pi_entries=$(mktemp "$runtime_dir/pi-model-providers.XXXXXX")
 opencode_entries=$(mktemp "$runtime_dir/opencode-providers.XXXXXX")
 trap 'rm -f "$pi_entries" "$opencode_entries"' EXIT HUP INT TERM
 
-printf '%s\n' '{}' > "$pi_entries"
-printf '%s\n' '{}' > "$opencode_entries"
+printf '%s
+' '{}' > "$opencode_entries"
 
 # {{#each agent.enterprise_clients as |client_value client_key|}}
 # {{#each @root.agent.enterprise_deployments as |deploy_value deploy_key|}}
 jq -cn \
-  --arg key "{{client_key}}|{{deploy_key}}" \
+  --arg client_key "{{client_key}}" \
   --arg api_key "{{client_value.api_key}}" \
   --arg base_url "{{deploy_value.base_url}}" \
+  --arg npm "{{#if deploy_value.npm}}{{deploy_value.npm}}{{else}}@ai-sdk/openai-compatible{{/if}}" \
   --slurpfile models "pi/{{deploy_value.models_file}}" \
   '{
-    ($key): {
+    ($client_key): {
       api: "openai-completions",
       apiKey: $api_key,
       baseUrl: $base_url,
@@ -43,7 +44,12 @@ jq -cn \
         maxTokensField: "max_tokens",
         supportsDeveloperRole: false
       },
-      models: $models[0]
+      models: ($models[0] | map(
+        .baseUrl = (if ($npm == "@ai-sdk/openai")
+          then (($base_url | sub("/v1/?$"; "")) + "/deployments/" + .id + "-sdlc-gs")
+          else $base_url
+        end)
+      ))
     }
   }' >> "$pi_entries"
 
@@ -69,5 +75,5 @@ jq -cn \
 # {{/each}}
 # {{/each}}
 
-jq -s 'add' "$pi_entries" > "$runtime_dir/pi-model-providers.json"
+jq -s 'reduce .[] as $item ({}; ($item | keys[0]) as $k | if has($k) then .[$k].models = .[$k].models + $item[$k].models else .[$k] = $item[$k] end)' "$pi_entries" > "$runtime_dir/pi-model-providers.json"
 jq -s 'add' "$opencode_entries" > "$runtime_dir/opencode-model-providers.json"
