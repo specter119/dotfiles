@@ -4,7 +4,8 @@
 # -x
 
 # extract cookie from browser
---cookies-from-browser firefox
+# --cookies-from-browser firefox
+
 {{#if enterprise_proxy.url}}--proxy {{enterprise_proxy.url}}{{/if}}
 
 # Do not copy the mtime

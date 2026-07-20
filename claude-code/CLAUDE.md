@@ -1,134 +1,18 @@
 @RTK.md
 
-# Claude Code 配置
+# Claude Code Instructions
 
-## 交流规范
+## Core rules
 
-- 用中文交流、写 spec 和文档
-- 用英文写代码、注释、日志和 commit message
-- 回答简洁，避免冗长解释
-- 不明确时主动提问，不臆测
+- 用中文交流、写 spec 和文档；用英文写代码、标识符、日志和 commit message。
+- 遵循最具体的仓库指令。修改前读取必要上下文、相关代码和既有模式。
+- 只做满足请求所需的最小改动，不扩大范围，不伪造结果或工具能力。
+- 保护密钥、用户本地状态和未跟踪文件。破坏性、不可逆或远程操作前说明影响并取得确认。
+- 运行与改动匹配的验证，如实报告失败、跳过和未运行项。未经请求，不 commit、push 或改变分支策略。
 
-### 回答结构（复杂任务）
+## Claude Code tools
 
-1. **直接结论** - 应该怎么做 / 当前最合理的结论
-2. **简要推理** - 关键前提、判断步骤、重要权衡
-3. **可选方案** - 1-2 个选项及适用场景
-4. **下一步计划** - 可执行的行动列表
-
-## 工作流程
-
-### 基础流程
-
-1. **理解需求** - 有疑问立即提问
-2. **搜索优先** - 修改前先搜索并阅读相关代码
-3. **小步快跑** - 拆分大任务，逐步完成
-4. **目标驱动** - 先定义验收标准，循环验证直到满足
-5. **主动报告** - 完成后报告结果；无法复述当前状态时停下重新陈述
-
-### 推理框架
-
-操作前完成以下推理：
-
-1. **优先级与约束**：显式规则 > 操作顺序 > 前置条件
-2. **风险评估**：低风险直接行动，高风险说明替代方案
-3. **复杂度分级**：
-   - trivial: 简单语法、<10行修改
-   - moderate: 单文件复杂逻辑、局部重构
-   - complex: 跨模块设计、大型重构
-
-## 工具使用偏好
-
-### 内置工具（优先使用）
-
-- 搜索内容：`Grep`（不是 bash `rg`）
-- 查找文件：`Glob`（不是 bash `fd`）
-- 读取文件：`Read`（不是 `cat`）
-- 编辑文件：`Edit`（不是 `sed`）
-- 创建文件：`Write`（不是 `echo >`）
-
-### 系统工具
-
-- 文本搜索：`rg` > `grep`
-- 文件查找：`fd` > `find`
-- DNS 查询：`dig` > `nslookup`
-- 网络连接：`ss` > `netstat`
-- 语法搜索：`ast-grep`
-- 浏览器操作（网页截图、表单填写、Web 测试）：`playwright-cli`（比 Playwright MCP 更省 token）
-
-### MCP 工具
-
-| 用途       | 工具                        |
-| ---------- | --------------------------- |
-| 代码搜索   | `mcp__fast-context__fast_context_search` |
-| 网络搜索   | `WebSearch`                 |
-| 网页抓取   | `WebFetch`                  |
-| 库文档查询 | `context7 plugin`           |
-
-### 跨 Agent 对话 (xurl)
-
-使用 `xurl` 读取和查询其他 AI agent 的对话记录（provider：`amp`、`claude`、`codex`、`gemini`、`opencode`）：
-
-```bash
-xurl <provider>                        # 列出最近线程
-xurl '<provider>?q=keyword'            # 按关键词搜索
-xurl <provider>/<session_id>           # 读取对话内容
-xurl <provider>/<session_id> -d "msg"  # 继续对话
-```
-
-### 任务管理
-
-- 复杂任务：使用 `Task` 工具启动专门 agent
-- 大型重构：使用 `Explore` agent 先理解代码
-- 跟踪进度：使用 `TodoWrite` 管理多步骤任务
-
-## 自检与修复
-
-### 回答前自检
-
-1. 任务复杂度：trivial / moderate / complex？
-2. 是否在解释已知的基础知识？
-3. 是否可以直接修复低级错误？
-
-### 自动修复低级错误
-
-直接修复，无需批准：
-
-- 语法错误（括号不配对、字符串未闭合）
-- 明显的缩进或格式问题
-- 编译期错误（缺失 import、错误类型）
-
-### 风险操作
-
-破坏性操作（删除文件、重建数据库、`git reset --hard`）必须：
-
-- 明确说明风险
-- 给出更安全的替代方案
-- 确认用户意图
-
-### 完整性原则
-
-- 遇到矛盾模式时明确选一个并解释原因，不混合妥协
-- 跳过任何步骤必须显式声明，不能默认"已完成"
-- "测试通过"不成立如果有测试被跳过
-
-## 编程原则
-
-遵循软件工程基本原则（DRY, KISS, YAGNI, SRP）。
-
-- Python：遵循 One Python Craftsman 的理念（参考 `piglet` / `friendly-python` skill）
-- Python 独立脚本：使用 `uv run` + PEP 723 Inline Script Metadata
-
-## 测试要求
-
-- 修改代码后运行相关测试
-- 重要功能补充测试用例
-- 测试独立、可重复、快速
-- 测试名称清晰描述测试内容
-
-## Git 规范
-
-- Commit message：英文，格式 `<type>: <description>`
-- Type：`feat`, `fix`, `refactor`, `docs`, `test`, `chore`
-- 每次 commit 逻辑完整
-- Push 前确保测试通过
+- 仓库操作优先使用 `Read`、`Grep`、`Glob`、`Edit` 和 `Write`；只在需要命令时使用系统 shell。
+- 可用时，使用 `mcp__fast-context__fast_context_search` 搜索代码，`context7` 查询库文档，`WebSearch`/`WebFetch` 查询外部资料。
+- 仅在其他 agent 对话与当前请求相关时使用 `xurl`。复杂任务仅在隔离或独立复核确有收益时使用 `Task` 或 `Explore`。
+- 存在 `.jj/` 时使用 `jj`。独立 Python 脚本使用 `uv run` 和 PEP 723 metadata。

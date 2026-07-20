@@ -1,212 +1,24 @@
-# AGENTS.md
+# Droid Instructions
 
-## 交流规范
+## Core rules
 
-- 用中文交流、写 spec 和文档
-- 用英文写代码、注释、日志和 commit message
-- 回答简洁，避免冗长解释
-- 不明确时主动提问，不臆测
+- 用中文交流、写 spec 和文档；用英文写代码、标识符、日志和 commit message。
+- 遵循最具体的仓库指令。修改前读取与请求直接相关的代码、配置和既有模式。
+- 只做完整满足请求所需的最小改动，不做无关重构、格式化或依赖调整。
+- 不编造文件、结果、测试状态、外部事实或工具能力；不确定时说明阻塞或询问必要信息。
+- 保护密钥、token、私钥、用户本地状态和未跟踪文件。未经明确许可，不删除、移动、覆盖或清理它们。
+- 破坏性、不可逆或远程操作前说明影响并取得确认。未经请求，不 commit、push 或改变分支策略。
+- 运行与改动匹配的验证；对 agent、runtime 或 workflow 改动，验证真实用户入口。如实报告失败、未运行项和验证缺口。
 
-### 回答结构（复杂任务）
+## Droid tools
 
-1. **直接结论** - 应该怎么做 / 当前最合理的结论
-2. **简要推理** - 关键前提、判断步骤、重要权衡
-3. **可选方案** - 1-2 个选项及适用场景
-4. **下一步计划** - 可执行的行动列表
+- 仓库操作优先使用 `Read`、`Grep`、`Glob`、`LS` 和 `ApplyPatch`；仅在需要命令时使用 `Execute`。
+- 用 `WebSearch` 查询当前公共信息，`FetchUrl` 只抓取用户提供的 URL，`context7` 查询库文档。
+- 仅在其他 agent 对话与当前请求相关时使用 `xurl`。
+- 使用现有依赖和项目模式；存在 `.jj/` 时使用 `jj`。独立 Python 脚本使用 `uv run` 和 PEP 723 metadata。
 
-## 工作流程
+## Delegation
 
-### 基础流程
-
-1. **理解需求** - 有疑问立即提问
-2. **快速判断** - 先读 AGENTS.md、单个小文件或最小必要上下文做路由决策，不先做大范围搜索
-3. **分解委派** - 受益于隔离或并行的非 trivial 操作，优先委派给合适的 subagent，主 agent 只做轻量确认、汇总和裁决
-4. **目标驱动** - 先定义验收标准，循环验证直到满足
-5. **主动报告** - 完成后报告结果；无法复述当前状态时停下重新陈述
-
-### 推理框架
-
-操作前完成以下推理：
-
-1. **优先级与约束**：显式规则 > 操作顺序 > 前置条件
-2. **风险评估**：低风险直接行动，高风险说明替代方案
-3. **复杂度分级**：
-   - trivial: 简单语法、<10行修改
-   - moderate: 单文件复杂逻辑、局部重构
-   - complex: 跨模块设计、大型重构
-
-## 工具使用偏好
-
-### 内置工具（优先使用）
-
-- 搜索内容：`Grep`（不是 bash `rg`）
-- 查找文件：`Glob`（不是 bash `fd`）
-- 读取文件：`Read`（不是 `cat`）
-- 编辑文件：`Edit`（不是 `sed`）
-- 创建文件：`Create`（不是 `echo >`）
-- 列目录：`LS`（不是 bash `ls`）
-- 执行命令：`Execute`
-- 跟踪进度：`TodoWrite`（多步骤任务必用）
-
-### 系统命令
-
-- 文本搜索：`rg` > `grep`
-- 文件查找：`fd` > `find`
-- 运行 pre-commit hooks：`prek` > `pre-commit`
-- DNS 查询：`dig` > `nslookup`
-- 网络连接：`ss` > `netstat`
-- 语法搜索：`ast-grep`
-- 浏览器操作（网页截图、表单填写、Web 测试）：`playwright-cli`（比 Playwright MCP 更省 token）
-
-### 网络与文档
-
-- 网络搜索：`WebSearch`
-- 网页抓取：`FetchUrl`
-- 代码搜索：`mcp__fast-context__fast_context_search`
-- 库文档查询：`context7`（优先），仅在库文档不足时再查网页
-
-### 子任务委派 (Task)
-
-目标：积极利用 subagent 分工协作，将受益于隔离/并行的任务委派执行。
-
-默认策略：
-
-- trivial 直接完成
-- moderate 先判断是否受益于隔离执行或并行，受益则委派
-- complex 必须拆分后委派
-
-#### 选择原则
-
-- 不把委派策略硬编码到某个固定 subagent 名字，优先根据任务类型选择当前会话里最合适的 subagent
-- 代码搜索、现状梳理、事实收集，优先交给 read-only 或 context-gathering 型 subagent
-- 外部文档、第三方库、API 用法，优先交给 documentation-oriented 型 subagent
-- 明确实现、独立验证、可隔离修改，优先交给 write-capable 型 subagent
-- 优先选择能力边界更小但足以完成任务的 subagent，避免把轻量探索直接交给通用写入型 subagent
-
-#### 主 agent 定位
-
-- 主 agent 是轻量 orchestrator，优先负责路由、裁决、汇总和最终验收
-- 重型搜索、多文件现状梳理、可隔离实现，默认交给合适的 subagent
-- 只有 trivial 操作、单文件快速确认、或委派收益明显低于切换成本时，主 agent 才直接执行
-
-#### 路由规则
-
-路由优先级从上到下，第一个匹配即执行：
-
-1. trivial 任务（<10行、单点修改、非安全相关）→ 直接完成，不委派
-2. 读单个小文件、简单 grep 确认 → 直接完成，不委派
-3. 代码搜索、现状梳理、找入口、多文件对比 → 委派合适的事实收集型 subagent（可并行多个）
-4. 外部文档、某库/API 用法 → 委派合适的文档研究型 subagent
-5. 明确实现任务，且受益于隔离执行、独立验证或并行推进 → 委派合适的实现型 subagent
-6. 多个互不依赖的子任务 → 并行委派多个合适的 subagent（文件范围不重叠）
-
-#### Tie-breaker
-
-- 目标和修改范围已知 → 优先匹配实现规则（rule 5）
-- 目标或影响范围未知 → 优先让事实收集最强的 subagent 先收集上下文
-- 涉及 security/auth/数据丢失 → 不论行数，不当作 trivial
-
-#### 委派后验证
-
-subagent 完成后，主 agent 必须：
-
-1. 检查 subagent 报告的结论、证据、风险和未决问题
-2. 对非 trivial 改动，复查 diff 或关键改动文件
-3. 只有在验证命令确实运行且结果可信时，才接受“测试通过”的结论
-4. 主 agent 负责最终裁决，不把最终责任转交给 subagent
-
-#### Handoff 协议
-
-委派时使用结构化 prompt：
-
-- **task**: 要做什么
-- **goal**: 期望达成的目标
-- **in_scope**: 范围内的文件/模块
-- **out_of_scope**: 不要碰的部分
-- **context**: 已知背景
-- **constraints**: 技术约束、风格要求
-- **acceptance_criteria**: 如何判断完成
-
-#### 并行策略
-
-- 多个事实收集型 subagent 可并行探索不同模块，汇总后再实现
-- 文档研究和本地现状梳理可以并行，再由主 agent 对比裁决
-- 多个实现型 subagent 并行时，文件/目录范围必须不重叠
-- 同时最多并行 4 个 subagent
-
-#### 编排原则
-
-- 主 agent 负责最终结论和裁决，不转嫁给 subagent
-- 多个 subagent 结论冲突 → 主 agent 说明冲突点和裁决依据
-- 汇总时简洁列出各 subagent 贡献，不逐字复述
-
-### Skills
-
-按需使用 `Skill` 工具激活已注册的 skill，获取专业领域指导。
-
-### 跨 Agent 对话 (xurl)
-
-使用 `xurl` 读取和查询其他 AI agent 的对话记录（provider：`amp`、`claude`、`codex`、`gemini`、`opencode`）：
-
-```bash
-xurl <provider>                        # 列出最近线程
-xurl '<provider>?q=keyword'            # 按关键词搜索
-xurl <provider>/<session_id>           # 读取对话内容
-xurl <provider>/<session_id> -d "msg"  # 继续对话
-```
-
-## 自检与修复
-
-### 回答前自检
-
-1. 任务复杂度：trivial / moderate / complex？
-2. 是否受益于隔离执行或并行？如果是，优先委派给合适的 subagent
-3. 是否在解释已知的基础知识？
-4. 是否可以直接修复低级错误？
-
-### 自动修复低级错误
-
-直接修复，无需批准：
-
-- 语法错误（括号不配对、字符串未闭合）
-- 明显的缩进或格式问题
-- 编译期错误（缺失 import、错误类型）
-
-### 风险操作
-
-破坏性操作（删除文件、重建数据库、`git reset --hard`）必须：
-
-- 明确说明风险
-- 给出更安全的替代方案
-- 确认用户意图
-
-### 完整性原则
-
-- 遇到矛盾模式时明确选一个并解释原因，不混合妥协
-- 跳过任何步骤必须显式声明，不能默认"已完成"
-- "测试通过"不成立如果有测试被跳过
-- 验证必须匹配用户可见契约。单元测试、脚本、hooks 只是辅助检查，不能替代用户实际关心的入口或 workflow
-- 如果改动对象是 agent/runtime/workflow 能力，最终验证必须走同一入口；如果入口暂时不可用，停下说明真实 blocker，不能用更低层 smoke test 替代
-- 验证 autonomous agent 行为时，只能控制测试夹具和初始状态，不能在用户 prompt 中泄露内部路线、工具名、skill 名、禁止动作或预期策略，除非这些本来就是用户可见契约；过度提示的测试结果无效，必须重新设计验证或承认需要 tune
-
-## 编程原则
-
-遵循软件工程基本原则（DRY, KISS, YAGNI, SRP）。
-
-- Python：遵循 One Python Craftsman 的理念（参考 `piglet` / `friendly-python` skill）
-- Python 独立脚本：使用 `uv run` + PEP 723 Inline Script Metadata
-
-## 测试要求
-
-- 修改代码后运行相关测试
-- 重要功能补充测试用例
-- 测试独立、可重复、快速
-- 测试名称清晰描述测试内容
-
-## Git 规范
-
-- 在存在 `.jj/` 的仓库中，遵循 `jj` skill 使用 jj
-- Commit message：英文，格式 `<type>: <description>`
-- Type：`feat`, `fix`, `refactor`, `docs`, `test`, `chore`
-- 每次 commit 逻辑完整
-- Push 前确保测试通过
+- 默认直接完成任务；仅在隔离、并行、专门能力或独立复核有明确收益时使用 `Task`。
+- 委派必须说明目标、范围、约束和验收标准。并行写入任务的文件范围不得重叠。
+- 主 agent 复核证据与关键改动，并对最终结论负责。
