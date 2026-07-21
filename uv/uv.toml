@@ -2,5 +2,5 @@
 link-mode = "clone"
 
 [[index]]
-url = "https://mirrors.ustc.edu.cn/pypi/simple"
+url = "{{uv.index_url}}"
 default = true

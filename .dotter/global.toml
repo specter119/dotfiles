@@ -83,6 +83,9 @@ mamba = '~/.config'
 [uv.files]
 uv = '~/.config/uv'
 
+[uv.variables.uv]
+index_url = "https://mirrors.ustc.edu.cn/pypi/simple"
+
 [registry-auth.variables.registry-auth]
 host = ""
 user_id = ""

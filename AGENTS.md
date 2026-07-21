@@ -191,6 +191,7 @@ Enterprise gateway provider data has two sources:
 | `ssh.{site}.user` | string | `global + local` | Per-site SSH wildcard user (e.g. `ssh.hkg.user`); omitted when empty |
 | `ssh.{site}.hosts` | array of tables | `global + local` | Each item has `alias` and `hostname`; renders specific Host entries under site prefix |
 | `scoop.lastupdate` | string | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop lastupdate timestamp |
+| `uv.index_url` | string | `global + local` | uv pip index URL; defaults to USTC mirror, overridable per machine |
 
 #### Git Repo Identities
 
