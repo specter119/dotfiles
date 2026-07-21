@@ -1,6 +1,6 @@
 {
   "compaction": {
-    "enabled": false
+    "enabled": true
   },
   "defaultModel": "{{pi.default_model}}",
   "defaultProvider": "{{pi.default_provider}}",

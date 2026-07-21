@@ -218,6 +218,8 @@ class Deployment:
 
 def load_local_variables() -> dict[str, object]:
     path = REPO_ROOT / '.dotter' / 'local.toml'
+    if not path.exists():
+        return {}
     try:
         with path.open('rb') as file:
             return tomllib.load(file).get('variables', {})
@@ -254,12 +256,27 @@ def load_model_catalog() -> dict[str, list[object]]:
 
 def build_context() -> dict[str, object]:
     variables = load_local_variables()
-    agent = variables.get('agent', {})
-    agent = require_table(agent, 'variables.agent')
+    agent = variables.get('agent')
+    if not isinstance(agent, dict):
+        agent = {}
     clients = agent.get('enterprise_clients', {})
     deployments = agent.get('enterprise_deployments', {})
+
+    # Graceful degradation: no enterprise config or no catalog → empty providers.
+    # This lets new machines deploy before local.toml enterprise data is set up.
+    if not clients and not deployments:
+        return {'clients': {}, 'deployments': []}
+    if not MODEL_CATALOG_PATH.exists():
+        return {'clients': {}, 'deployments': []}
+
+    # Partial config is a real error once any enterprise data is present.
     if not isinstance(clients, dict) or not isinstance(deployments, dict):
         raise ValueError('enterprise_clients and enterprise_deployments must be tables')
+    if not clients or not deployments:
+        raise ValueError(
+            'enterprise_clients and enterprise_deployments must be configured together'
+        )
+
     catalog = load_model_catalog()
     local_deployment_names = set(deployments)
     catalog_deployment_names = set(catalog)
