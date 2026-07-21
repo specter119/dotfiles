@@ -57,17 +57,19 @@ def reject_unknown_fields(
 
 @dataclass(frozen=True)
 class Client:
+    client_id: str
     api_key: str
 
-    _ALLOWED_FIELDS: ClassVar[frozenset[str]] = frozenset({'api_key'})
+    _ALLOWED_FIELDS: ClassVar[frozenset[str]] = frozenset({'client_id', 'api_key'})
 
     @classmethod
-    def from_table(cls, name: object, value: object) -> Client:
-        client_name = require_nonempty_string(name, 'client name')
-        subject = f"client {client_name}"
-        table = require_table(value, subject)
-        reject_unknown_fields(table, cls._ALLOWED_FIELDS, subject)
+    def from_table(cls, value: object) -> Client:
+        table = require_table(value, 'client entry')
+        reject_unknown_fields(table, cls._ALLOWED_FIELDS, 'client entry')
+        client_id = require_nonempty_string(table.get('client_id'), 'client entry client_id')
+        subject = f"client {client_id}"
         return cls(
+            client_id=client_id,
             api_key=require_nonempty_string(table.get('api_key'), f"{subject} api_key")
         )
 
@@ -259,7 +261,7 @@ def build_context() -> dict[str, object]:
     agent = variables.get('agent')
     if not isinstance(agent, dict):
         agent = {}
-    clients = agent.get('enterprise_clients', {})
+    clients = agent.get('enterprise_clients', [])
     deployments = agent.get('enterprise_deployments', {})
 
     # Graceful degradation: no enterprise config or no catalog → empty providers.
@@ -270,8 +272,8 @@ def build_context() -> dict[str, object]:
         return {'clients': {}, 'deployments': []}
 
     # Partial config is a real error once any enterprise data is present.
-    if not isinstance(clients, dict) or not isinstance(deployments, dict):
-        raise ValueError('enterprise_clients and enterprise_deployments must be tables')
+    if not isinstance(clients, list) or not isinstance(deployments, dict):
+        raise ValueError('enterprise_clients must be an array and enterprise_deployments must be a table')
     if not clients or not deployments:
         raise ValueError(
             'enterprise_clients and enterprise_deployments must be configured together'
@@ -293,10 +295,7 @@ def build_context() -> dict[str, object]:
 
     return {
         'clients': {
-            require_nonempty_string(name, 'client name'): Client.from_table(
-                name, client
-            )
-            for name, client in clients.items()
+            c.client_id: c for c in (Client.from_table(entry) for entry in clients)
         },
         'deployments': [
             Deployment.from_table(name, deployment, catalog[name])

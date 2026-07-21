@@ -155,7 +155,7 @@ nested_value = { key_b = "overridden" }
 
 Enterprise gateway provider data has two sources:
 
-- [`agent/config/enterprise_llm_gateway/models.toml`](./agent/config/enterprise_llm_gateway/models.toml) is the tracked, shared source for enterprise model metadata: IDs, display names, capabilities, limits, and reasoning metadata. Each top-level deployment table owns a model list.
+- [`agent/config/enterprise_llm_gateway/models.toml`](./agent/config/enterprise_llm_gateway/models.toml) is the tracked, shared source for enterprise model metadata: IDs, display names, capabilities, limits, and reasoning metadata. Each top-level deployment table owns a model list. See the adjacent [`README.md`](./agent/config/enterprise_llm_gateway/README.md) for the rendering pipeline and local configuration format.
 - `.dotter/local.toml` holds machine-local client credentials and deployment `base_url` values. Its deployment keys must exactly match the catalog.
 - The renderer combines every configured client with every catalog deployment. Consumer templates choose the resulting provider shape.
 - Do not duplicate model lists in `local.toml` or consumer-specific model files.
@@ -175,7 +175,7 @@ Enterprise gateway provider data has two sources:
 | `git.repo_identities` | table | `global + local` | Keyed by identity name; values contain `repo_dir`, `name`, `email` |
 | `skm.local_packages` | array of tables | `global + local` | Each item has `repo`, optional `skills` |
 | `mihomo.direct_suffixes` | array of strings | `global + local` | Optional; extra direct rules are omitted when unset |
-| `agent.enterprise_clients` | table of tables | `global + local` | Enterprise gateway client identities; each entry keyed by client name contains `api_key`; paired with every deployment by the provider renderer |
+| `agent.enterprise_clients` | array of tables | `global + local` | Enterprise gateway client identities; each entry has `client_id` and `api_key`; paired with every deployment by the provider renderer |
 | `agent.enterprise_deployments` | table of tables | `global + local` | Machine-local enterprise gateway deployments keyed by name; each contains `base_url` and must match a deployment table in the shared model catalog |
 | `pi.default_model` | string | `global + local` | Pi default model ID; synced from deploy side by sync script |
 | `pi.default_provider` | string | `global + local` | Pi default provider name; synced from deploy side by sync script |

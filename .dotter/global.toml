@@ -349,7 +349,7 @@ depends = [
 'agent/share' = '~/.local/share'
 
 [agent.variables.agent]
-enterprise_clients = {}
+enterprise_clients = []
 enterprise_deployments = {}
 
 [agent-tunnel]

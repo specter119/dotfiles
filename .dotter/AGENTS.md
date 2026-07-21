@@ -42,7 +42,7 @@ Enterprise provider data is rendered inline rather than written as a runtime art
 
 ```text
 .dotter/local.toml
-  [variables.agent.enterprise_clients] × [variables.agent.enterprise_deployments]
+  [[variables.agent.enterprise_clients]] × [variables.agent.enterprise_deployments]
                                      +
 agent/config/enterprise_llm_gateway/models.toml
     ↓
