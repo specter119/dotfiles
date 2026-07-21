@@ -8,13 +8,7 @@
           "stream_options": {"include_usage": true}
         }
       } %]
-      [% set is_gpt5 = "gpt-5" in model.id | lower %]
-      [% if model.opencode_max_tokens is defined or is_gpt5 %]
-        [% set token_limit = model.opencode_max_tokens | default(model.pi_max_tokens) %]
-        [% set max_tokens_field = "max_completion_tokens" if is_gpt5 else "max_tokens" %]
-        [% set _ = options.update({max_tokens_field: token_limit}) %]
-      [% endif %]
-      [% if model.reasoning_format is defined and model.reasoning_format %]
+      [% if deployment.name != "azure" and model.reasoning_enabled %]
         [% set _ = options.extra_body.update({"enable_thinking": true}) %]
       [% endif %]
       [% set model_name = model.id %]
@@ -23,15 +17,36 @@
       [% endif %]
       [% set entry = {
         "name": model_name,
-        "options": options
+        "options": options,
+        "limit": {
+          "context": model.context_window,
+          "output": model.max_tokens
+        }
       } %]
-      [% if model.opencode_image_input | default(false) %]
+      [% if "image" in model.input %]
         [% set _ = entry.update({
           "modalities": {
             "input": ["text", "image"],
             "output": ["text"]
           }
         }) %]
+      [% endif %]
+      [% if model.reasoning_enabled %]
+        [% set _ = entry.update({"reasoning": true}) %]
+        [% if model.reasoning_format == "deepseek" %]
+          [% set _ = entry.update({"interleaved": {"field": "reasoning_content"}}) %]
+        [% endif %]
+        [% if model.reasoning_levels %]
+          [% set variants = {} %]
+          [% for level in model.reasoning_levels %]
+            [% set effort = "none" if level == "off" else level %]
+            [% set _ = variants.update({effort: {"reasoningEffort": effort}}) %]
+          [% endfor %]
+          [% set _ = entry.update({"variants": variants}) %]
+          [% if deployment.name == "azure" %]
+            [% set _ = entry.options.update({"reasoningEffort": "high"}) %]
+          [% endif %]
+        [% endif %]
       [% endif %]
       [% set _ = models.update({model.id: entry}) %]
     [% endfor %]

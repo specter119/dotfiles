@@ -51,6 +51,9 @@ git = '~/.config/git'
 [git.variables.git]
 repo_identities = {}
 
+[jj]
+depends = ['git']
+
 [jj.files]
 jj = '~/.config/jj'
 
@@ -137,9 +140,8 @@ stylua = '~/.config/stylua'
 codex = '~/.config'
 
 [codex.variables]
-default_model = ""
 model_provider = ""
-trusted_projects = []
+projects = []
 hook_states = []
 
 [glab.files]

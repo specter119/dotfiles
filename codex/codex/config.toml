@@ -1,4 +1,4 @@
-model = "{{#if codex.default_model}}{{codex.default_model}}{{else}}gpt-5.5{{/if}}"
+model = "gpt-5.5"
 # {{#if codex.model_provider}}
 model_provider = "{{codex.model_provider}}"
 # {{/if}}
@@ -70,7 +70,7 @@ enabled = true
 enabled = true
 
 [projects]
-# {{#each codex.trusted_projects}}
+# {{#each codex.projects}}
 
 [projects."{{this}}"]
 trust_level = "trusted"

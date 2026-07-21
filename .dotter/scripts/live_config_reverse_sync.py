@@ -61,7 +61,7 @@ def read_jsonc(path: Path) -> dict | None:
         return None
     try:
         text = path.read_text()
-        lines = [l for l in text.splitlines() if not re.match(r'^\s*//', l)]
+        lines = [line for line in text.splitlines() if not re.match(r'^\s*//', line)]
         return json.loads('\n'.join(lines))
     except (json.JSONDecodeError, OSError):
         return None
@@ -186,6 +186,32 @@ def normalize_trusted_workspaces(value: object) -> list[str]:
 def sync_trusted_workspaces(table: tomlkit.items.Table, key: str, value: object) -> bool:
     """Sync trustedWorkspaces (array of strings) into local.toml."""
     live = normalize_trusted_workspaces(value)
+    existing = normalize_trusted_workspaces(table.get(key, []))
+    if existing == live:
+        return False
+    table[key] = live
+    return True
+
+
+def normalize_projects(value: object) -> list[str]:
+    """Normalize Codex projects table to sorted trusted project paths."""
+    if not isinstance(value, dict):
+        return []
+    return sorted(
+        path
+        for path, project in value.items()
+        if (
+            isinstance(path, str)
+            and path
+            and isinstance(project, dict)
+            and project.get('trust_level') == 'trusted'
+        )
+    )
+
+
+def sync_projects(table: tomlkit.items.Table, key: str, value: object) -> bool:
+    """Sync trusted Codex project paths into local.toml."""
+    live = normalize_projects(value)
     existing = normalize_trusted_workspaces(table.get(key, []))
     if existing == live:
         return False
@@ -479,17 +505,21 @@ def main() -> None:
         opencode_table = ensure_table(doc, 'variables', 'opencode')
         changed |= sync_string(opencode_table, 'default_model', opencode_data.get('model'))
 
-    # codex: model, model_provider (skip empty provider to keep template guard effective)
+    # codex: model_provider and trusted projects
     codex_data = read_toml(CODEX_CONFIG)
     if codex_data:
         codex_table = ensure_table(doc, 'variables', 'codex')
-        changed |= sync_string(codex_table, 'default_model', codex_data.get('model'))
         changed |= sync_string(
             codex_table,
             'model_provider',
             codex_data.get('model_provider'),
             fallback='',
             remove_if_empty=True,
+        )
+        changed |= sync_projects(
+            codex_table,
+            'projects',
+            codex_data.get('projects', {}),
         )
 
     # antigravity: trustedWorkspaces

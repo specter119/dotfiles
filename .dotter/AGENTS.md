@@ -13,10 +13,11 @@ Scope: `.dotter/`
 
 - Default to `dotter deploy` (without `--force`).
 - When deploy reports "target contents were changed", inspect the diff first:
-  1. If the difference is a value that varies per machine (model name, API key, path, etc.), extract it into a Dotter variable in `global.toml` / `local.toml` so the template absorbs the change.
-  2. If the difference is a legitimate upstream change that should be committed, accept it into the repo template.
-  3. Only use `--force` as a last resort after understanding the diff.
-- Follow the repo-level reverse-sync decision framework before adding a variable. In particular, only Droid `trustedFolders` is templated and reverse-synced; manually reconcile all other Droid drift.
+  1. Align with the user on the intended source of truth before changing either side. Do not overwrite live state, accept it into a template, or add a variable based on inference alone.
+  2. If the user chooses a machine-specific value (model name, API key, path, etc.), extract it into a Dotter variable in `global.toml` / `local.toml` so the template absorbs the change.
+  3. If the user chooses the live change as the shared source, accept it into the repo template.
+  4. Only use `--force` as a last resort after the user has explicitly chosen the repo-managed value.
+- Follow the repo-level reverse-sync decision framework before adding a variable. Apply this workflow to every Dotter-managed target, including reverse-synced values.
 
 ## Deployment Cache
 
@@ -27,7 +28,7 @@ Scope: `.dotter/`
 ## Deploy Scripts
 
 - `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` are for deploy-time glue that should not live in static templates. Keep these entry scripts POSIX `sh` compatible because Dotter may execute the rendered cache scripts through `/bin/sh`; call Bash-only helpers explicitly with `bash ...`.
-- `.dotter/scripts/live_config_reverse_sync.py` is invoked from `.dotter/pre_deploy.sh` to reverse-sync tool-modified config values (e.g., trusted folders, default model) from live configs back into `local.toml`. See repo-level `AGENTS.md` for the decision framework and variable coverage.
+- `.dotter/scripts/live_config_reverse_sync.py` is invoked from `.dotter/pre_deploy.sh` to reverse-sync tool-modified config values (e.g., Codex trusted projects and model provider, Droid trusted folders, Pi defaults) from live configs back into `local.toml`. See repo-level `AGENTS.md` for the decision framework and variable coverage.
 - `.dotter/scripts/mcp_setup.sh` is only a manual backup for setting Claude MCP entries. It is not part of the normal deploy path.
 - Keep `.dotter/scripts/mcp_setup.sh` scoped to Claude MCP only; do not add other agent setup there.
 - Do not call `.dotter/scripts/mcp_setup.sh` from deploy hooks.
@@ -40,7 +41,10 @@ Scope: `.dotter/`
 Enterprise provider data is rendered inline rather than written as a runtime artifact:
 
 ```text
-variables.agent.enterprise_clients × variables.agent.enterprise_deployments
+.dotter/local.toml
+  [variables.agent.enterprise_clients] × [variables.agent.enterprise_deployments]
+                                     +
+agent/config/enterprise_llm_gateway/models.toml
     ↓
 .dotter/scripts/render_gateway_providers.py
     ├── pi/gateway-providers.json.j2
@@ -49,11 +53,17 @@ variables.agent.enterprise_clients × variables.agent.enterprise_deployments
 command_output in pi/models.json or opencode/config/opencode.jsonc
 ```
 
-- The Python script only loads `.dotter/local.toml`, selects the consumer template, supplies the client/deployment context, and validates its JSON stdout. Keep consumer schema conversion in the adjacent Jinja template.
+- `models.toml` is the shared model source and is deployed to `~/.config/enterprise_llm_gateway/`; Pi and OpenCode do not load it directly.
+- Update model metadata in `models.toml`; machine-specific client credentials and deployment URLs in `.dotter/local.toml`; consumer JSON shape in the adjacent Jinja adapter; and shared validation or consumer registration in `render_gateway_providers.py`.
+- The Python script loads `models.toml` and `.dotter/local.toml`, requires matching deployment names, validates their strict schemas, selects the consumer template, and validates its JSON stdout. Keep consumer schema conversion in the adjacent Jinja template.
 - Jinja templates use `[% ... %]` and `[[ ... ]]` delimiters, not `{{ ... }}`, so Dotter does not parse their source as Handlebars.
 - Jinja templates are build inputs, not live configuration. The explicit `pi.files` mappings intentionally exclude `pi/gateway-providers.json.j2`; preserve that exclusion when changing Pi mappings.
-- The deployment key is semantic: `azure` selects the OpenAI SDK and its `-sdlc-gs` deployment-name transform; other deployments use the OpenAI-compatible SDK.
-- Validate before deployment with `uv run .dotter/scripts/render_gateway_providers.py pi | jq empty` and the equivalent `opencode` command.
+- The renderer passes deployment names through unchanged. Consumer adapters assign their semantics: OpenCode uses `@ai-sdk/openai` and `-sdlc-gs` model names for `azure`, and `@ai-sdk/openai-compatible` otherwise; Pi applies the Azure `-sdlc-gs` per-model URL transform.
+- Validate before deployment:
+  ```sh
+  uv run .dotter/scripts/render_gateway_providers.py pi | jq empty
+  uv run .dotter/scripts/render_gateway_providers.py opencode | jq empty
+  ```
 
 ## Runtime Artifacts
 

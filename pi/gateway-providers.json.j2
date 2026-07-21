@@ -24,22 +24,25 @@
         "id": model.id,
         "name": model.name,
         "contextWindow": model.context_window,
-        "maxTokens": model.pi_max_tokens,
+        "maxTokens": model.max_tokens,
         "input": model.input,
         "compat": compat,
         "baseUrl": model_base_url
       } %]
-      [% if model.reasoning_format is defined and model.reasoning_format %]
-        [% set _ = pi_model.update({
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": none,
-            "medium": none,
-            "minimal": none,
-            "xhigh": "max"
-          }
-        }) %]
+      [% if model.reasoning_enabled %]
+        [% set _ = pi_model.update({"reasoning": true}) %]
+        [% if model.thinking_level_map %]
+          [% set thinking_level_map = model.thinking_level_map.copy() %]
+          [% if deployment.name == "azure" %]
+            [% set _ = thinking_level_map.update({"off": "none"}) %]
+          [% endif %]
+          [% set _ = pi_model.update({"thinkingLevelMap": thinking_level_map}) %]
+        [% endif %]
+        [% if deployment.name == "azure" %]
+          [% set _ = pi_model.compat.update({"supportsReasoningEffort": true}) %]
+        [% endif %]
+      [% endif %]
+      [% if model.reasoning_format %]
         [% set _ = pi_model.compat.update({"thinkingFormat": model.reasoning_format}) %]
       [% endif %]
       [% set _ = pi_provider.models.append(pi_model) %]

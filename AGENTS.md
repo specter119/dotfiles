@@ -6,8 +6,17 @@ Cross-platform dotfiles managed by [dotter](https://github.com/SuperCuber/dotter
 
 - `AGENTS.md`: repo-level architecture, package organization, template conventions, variable strategy
 - `.dotter/AGENTS.md`: Dotter internals, `pre_deploy` / `post_deploy` scripts, post-deploy patching, and other implementation exceptions
+- `README.md`: concise, user-facing introduction to the repository and its high-level maintenance patterns
 
 If you touch `.dotter/`, read `.dotter/AGENTS.md` first.
+
+## README Scope
+
+Use `README.md` for the repository's purpose, user-facing configuration patterns, and links to detailed maintenance guidance.
+
+- Include stable concepts useful to prospective users, such as portability, local overrides, secret handling, and reverse sync.
+- Keep implementation contracts in `AGENTS.md` or `.dotter/AGENTS.md`: source paths, variable schemas, renderer behavior, template delimiters, deployment mechanics, and validation commands do not belong in the README.
+- Link to the owning guidance instead of duplicating implementation detail.
 
 ## Agent Config Paths (XDG)
 
@@ -142,32 +151,32 @@ nested_value = { key_b = "overridden" }
 - **Shareable secrets**: keep using inline `rbw get` in templates or scripts instead of storing them in `local.toml`.
 - Detailed constraints for `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` live in `.dotter/AGENTS.md`.
 
+#### Enterprise Gateway Provider Data
+
+Enterprise gateway provider data has two sources:
+
+- [`agent/config/enterprise_llm_gateway/models.toml`](./agent/config/enterprise_llm_gateway/models.toml) is the tracked, shared source for enterprise model metadata: IDs, display names, capabilities, limits, and reasoning metadata. Each top-level deployment table owns a model list.
+- `.dotter/local.toml` holds machine-local client credentials and deployment `base_url` values. Its deployment keys must exactly match the catalog.
+- The renderer combines every configured client with every catalog deployment. Consumer templates choose the resulting provider shape.
+- Do not duplicate model lists in `local.toml` or consumer-specific model files.
+- For the Dotter/Jinja lifecycle, delimiter rules, Pi mapping boundary, and validation commands, read [`.dotter/AGENTS.md` — Enterprise Provider Rendering](./.dotter/AGENTS.md#enterprise-provider-rendering) before modifying the renderer or either consumer template.
+
 #### Approved Variable Schema
 
 | Variable | Shape | Source | Notes |
 | --- | --- | --- | --- |
-| `codex.model_provider` | string | `global + local` | Optional; when empty, top-level `model_provider` is omitted |
+| `codex.model_provider` | string | `global + local` | Reverse-synced from `config.toml.model_provider`; omitted when empty |
 | `raft.api_key` | string | `global + local` | Optional; service renders normally even when empty |
 | `enterprise_proxy.url` | string | `global + local` | Optional; provided by the `enterprise-proxy` variable-only package, used by raft via `WSS_PROXY` and by yt-dlp when set |
 | `yt-dlp.output_dir` | string | `global + local` | yt-dlp output root; defaults to `~/Videos` and can be overridden per machine |
-| `codex.trusted_projects` | array of strings | `global + local` | Optional; renders Codex `[projects]` trust list |
+| `codex.projects` | array of strings | `global + local` | Reverse-synced from trusted live Codex `[projects]` entries and renders that trust list |
 | `codex.hook_states` | array of tables | `global + local` | Each item has `key` and `trusted_hash`; renders Codex hook trust state |
 | `antigravity.trusted_workspaces` | array of strings | `global + local` | Optional; renders Antigravity `trustedWorkspaces` |
 | `git.repo_identities` | table | `global + local` | Keyed by identity name; values contain `repo_dir`, `name`, `email` |
 | `skm.local_packages` | array of tables | `global + local` | Each item has `repo`, optional `skills` |
 | `mihomo.direct_suffixes` | array of strings | `global + local` | Optional; extra direct rules are omitted when unset |
 | `agent.enterprise_clients` | table of tables | `global + local` | Enterprise gateway client identities; each entry keyed by client name contains `api_key`; paired with every deployment by the provider renderer |
-| `agent.enterprise_deployments` | table of tables | `global + local` | Enterprise gateway deployments keyed by name; each contains `base_url` and a `models` array of consumer-relevant model metadata |
-
-### Enterprise Gateway Provider Data
-
-Enterprise gateway provider data is machine-local and is maintained entirely in `.dotter/local.toml`.
-
-- Define each deployment as `[variables.agent.enterprise_deployments.<name>]`; place its models below it as `[[variables.agent.enterprise_deployments.<name>.models]]`.
-- The client × deployment relationship is source data: each configured client is rendered against every configured deployment.
-- Keep model capabilities and limits in the model table. Do not create a second tracked model catalog or duplicate consumer-specific model files.
-- For the Dotter/Jinja lifecycle, delimiter rules, Pi mapping boundary, and validation command, read [`.dotter/AGENTS.md` — Enterprise Provider Rendering](./.dotter/AGENTS.md#enterprise-provider-rendering) before modifying the renderer or either consumer template.
-
+| `agent.enterprise_deployments` | table of tables | `global + local` | Machine-local enterprise gateway deployments keyed by name; each contains `base_url` and must match a deployment table in the shared model catalog |
 | `pi.default_model` | string | `global + local` | Pi default model ID; synced from deploy side by sync script |
 | `pi.default_provider` | string | `global + local` | Pi default provider name; synced from deploy side by sync script |
 | `pi.enterprise_packages` | array of strings | `global + local` | Optional; extra packages appended to Pi packages list |
@@ -239,9 +248,9 @@ Put control blocks in `# ` comments to keep the raw template parseable by TOML-a
 **Reduce redundant `#if` guards**: when `global.toml` provides an empty list/table default, use `#each` directly in the template without an outer `#if` wrapper. `#each` produces zero items for an empty collection and does not error. Only use `#if` when the variable may be completely undefined (no global default).
 
 ```toml
-# global.toml gives trusted_projects = [], loop directly
+# global.toml gives projects = [], loop directly
 [projects]
-# {{#each codex.trusted_projects}}
+# {{#each codex.projects}}
 
 [projects."{{this}}"]
 trust_level = "trusted"
@@ -282,16 +291,11 @@ When an agent tool modifies its own config file at runtime (e.g., adding trusted
 
 See `.dotter/AGENTS.md` for constraints on deploy scripts (POSIX sh, no literal `{{` in embedded code, runtime artifact conventions).
 
-### Droid Settings Boundary
+### Local Schema Differences
 
-`droid/config/settings.json` is source-managed static configuration except for `trustedFolders`.
-`droid.trusted_folders` is a local variable reverse-synced from the live file because Droid
-writes trust records as a machine-specific side effect. All other Droid settings have
-meaningful behavior and are intentionally not Dotter variables or reverse-synced.
+When a variable is renamed or removed, update the tracked placeholder, template, and documentation to the new schema, but do not silently migrate, copy, or delete a legacy key in `local.toml`.
 
-When any other Droid setting differs between the repository and `~/.factory/settings.json`,
-resolve that drift manually by choosing the intended source or live value. Do not turn a
-field into a template variable merely because it differs.
+If a local schema still contains a legacy key, surface the difference and ask the user whether to keep, migrate, or remove it. Deploy and reverse-sync scripts must never make that choice automatically.
 
 ### Flow
 
@@ -333,7 +337,7 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 4. **Temporary workaround** — switching models because a quota is exhausted, planning to switch back later. Reverse sync ensures deploy doesn't overwrite the workaround before you switch back.
 
 **Does NOT need reverse sync — user maintains the value deliberately:**
-- **Intentionally maintained config** — API keys, trusted project lists, plugin lists that the user explicitly manages in `local.toml`. The tool never modifies them.
+- **Intentionally maintained config** — API keys, manually selected models, and plugin lists that the user explicitly manages in `local.toml`. The tool never modifies them.
 - **Static content** — hardcoded in the template, no variable reference.
 
 ### Implementation Steps
@@ -349,6 +353,7 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 |---|---|---|---|
 | string | string | `sync_string(table, 'key', data.get('field'))` | pi `default_model` |
 | string (conditional) | string | `sync_string(table, 'key', val, fallback='', remove_if_empty=True)` | codex `model_provider` |
+| `dict[path, {trust_level: "trusted"}]` | `string[]` | `sync_projects` — uses `normalize_projects` | codex `projects` |
 | `dict[str, {trustedAt: str}]` | `[[aot]]` array of tables | `sync_trusted_folders` — uses `normalize_trusted_folders` (live) + `normalize_existing_trusted_folders` (TOML) | droid `trusted_folders` |
 | `string[]` | inline array | `sync_trusted_workspaces` — uses `normalize_trusted_workspaces` for both sides | antigravity `trusted_workspaces` |
 
@@ -361,8 +366,8 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 | pi | `last_changelog_version` | string | `settings.json.lastChangelogVersion` |
 | droid | `trusted_folders` | `[[aot]]` | `settings.json.trustedFolders` |
 | opencode | `default_model` | string | `opencode.jsonc.model` |
-| codex | `default_model` | string | `config.toml.model` |
 | codex | `model_provider` | string (conditional) | `config.toml.model_provider` |
+| codex | `projects` | `string[]` | trusted `config.toml [projects.*]` entries |
 | antigravity | `trusted_workspaces` | `string[]` | `settings.json.trustedWorkspaces` |
 | glab | `default_host` | string | `config.yml.host` |
 | glab | `hosts` | `[[aot]]` | `config.yml.hosts` |
@@ -372,7 +377,7 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 | ssh | `{site}.hosts` | `[[aot]]` | `config.d/{site}` specific `Host`/`HostName` pairs |
 | scoop | `lastupdate` | string | `config.json.lastupdate` (Windows only) |
 
-## Commands"}]
+## Commands
 
 ```bash
 dotter deploy           # deploy dotfiles
