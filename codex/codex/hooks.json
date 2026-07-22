@@ -1,16 +1,14 @@
 {
   "hooks": {
-    "PreToolUse": [
+    "SessionStart": [
       {
         "hooks": [
           {
-            "command": "sh \"$HOME/.config/codex/scripts/rtk-rewrite.sh\"",
-            "statusMessage": "RTK: Optimizing command output",
-            "timeout": 5,
+            "command": "bash '/home/liuky3/.config/codex/herdr-agent-state.sh' session",
+            "timeout": 10,
             "type": "command"
           }
-        ],
-        "matcher": "Bash"
+        ]
       }
     ]
   }

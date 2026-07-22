@@ -29,17 +29,6 @@
         ],
         "matcher": ""
       }
-    ],
-    "PreToolUse": [
-      {
-        "hooks": [
-          {
-            "command": "~/.config/claude/hooks/rtk-rewrite.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "Bash"
-      }
     ]
   },
   "includeCoAuthoredBy": false,
@@ -78,7 +67,6 @@
       "Bash(jq:*)",
       "Bash(git:status,show,diff,log,rev-parse,config)",
       "Bash(jj:*)",
-      "Bash(rtk:*)",
       "Bash(xurl:*)",
       "Bash(cargo:test,build,check,clippy,fmt)",
       "Bash(mkdir:*)",

@@ -6,7 +6,7 @@ repos:
       - id: check-case-conflict
       - id: check-symlinks
       - id: check-toml
-        exclude: ^(alacritty/alacritty\.toml|codex/codex/config\.toml|jj/config\.toml|yazi/yazi\.toml)$
+        exclude: ^(alacritty/alacritty\.toml|codex/codex/config\.toml|jj/config\.toml|uv/uv\.toml|yazi/yazi\.toml)$
       - id: check-yaml
         exclude: ^(glab/config\.yml|mihomo/config\.yaml|skm/skills\.yaml)$
       - id: check-json
@@ -37,4 +37,4 @@ repos:
     hooks:
       - id: toml-sort-fix
         args: [--in-place, --no-sort-tables]
-        exclude: ^(alacritty/alacritty\.toml|codex/codex/config\.toml|jj/config\.toml|yazi/yazi\.toml)$
+        exclude: ^(alacritty/alacritty\.toml|codex/codex/config\.toml|jj/config\.toml|uv/uv\.toml|yazi/yazi\.toml)$

@@ -1,5 +1,3 @@
-@RTK.md
-
 # Claude Code Instructions
 
 ## Core rules
