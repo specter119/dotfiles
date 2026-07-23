@@ -6,9 +6,11 @@ Cross-platform dotfiles managed by [dotter](https://github.com/SuperCuber/dotter
 
 - `AGENTS.md`: repo-level architecture, package organization, template conventions, variable strategy
 - `.dotter/AGENTS.md`: Dotter internals, `pre_deploy` / `post_deploy` scripts, post-deploy patching, and other implementation exceptions
+- `agent/AGENTS.md`: cross-tool agent config contracts (skill/subagent routing, delegation placement). Read before editing agent packages.
 - `README.md`: concise, user-facing introduction to the repository and its high-level maintenance patterns
 
 If you touch `.dotter/`, read `.dotter/AGENTS.md` first.
+If you touch agent packages (`agent`, `droid`, `pi`, and peers), read `agent/AGENTS.md`.
 
 ## README Scope
 
@@ -35,6 +37,8 @@ This repo manages configs for multiple AI coding agents. Their paths follow XDG 
 | Qoder   | `QODERCLI_HOME`       | `~/.config/qoder`   |
 
 When reading or writing agent configs, use these paths.
+
+Skill/subagent routing and delegation placement contracts live in [`agent/AGENTS.md`](./agent/AGENTS.md), not here.
 
 ## Package Organization
 

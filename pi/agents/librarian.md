@@ -4,7 +4,7 @@ tools: read, bash, grep, find, ls
 # {{#if pi.subagent_model.librarian}}
 model: {{pi.subagent_model.librarian}}
 # {{/if}}
-thinking: high
+thinking: medium
 max_turns: 20
 prompt_mode: replace
 disallowed_tools: Agent, edit, write

@@ -4,7 +4,7 @@ tools: read, bash, grep, find, ls
 # {{#if pi.subagent_model.explorer}}
 model: {{pi.subagent_model.explorer}}
 # {{/if}}
-thinking: high
+thinking: low
 max_turns: 20
 prompt_mode: replace
 extensions: false

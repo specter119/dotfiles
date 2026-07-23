@@ -14,6 +14,8 @@
 - 委派只允许一层。选择当前会话中能力边界最小但足以完成任务的 subagent。
 - Handoff 至少给出目标、范围、已知上下文、约束和验收标准。并行写入任务不得覆盖同一文件范围。
 - 主 agent 复核 subagent 的证据、风险和关键改动，并保留最终验收责任。
+- Pi 无 spec mode、无 `ExitSpecMode` 闸口，故用启发式触发：高不确定或不可逆的 plan 在定稿（交付或落地实现）前，委派 `oracle` 复核，附完整 plan、目标约束、已排除方案与取舍理由。
+- 该触发刻意放主指令：oracle 的 description 是 pull 能力提示（“我是什么、何时选我”），只在你已决定委派时帮你选对 agent；本条是 push 义务（“何时必须复核”）。二者互补不重复：description 决定“选哪个”，本条决定“何时必须做”。
 
 ## Pi environment
 
