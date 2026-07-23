@@ -3,8 +3,8 @@
   "enableTelemetry": false,
   "model": "Claude Opus 4.6 (Thinking)",
   "trustedWorkspaces": [
-    {{#each antigravity.trusted_workspaces}}
+# {{#each antigravity.trusted_workspaces}}
     "{{this}}"{{#unless @last}},{{/unless}}
-    {{/each}}
+# {{/each}}
   ]
 }

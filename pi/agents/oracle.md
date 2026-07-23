@@ -4,7 +4,7 @@ tools: read, bash, grep, find, ls
 # {{#if pi.subagent_model.oracle}}
 model: {{pi.subagent_model.oracle}}
 # {{/if}}
-thinking: high
+thinking: xhigh
 max_turns: 15
 prompt_mode: replace
 extensions: false

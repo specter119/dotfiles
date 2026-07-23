@@ -8,8 +8,8 @@
     "skipUserTesting": false,
     "validationWorkerModel": "glm-5.2",
     "validationWorkerReasoningEffort": "high",
-    "workerModel": "gpt-5.6-sol",
-    "workerReasoningEffort": "xhigh"
+    "workerModel": "grok-4.5",
+    "workerReasoningEffort": "high"
   },
   "missionOrchestratorModel": "claude-opus-4-8",
   "missionOrchestratorReasoningEffort": "high",
@@ -18,8 +18,7 @@
     "claude-opus-4-8",
     "claude-fable-5",
     "grok-4.5",
-    "gpt-5.6-sol",
-    "gpt-5.6-terra"
+    "gpt-5.6-sol"
   ],
   "nerdFont": true,
   "sessionDefaultSettings": {
@@ -38,11 +37,11 @@
     "vscode": 1782694674288
   },
   "trustedFolders": {
-    {{#each droid.trusted_folders}}
+# {{#each droid.trusted_folders}}
     "{{this.dir}}": {
       "trustedAt": "{{this.trustedAt}}"
     }{{#unless @last}},{{/unless}}
-    {{/each}}
+# {{/each}}
   },
   "enabledPlugins": {
     "autoresearch@factory-plugins": true,

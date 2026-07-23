@@ -7,7 +7,7 @@ Cross-platform dotfiles managed by [dotter](https://github.com/SuperCuber/dotter
 This repo uses a small set of patterns to keep shared configuration reproducible without losing machine-specific or tool-managed local state.
 
 - **Global placeholders, local concrete values**
-  Shared templates define defaults or placeholders in `.dotter/global.toml`, while each machine can provide its own concrete values through `.dotter/local.toml`. This keeps the repository portable across environments without hardcoding local details into tracked files.
+  Shared templates define defaults or placeholders in tracked files, while each machine can provide its own concrete values through local overrides. This keeps the repository portable across environments without hardcoding local details into tracked files.
 
 - **Two paths for credentials and secrets**
   Private values that differ by machine can live in local overrides, while reusable secrets can be injected at deploy time from Bitwarden via `rbw`. This keeps secrets out of the repo while still allowing templates to render complete working configs.

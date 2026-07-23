@@ -153,6 +153,7 @@ nested_value = { key_b = "overridden" }
 - **Variables must be namespaced**: in `global.toml`, variables must be defined under `[pkg.variables.pkg]` (e.g. `[opencode.variables.opencode]`), not flat under `[pkg.variables]`. Dotter strict mode requires that the template access path `pkg.var_name` matches the variable definition path; un-namespaced variables trigger `Failed to access variable in strict mode` when used in `#each` (`#if` silently skips so it does not error, but the variable is not actually registered correctly).
 - **Cross-package shared variables**: use the owning tool's namespace, e.g. `git.repo_identities` is defined by `git` / `jj` and consumed by both Git and Jujutsu templates.
 - **Shareable secrets**: keep using inline `rbw get` in templates or scripts instead of storing them in `local.toml`.
+- **Public client credentials**: non-personal, shared credentials that are identical across all machines and published upstream may stay hardcoded in tracked templates. `chromium/chromium-flags.conf` carries the Chromium open-source project's public OAuth2 client id/secret (used for Google account sign-in); these are not personal secrets and are the same on every machine, so they are exempt from the `rbw get` rule.
 - Detailed constraints for `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` live in `.dotter/AGENTS.md`.
 
 #### Enterprise Gateway Provider Data
@@ -185,6 +186,7 @@ Enterprise gateway provider data has two sources:
 | `pi.default_provider` | string | `global + local` | Pi default provider name; synced from deploy side by sync script |
 | `pi.enterprise_packages` | array of strings | `global + local` | Optional; extra packages appended to Pi packages list |
 | `pi.last_changelog_version` | string | `global + local` | Pi read changelog version; synced by sync script to avoid deploy overwriting local value |
+| `pi.subagent_model` | table | `global + local` | Keyed by subagent name → model id; injected into `pi/agents/<name>.md` frontmatter. An absent entry inherits the main agent `defaultModel`, so leaving a subagent unset is intentional inheritance, not a gap |
 | `opencode.default_model` | string | `global + local` | opencode default model, format `provider/model`; synced by sync script |
 | `opencode.enterprise_tui_plugins` | array of strings | `global + local` | Optional; TUI plugin entries are omitted when empty |
 | `droid.trusted_folders` | array of tables | `global + local` | Optional; each item has `dir` (folder path) and `trustedAt` (timestamp); renders Droid `trustedFolders` |
@@ -196,6 +198,11 @@ Enterprise gateway provider data has two sources:
 | `ssh.{site}.hosts` | array of tables | `global + local` | Each item has `alias` and `hostname`; renders specific Host entries under site prefix |
 | `scoop.lastupdate` | string | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop lastupdate timestamp |
 | `uv.index_url` | string | `global + local` | uv pip index URL; defaults to USTC mirror, overridable per machine |
+| `registry-auth.host` | string | `global + local` | Docker registry host; variable-only `registry-auth` package, base64-encoded with user_id/access_token by `pre_deploy.sh` into a runtime artifact read by docker/npmrc/netrc |
+| `registry-auth.user_id` | string | `global + local` | Registry user id; combined with access_token into the `registry-auth-encode` runtime artifact |
+| `registry-auth.access_token` | string | `global + local` | Registry access token; base64-encoded with user_id, never written to tracked files |
+| `npmrc.registry_auth_npm` | string | `global + local` | npm registry `_auth` value injected into `~/.npmrc`; Bun inherits auth via the deployed npmrc |
+| `docker.registry_hosts` | array of strings | `global + local` | Docker registry hosts; each renders an `auths` entry reading the base64 token from the `registry-auth` runtime artifact |
 
 #### Git Repo Identities
 
@@ -289,6 +296,27 @@ When a YAML file is both a Dotter template and pre-commit formatted with `yamlfm
 
 - Put control blocks like `#each` and `#if` in YAML comments so YAML formatters and editors can still parse the file.
 - Quote inline Handlebars values in YAML scalars, for example `repo: "{{repo}}"` and `- "{{this}}"`. Unquoted forms may be rewritten into invalid `{ { repo } }` style text by formatters.
+
+#### JSON Template Tips
+
+JSON has no comments, so Handlebars control blocks split into two forms:
+
+- **Standalone control blocks** (`{{#each}}`, `{{/each}}`, `{{#if}}`, `{{/if}}`) go on `# `-prefixed lines. After rendering, leftover `# ` blank lines are removed by `post_deploy.sh` cleanup. Use `docker/config.json` as the reference.
+- **Inline control blocks** (e.g. `{{#unless @last}},{{/unless}}` for comma separation) stay bare, because they must emit literal characters and cannot be commented out.
+
+```json
+{
+  "auths": {
+# {{#each docker.registry_hosts}}
+    "{{this}}": {
+      "auth": "{{command_output "cat \"$XDG_RUNTIME_DIR\"/dotter/registry-auth-encode"}}"
+    }{{#unless @last}},{{/unless}}
+# {{/each}}
+  }
+}
+```
+
+- `post_deploy.sh` identifies templates with `# `-prefixed `#if`/`#each` controls by content and strips residual blank `# ` lines from both the rendered target and the Dotter cache.
 
 ## Live Config Reverse Sync Pattern
 

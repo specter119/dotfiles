@@ -29,7 +29,7 @@ hosts:
   # {{#each glab.hosts}}
     "{{this.host}}":
     # {{#each this}}
-    # {{#if (replace @key "host" "")}}
+    # {{#if (not (eq @key "host"))}}
         "{{@key}}": "{{this}}"
     # {{/if}}
     # {{/each}}
