@@ -14,17 +14,20 @@
   "missionOrchestratorModel": "claude-opus-4-8",
   "missionOrchestratorReasoningEffort": "high",
   "modelFavorites": [
-    "claude-opus-4-6",
-    "gpt-5.4",
-    "glm-5.2"
+    "glm-5.2",
+    "claude-opus-4-8",
+    "claude-fable-5",
+    "grok-4.5",
+    "gpt-5.6-sol",
+    "gpt-5.6-terra"
   ],
   "nerdFont": true,
   "sessionDefaultSettings": {
     "autonomyLevel": "medium",
     "autonomyMode": "auto-medium",
     "interactionMode": "auto",
-    "model": "gpt-5.6-terra",
-    "reasoningEffort": "xhigh",
+    "model": "grok-4.5",
+    "reasoningEffort": "high",
     "specModeModel": "claude-opus-4-8",
     "specModeReasoningEffort": "xhigh"
   },
