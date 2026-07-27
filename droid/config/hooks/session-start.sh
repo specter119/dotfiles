@@ -12,17 +12,18 @@ bootstrap_context="$(print_bootstrap_context)"
 
 case "$source_name" in
   startup|resume|clear)
-    if [ -n "$bootstrap_context" ]; then
-      printf '%s\n' "$bootstrap_context"
-    fi
+    emit_hook_context "SessionStart" "$bootstrap_context"
     ;;
   compact)
-    if [ -n "$bootstrap_context" ]; then
-      printf '%s\n\n' "$bootstrap_context"
-    fi
+    context_text="$bootstrap_context"
+    if [ -n "$context_text" ]; then
+      context_text="${context_text}
 
-    printf '%s\n' '---'
-    printf '%s\n' 'Context was compacted. If you discovered important insights, distill them before continuing:'
-    printf '%s\n' '  nmem --json m add "<insight>" -t "<short title>" -i 0.8 -s droid'
+"
+    fi
+    context_text="${context_text}---
+Context was compacted. If you discovered important insights, distill them before continuing:
+  nmem --json m add \"<insight>\" -t \"<short title>\" -i 0.8 -s droid"
+    emit_hook_context "SessionStart" "$context_text"
     ;;
 esac

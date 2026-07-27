@@ -54,3 +54,32 @@ read_working_memory() {
 print_bootstrap_context() {
   read_context_bundle || read_working_memory || cat ~/ai-now/memory.md 2>/dev/null || true
 }
+
+# Emit hook JSON so Droid injects context for the model but hides the hook
+# block from the chat UI (still visible in detailed transcript).
+emit_hook_context() {
+  local event_name="$1"
+  local context_text="$2"
+
+  if [ -z "$context_text" ]; then
+    return 0
+  fi
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    printf '%s\n' "$context_text"
+    return 0
+  fi
+
+  HOOK_EVENT_NAME="$event_name" HOOK_CONTEXT_TEXT="$context_text" python3 - <<'PY'
+import json
+import os
+
+print(json.dumps({
+    "suppressOutput": True,
+    "hookSpecificOutput": {
+        "hookEventName": os.environ["HOOK_EVENT_NAME"],
+        "additionalContext": os.environ["HOOK_CONTEXT_TEXT"],
+    },
+}, ensure_ascii=False))
+PY
+}

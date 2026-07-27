@@ -1,24 +1,22 @@
 {
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "command": "bash \"$HOME/.factory/hooks/session-start.sh\"",
-            "type": "command"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "command": "bash \"$HOME/.factory/hooks/user-prompt-submit.sh\"",
-            "type": "command"
-          }
-        ]
-      }
-    ]
-  }
+  "SessionStart": [
+    {
+      "hooks": [
+        {
+          "command": "bash \"$HOME/.factory/hooks/session-start.sh\"",
+          "type": "command"
+        }
+      ]
+    }
+  ],
+  "UserPromptSubmit": [
+    {
+      "hooks": [
+        {
+          "command": "bash \"$HOME/.factory/hooks/user-prompt-submit.sh\"",
+          "type": "command"
+        }
+      ]
+    }
+  ]
 }
