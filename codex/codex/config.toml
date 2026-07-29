@@ -69,6 +69,12 @@ enabled = true
 [plugins."openai-developers@openai-curated"]
 enabled = true
 
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
 [projects]
 # {{#each codex.projects}}
 
@@ -101,9 +107,9 @@ approval_mode = "approve"
 [marketplaces]
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-05-22T15:27:11Z"
+last_updated = "2026-07-27T15:30:55Z"
 source_type = "local"
-source = "~/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+source = "{{env_var "HOME"}}/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [hooks]
 
