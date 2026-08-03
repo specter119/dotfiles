@@ -11,7 +11,7 @@
     "workerModel": "grok-4.5",
     "workerReasoningEffort": "high"
   },
-  "missionOrchestratorModel": "claude-opus-4-8",
+  "missionOrchestratorModel": "kimi-k3",
   "missionOrchestratorReasoningEffort": "high",
   "modelFavorites": [
     "glm-5.2",
@@ -27,8 +27,8 @@
     "interactionMode": "auto",
     "model": "grok-4.5",
     "reasoningEffort": "high",
-    "specModeModel": "claude-opus-4-8",
-    "specModeReasoningEffort": "xhigh"
+    "specModeModel": "kimi-k3",
+    "specModeReasoningEffort": "high"
   },
   "showTokenUsageIndicator": true,
   "reauthBannerShownTui": true,
@@ -47,5 +47,14 @@
     "autoresearch@factory-plugins": true,
     "droid-evolved@factory-plugins": true,
     "code-review@factory-plugins": true
-  }
+  },
+  "subagentModelSettings": {
+    "lightModel": "glm-5.2",
+    "lightReasoningEffort": "high",
+    "mediumModel": "glm-5.2",
+    "mediumReasoningEffort": "high",
+    "heavyModel": "gpt-5.5",
+    "heavyReasoningEffort": "high"
+  },
+  "subagentAutonomyLevel": "inherit"
 }

@@ -4,7 +4,7 @@
       "type": "http",
       "url": "https://mcp.context7.com/mcp",
       "headers": {
-        "CONTEXT7_API_KEY": "{{replace (command_output "rbw get factory-context7-api-key") "\n" ""}}"
+        "CONTEXT7_API_KEY": "{{replace (command_output "rbw get context7-api-key") "\n" ""}}"
       },
       "tools": ["*"]
     },
@@ -13,7 +13,7 @@
       "command": "bunx",
       "args": ["fast-context-mcp"],
       "env": {
-        "WINDSURF_API_KEY": "{{replace (command_output "rbw get factory-windsurf-api-key") "\n" ""}}"
+        "WINDSURF_API_KEY": "{{replace (command_output "rbw get windsurf-api-key") "\n" ""}}"
       },
       "tools": ["fast_context_search"]
     }
