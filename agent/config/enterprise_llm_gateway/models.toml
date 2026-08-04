@@ -12,8 +12,8 @@ reasoning = ["off", "high", "max"]
 reasoning_format = "deepseek"
 
 [[ali.models]]
-id = "deepseek-v4-flash"
-name = "DeepSeek V4 Flash"
+id = "deepseek-v4-flash-0731"
+name = "DeepSeek V4 Flash 0731"
 context_window = 1000000
 max_tokens = 384000
 input = ["text", "image"]
@@ -23,8 +23,8 @@ reasoning_format = "deepseek"
 [[ali.models]]
 id = "glm-5.1"
 name = "GLM-5.1"
-context_window = 202752
-max_tokens = 128000
+context_window = 200000
+max_tokens = 131072
 input = ["text", "image"]
 reasoning = true
 
@@ -48,7 +48,7 @@ reasoning = true
 id = "kimi-k2.6"
 name = "Kimi-K2.6"
 context_window = 262144
-max_tokens = 16384
+max_tokens = 98304
 input = ["text", "image"]
 reasoning = true
 reasoning_format = "deepseek"
@@ -57,10 +57,26 @@ reasoning_format = "deepseek"
 id = "kimi-k2.7-code"
 name = "Kimi-K2.7-Code"
 context_window = 262144
-max_tokens = 262144
+max_tokens = 16000
 input = ["text", "image"]
 reasoning = true
 reasoning_format = "deepseek"
+
+[[azure.models]]
+id = "gpt-5.4-mini"
+name = "GPT-5.4 Mini"
+context_window = 400000
+max_tokens = 128000
+input = ["text", "image"]
+reasoning = ["off", "minimal", "low", "medium", "high", "xhigh", "max"]
+
+[[azure.models]]
+id = "gpt-5.5"
+name = "GPT-5.5"
+context_window = 1050000
+max_tokens = 128000
+input = ["text", "image"]
+reasoning = ["off", "minimal", "low", "medium", "high", "xhigh", "max"]
 
 [[azure.models]]
 id = "gpt-5.6-luna"
