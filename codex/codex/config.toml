@@ -107,7 +107,7 @@ approval_mode = "approve"
 [marketplaces]
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-07-27T15:30:55Z"
+last_updated = "2026-08-05T14:28:17Z"
 source_type = "local"
 source = "{{env_var "HOME"}}/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
