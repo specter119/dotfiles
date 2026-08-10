@@ -16,6 +16,8 @@ packages:
     skills:
       - liteparse
   - repo: https://github.com/ast-grep/agent-skill
+  - repo: https://github.com/tw93/Kami.git
+  - repo: https://github.com/nyblnet/bento.git
   # {{#each skm.local_packages}}
   - repo: "{{repo}}"
     # {{#if skills}}

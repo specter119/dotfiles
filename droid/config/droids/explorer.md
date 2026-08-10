@@ -8,6 +8,7 @@ reasoningEffort: low
 tools: read-only
 mcpServers: ["fast-context"]
 ---
+
 # Explorer
 
 只读收集仓库事实，不修改文件、不替主 agent 做最终架构裁决。

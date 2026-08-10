@@ -1,6 +1,6 @@
 {
-  "compactionModel": "minimax-m3",
-  "compactionTokenLimit": 100000,
+  "compactionModel": "deepseek-v4-flash-0731",
+  "compactionTokenLimit": 250000,
   "includeCoAuthoredByDroid": false,
   "logoAnimation": "off",
   "missionModelSettings": {
@@ -8,26 +8,28 @@
     "skipUserTesting": false,
     "validationWorkerModel": "glm-5.2",
     "validationWorkerReasoningEffort": "high",
-    "workerModel": "grok-4.5",
+    "workerModel": "gpt-5.6-sol",
     "workerReasoningEffort": "high"
   },
-  "missionOrchestratorModel": "kimi-k3",
-  "missionOrchestratorReasoningEffort": "high",
+  "missionOrchestratorModel": "claude-opus-5",
+  "missionOrchestratorReasoningEffort": "xhigh",
   "modelFavorites": [
     "glm-5.2",
-    "claude-opus-4-8",
     "claude-fable-5",
     "grok-4.5",
-    "gpt-5.6-sol"
+    "gpt-5.6-sol",
+    "kimi-k3",
+    "claude-opus-5",
+    "gpt-5.5"
   ],
   "nerdFont": true,
   "sessionDefaultSettings": {
     "autonomyLevel": "medium",
     "autonomyMode": "auto-medium",
     "interactionMode": "auto",
-    "model": "grok-4.5",
+    "model": "gpt-5.5",
     "reasoningEffort": "high",
-    "specModeModel": "kimi-k3",
+    "specModeModel": "gpt-5.6-sol",
     "specModeReasoningEffort": "high"
   },
   "showTokenUsageIndicator": true,
@@ -56,5 +58,9 @@
     "heavyModel": "gpt-5.5",
     "heavyReasoningEffort": "high"
   },
-  "subagentAutonomyLevel": "inherit"
+  "subagentAutonomyLevel": "inherit",
+  "compactionTokenLimitPerModel": {
+    "minimax-m3": 250000,
+    "gemini-3.6-flash": 250000
+  }
 }
