@@ -61,9 +61,9 @@ jj = '~/.config/jj'
 ssh = '~/.ssh'
 
 [ssh.variables.ssh]
-hkg = {user = "", hosts = []}
-zha = {user = "", hosts = []}
-azure = {user = "", hosts = []}
+hkg = { user = "", hosts = [] }
+zha = { user = "", hosts = [] }
+azure = { user = "", hosts = [] }
 
 [scoop.variables.scoop]
 lastupdate = ""
@@ -133,6 +133,10 @@ rust = '~/.config'
 [julia.files]
 julia = '~/.julia'
 
+["llama.cpp".files]
+'llama.cpp/config' = '~/.config'
+'llama.cpp/lib' = '~/.local/lib'
+
 [stylua.files]
 stylua = '~/.config/stylua'
 
@@ -157,14 +161,7 @@ last_update_check_timestamp = ""
 last_seen_version = ""
 
 [pi.files]
-'pi/AGENTS.md' = '~/.config/pi/AGENTS.md'
-'pi/agents' = '~/.config/pi/agents'
-'pi/auth.json' = '~/.config/pi/auth.json'
-'pi/bin' = '~/.config/pi/bin'
-'pi/extensions' = '~/.config/pi/extensions'
-'pi/models.json' = '~/.config/pi/models.json'
-'pi/settings.json' = '~/.config/pi/settings.json'
-'pi/web-search.json' = '~/.config/pi/web-search.json'
+pi = '~/.config/pi'
 
 [pi.variables.pi]
 default_model = ""
@@ -341,7 +338,7 @@ depends = [
   'opencode',
   'claude-code',
   'antigravity',
-  'amp'
+  'amp',
 ]
 
 [agent.files]
@@ -351,6 +348,7 @@ depends = [
 [agent.variables.agent]
 enterprise_clients = []
 enterprise_deployments = {}
+otel_url = ""
 
 [agent-tunnel]
 depends = ['bub', 'lody', 'raft']

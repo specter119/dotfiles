@@ -1,0 +1,36 @@
+[Unit]
+Description=llama-server — Qwen3.8-27B IQ4_XS on 2x RTX 2080 Ti (22GB)
+# model auto-download runs in ExecStartPre, needs network
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Ensure the GGUF is present (downloads via hfd if missing/incomplete)
+ExecStartPre=%h/.local/lib/qwen38-model-sync.sh ensure
+# Adjust the llama-server path if your build installs elsewhere
+ExecStart=/usr/bin/llama-server \
+    --model %h/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/Qwen3.8-27B-IQ4_XS.gguf \
+    --host 127.0.0.1 \
+    --port 8080 \
+    --n-gpu-layers auto \
+    --split-mode layer \
+    --tensor-split 1,1 \
+    --parallel 2 \
+    --ctx-size 32768 \
+    --cache-type-k q8_0 \
+    --cache-type-v q8_0 \
+    --spec-type draft-mtp \
+    --spec-draft-n-max 4 \
+    --spec-draft-p-min 0.75 \
+    --reasoning-preserve \
+    --jinja
+Restart=on-failure
+RestartSec=10
+# generous: first start may download the 15.7 GB model
+TimeoutStartSec=1800
+Environment=HF_ENDPOINT=https://hf-mirror.com
+Environment=LD_LIBRARY_PATH=/opt/cuda/lib64
+
+[Install]
+WantedBy=default.target
