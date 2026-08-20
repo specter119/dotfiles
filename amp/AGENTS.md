@@ -14,3 +14,10 @@
 - 使用 `websearch`/`webfetch` 查询外部资料，使用 `fast-context` 搜索代码、`context7` 查询库文档。
 - 仅在其他 agent 对话与当前请求相关时使用 `xurl`。网页操作使用 `playwright-cli`，PDF 转图片使用 `pdftoppm`。
 - 存在 `.jj/` 时使用 `jj`。独立 Python 脚本使用 `uv run` 和 PEP 723 metadata。
+
+## Delegation
+
+- 非 trivial 请求优先 spawn subagent：边界清晰、可独立验收、写入不重叠的子任务可并行，实质探索/实现前先派。
+- 仅明显 trivial、一步可验证且无独立复核价值时本地直做；不得因“我也能做 / 有成本 / 已有上下文”跳过。
+- 非 trivial 交付前做一次独立复核；用户明确跳过或 subagent 不可用/失败时例外，并如实说明。
+- handoff：目标、范围、约束、已知证据、验收标准；主 agent 终责。

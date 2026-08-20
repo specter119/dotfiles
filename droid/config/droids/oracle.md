@@ -4,8 +4,8 @@ description: >-
   Read-only second-opinion reviewer for architecture tradeoffs, complex bugs,
   and design review. Use when the main agent needs an independent perspective
   from a different model family.
-model: claude-fable-5
-reasoningEffort: xhigh
+model: claude-opus-4-6
+reasoningEffort: high
 tools: ["Read", "LS", "Grep", "Glob", "WebSearch"]
 mcpServers: []
 ---

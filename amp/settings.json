@@ -13,7 +13,8 @@
       "command": "bunx",
       "environment": {
         "WINDSURF_API_KEY": "{{replace (command_output 'rbw get windsurf-api-key') '\n' ''}}"
-      }
+      },
+      "includeTools": ["fast_context_search"]
     }
   },
   "amp.permissions": [

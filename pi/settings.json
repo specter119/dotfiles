@@ -11,14 +11,27 @@
   "npmCommand": [
     "{{env_var "PI_CODING_AGENT_DIR"}}/bin/pi-npm-bun"
   ],
+# {{#if agent.otel_url}}
+  "otel": {
+    "enabled": true,
+    "endpoint": "{{agent.otel_url}}",
+    "protocol": "http/protobuf",
+    "headers": { "x-project-name": "harness-pi" },
+    "serviceName": "pi",
+    "captureContent": "metadata_only",
+    "sampleRatio": 1.0,
+    "signals": { "traces": true, "metrics": false, "logs": false }
+  },
+# {{/if}}
   "packages": [
     "https://github.com/aliou/pi-guardrails",
     "npm:@tintinweb/pi-subagents",
     "npm:@narumitw/pi-goal",
     "npm:pi-web-access",
     "npm:@ff-labs/pi-fff",
-    "https://github.com/davebcn87/pi-autoresearch"{{#if pi.enterprise_packages}}{{#each pi.enterprise_packages}},
-    "{{this}}"{{/each}}{{/if}}
+    "https://github.com/davebcn87/pi-autoresearch",
+    "npm:pi-otel"{{#each pi.enterprise_packages}},
+    "{{this}}"{{/each}}
   ],
   "theme": "dark"
 }
