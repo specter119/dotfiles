@@ -253,7 +253,8 @@ marimo = '~/.config'
 bub = '~/.config'
 
 [lody.files]
-lody = '~/.config'
+'lody/lib' = '~/.local/lib/lody'
+'lody/config' = '~/.config'
 
 [enterprise-proxy.variables.enterprise_proxy]
 url = ""
@@ -262,7 +263,8 @@ url = ""
 depends = ['enterprise-proxy']
 
 [raft.files]
-raft = '~/.config'
+'raft/lib' = '~/.local/lib/raft'
+'raft/config' = '~/.config'
 
 [raft.variables.raft]
 api_key = ""

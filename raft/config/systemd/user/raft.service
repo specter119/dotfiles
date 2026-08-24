@@ -5,8 +5,8 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-WorkingDirectory=%h/.config/raft
-ExecStartPre=bun update --latest --force @botiverse/raft-daemon@latest
+WorkingDirectory=%h/.local/lib/raft
+ExecStartPre=bun update --latest --force @botiverse/raft-daemon
 ExecStart=bun run raft-daemon --server-url https://api.raft.build --api-key {{raft.api_key}}
 Environment=SLOCK_HOME=%D/raft
 {{#if enterprise_proxy.url}}
