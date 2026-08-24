@@ -40,8 +40,17 @@ model id as shown by `/v1/models` (typically the GGUF filename).
 --n-gpu-layers auto --split-mode layer --tensor-split 1,1
 --cache-type-k q8_0 --cache-type-v q8_0
 --spec-type draft-mtp --spec-draft-n-max 4 --spec-draft-p-min 0.75   # MTP ON
---reasoning-preserve --jinja
+--reasoning-preserve --reasoning-budget 2000 --chat-template-kwargs '{"reasoning_effort": "low"}' --image-max-tokens 4000 --jinja
 ```
+
+- `--reasoning-budget 2000` + `--reasoning_effort low`: soft + hard cap on
+  thinking so short answers don't burn the token budget (client-side
+  `enable_thinking` is not forwarded by llama.cpp's OpenAI layer).
+- `--image-max-tokens 4000`: inert until a `--mmproj` vision projector is
+  loaded (not currently).
+- **Not supported on stock llama.cpp: `--cache-type-k/v kvarn5`** — that is
+  beellama.cpp-only (KVarN). Waiting on `aur/beellama.cpp-cuda` install to
+  evaluate migrating (KVarN would free KV VRAM for longer context).
 
 - **MTP speculative decoding is ON.** The unsloth GGUF carries the `nextn`
   head. Community recipe (github.com/sudoingX/qwen38-mtp) + local tuning:

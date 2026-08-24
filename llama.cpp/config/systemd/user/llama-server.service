@@ -11,7 +11,7 @@ ExecStartPre=%h/.local/lib/qwen38-model-sync.sh ensure
 # Adjust the llama-server path if your build installs elsewhere
 ExecStart=/usr/bin/llama-server \
     --model %h/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/Qwen3.8-27B-IQ4_XS.gguf \
-    --host 127.0.0.1 \
+    --host 0.0.0.0 \
     --port 8080 \
     --n-gpu-layers auto \
     --split-mode layer \
@@ -24,6 +24,9 @@ ExecStart=/usr/bin/llama-server \
     --spec-draft-n-max 4 \
     --spec-draft-p-min 0.75 \
     --reasoning-preserve \
+    --reasoning-budget 2000 \
+    --chat-template-kwargs '{"reasoning_effort": "low"}' \
+    --image-max-tokens 4000 \
     --jinja
 Restart=on-failure
 RestartSec=10
