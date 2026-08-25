@@ -61,9 +61,9 @@ jj = '~/.config/jj'
 ssh = '~/.ssh'
 
 [ssh.variables.ssh]
-hkg = { user = "", hosts = [] }
-zha = { user = "", hosts = [] }
-azure = { user = "", hosts = [] }
+hkg = {user = "", hosts = []}
+zha = {user = "", hosts = []}
+azure = {user = "", hosts = []}
 
 [scoop.variables.scoop]
 lastupdate = ""
@@ -150,6 +150,9 @@ codex = '~/.config'
 model_provider = ""
 projects = []
 hook_states = []
+
+[chatgpt.files]
+chatgpt = '~/.config'
 
 [glab.files]
 glab = '~/.config/glab-cli'
@@ -336,11 +339,12 @@ depends = [
   'droid',
   'pi',
   'codex',
+  'chatgpt',
   'copilot',
   'opencode',
   'claude-code',
   'antigravity',
-  'amp',
+  'amp'
 ]
 
 [agent.files]
