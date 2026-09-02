@@ -8,29 +8,24 @@
     "skipUserTesting": false,
     "validationWorkerModel": "glm-5.2",
     "validationWorkerReasoningEffort": "high",
-    "workerModel": "gpt-5.6-sol",
+    "workerModel": "grok-4.6",
     "workerReasoningEffort": "high"
   },
-  "missionOrchestratorModel": "claude-opus-5",
-  "missionOrchestratorReasoningEffort": "xhigh",
+  "missionOrchestratorModel": "claude-opus-4-6",
+  "missionOrchestratorReasoningEffort": "high",
   "modelFavorites": [
     "glm-5.2",
-    "claude-fable-5",
-    "grok-4.5",
+    "grok-4.6",
     "gpt-5.6-sol",
-    "kimi-k3",
-    "claude-opus-5",
-    "gpt-5.5"
+    "kimi-k3"
   ],
   "nerdFont": true,
   "sessionDefaultSettings": {
     "autonomyLevel": "medium",
     "autonomyMode": "auto-medium",
     "interactionMode": "auto",
-    "model": "gpt-5.5",
-    "reasoningEffort": "high",
-    "specModeModel": "gpt-5.6-sol",
-    "specModeReasoningEffort": "high"
+    "model": "gpt-5.6-luna",
+    "reasoningEffort": "max"
   },
   "showTokenUsageIndicator": true,
   "reauthBannerShownTui": true,
@@ -51,10 +46,10 @@
     "code-review@factory-plugins": true
   },
   "subagentModelSettings": {
-    "lightModel": "glm-5.2",
-    "lightReasoningEffort": "high",
-    "mediumModel": "glm-5.2",
-    "mediumReasoningEffort": "high",
+    "lightModel": "gpt-5.6-luna",
+    "lightReasoningEffort": "max",
+    "mediumModel": "gpt-5.6-luna",
+    "mediumReasoningEffort": "max",
     "heavyModel": "gpt-5.5",
     "heavyReasoningEffort": "high"
   },

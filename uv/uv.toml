@@ -1,3 +1,5 @@
+system-certs = true
+
 [pip]
 link-mode = "clone"
 

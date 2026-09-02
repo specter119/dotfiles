@@ -10,25 +10,30 @@
     },
     "models": []
   } %]
+  [% set provider_base_url = deployments[0].base_url | trim %]
   [% for deployment in deployments %]
     [% for model in deployment.models %]
       [% set model_base_url = deployment.base_url.rstrip('/') %]
-      [% if deployment.name == "azure" %]
-        [% set model_base_url = model_base_url.removesuffix('/v1') ~ "/deployments/" ~ model.id ~ "-sdlc-gs" %]
-      [% endif %]
+      [% set model_id = model.id %]
       [% set compat = {"cacheControlFormat": "anthropic"} %]
-      [% if deployment.name == "azure" or "gpt-5" in model.id | lower %]
-        [% set compat = {"maxTokensField": "max_completion_tokens"} %]
+      [% if deployment.name == "azure" %]
+        [% set model_id = model.id ~ "-sdlc-gs" %]
+        [% set compat = {} %]
       [% endif %]
       [% set pi_model = {
-        "id": model.id,
+        "id": model_id,
         "name": model.name,
         "contextWindow": model.context_window,
         "maxTokens": model.max_tokens,
         "input": model.input,
-        "compat": compat,
-        "baseUrl": model_base_url
+        "compat": compat
       } %]
+      [% if model_base_url != provider_base_url %]
+        [% set _ = pi_model.update({"baseUrl": model_base_url}) %]
+      [% endif %]
+      [% if deployment.name == "azure" %]
+        [% set _ = pi_model.update({"api": "openai-responses"}) %]
+      [% endif %]
       [% if model.reasoning_enabled %]
         [% set _ = pi_model.update({"reasoning": true}) %]
         [% if model.thinking_level_map %]
@@ -37,9 +42,6 @@
             [% set _ = thinking_level_map.update({"off": "none"}) %]
           [% endif %]
           [% set _ = pi_model.update({"thinkingLevelMap": thinking_level_map}) %]
-        [% endif %]
-        [% if deployment.name == "azure" %]
-          [% set _ = pi_model.compat.update({"supportsReasoningEffort": true}) %]
         [% endif %]
       [% endif %]
       [% if model.reasoning_format %]
