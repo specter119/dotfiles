@@ -50,7 +50,7 @@ js_repl = false
 
 [permissions.workspace-plus-cache.filesystem]
 ":root" = "read"
-":workspace_roots" = "write"
+":workspace_roots" = { "." = "write", ".git" = "write" }
 "~/.cache" = "write"
 "/tmp" = "write"
 "/run/user/1000" = "write"
