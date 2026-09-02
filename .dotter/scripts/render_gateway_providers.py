@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import shutil
 import subprocess
@@ -333,66 +332,17 @@ def load_bundled_catalog() -> list[dict]:
     return models if isinstance(models, list) else []
 
 
-FALLBACK_EFFORT_DESCRIPTIONS = {
-    'low': 'Fast responses with lighter reasoning',
-    'medium': 'Balances speed and reasoning depth for everyday tasks',
-    'high': 'Greater reasoning depth for complex problems',
-    'xhigh': 'Extra high reasoning depth for complex problems',
-    'max': 'Maximum reasoning depth for the hardest problems',
-    'ultra': 'Maximum reasoning with automatic task delegation',
-}
-
-
-def build_codex_catalog(context: dict[str, object]) -> list[dict]:
-    """Build Codex model_catalog entries from models.toml (azure gpt series).
-
-    The slug is the gateway request id (<id>-sdlc-gs); display and behavior
-    metadata owned by models.toml is overridden on top of the bundled catalog
-    entry for the same model (falling back to a bundled gpt-5.5 template when
-    the model is absent from the bundled catalog).
-    """
-    bundled = load_bundled_catalog()
-    by_slug = {model['slug']: model for model in bundled if 'slug' in model}
-    fallback = copy.deepcopy(
-        by_slug.get('gpt-5.5') or (by_slug.get('gpt-5.4-mini') or {})
-    )
-    catalog_models: list[dict] = []
-    for deployment in context.get('deployments', []):
-        if isinstance(deployment, dict):
-            continue  # defensive; deployments are dataclasses here
-        if deployment.name != 'azure':
-            continue
-        for model in deployment.models:
-            if not model.id.startswith('gpt-'):
-                continue
-            base = copy.deepcopy(by_slug.get(model.id) or fallback or {})
-            bundled_levels = {
-                level.get('effort'): level.get('description', '')
-                for level in base.get('supported_reasoning_levels', [])
-            }
-            reasoning = [l for l in model.reasoning_levels if l != 'off']
-            base.update(
-                {
-                    'slug': f"{model.id}-sdlc-gs",
-                    'display_name': model.name,
-                    'description': model.name,
-                    'context_window': model.context_window,
-                    'max_context_window': model.context_window,
-                    'default_reasoning_level': reasoning[0] if reasoning else 'medium',
-                    'supported_reasoning_levels': [
-                        {
-                            'effort': level,
-                            'description': bundled_levels.get(
-                                level, FALLBACK_EFFORT_DESCRIPTIONS.get(level, '')
-                            ),
-                        }
-                        for level in reasoning
-                    ],
-                    'input_modalities': model.input,
-                }
-            )
-            catalog_models.append(base)
-    return catalog_models
+def build_bundled_model_context() -> dict[str, object]:
+    """Prepare bundled Codex metadata for the consumer Jinja adapter."""
+    bundled_models = load_bundled_catalog()
+    by_slug = {
+        model['slug']: model
+        for model in bundled_models
+        if isinstance(model, dict) and isinstance(model.get('slug'), str)
+    }
+    return {
+        'bundled_models_by_slug': by_slug,
+    }
 
 
 def render(consumer: str) -> str:
@@ -409,7 +359,7 @@ def render(consumer: str) -> str:
     template = environment.from_string(template_path.read_text(encoding='utf-8'))
     context = build_context()
     if consumer == 'codex-catalog':
-        context['catalog_models'] = build_codex_catalog(context)
+        context.update(build_bundled_model_context())
     rendered = template.render(context)
     try:
         return json.dumps(json.loads(rendered), separators=(',', ':'))

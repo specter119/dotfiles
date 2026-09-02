@@ -48,9 +48,11 @@ agent/config/enterprise_llm_gateway/models.toml
     ↓
 .dotter/scripts/render_gateway_providers.py
     ├── pi/gateway-providers.json.j2
-    └── opencode/gateway-providers.json.j2
+    ├── opencode/gateway-providers.json.j2
+    └── codex/enterprise-model-catalog.json.j2
     ↓
-command_output in pi/models.json or opencode/config/opencode.jsonc
+command_output in pi/models.json, opencode/config/opencode.jsonc,
+or codex/codex/enterprise-model-catalog.json
 ```
 
 - `models.toml` is the shared model source and is deployed to `~/.config/enterprise_llm_gateway/`; Pi and OpenCode do not load it directly.
@@ -63,6 +65,7 @@ command_output in pi/models.json or opencode/config/opencode.jsonc
   ```sh
   uv run .dotter/scripts/render_gateway_providers.py pi | jq empty
   uv run .dotter/scripts/render_gateway_providers.py opencode | jq empty
+  uv run .dotter/scripts/render_gateway_providers.py codex-catalog | jq empty
   ```
 
 ## Runtime Artifacts

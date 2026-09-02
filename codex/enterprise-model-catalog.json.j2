@@ -1,1 +1,49 @@
+[% set effort_descriptions = {
+  "low": "Fast responses with lighter reasoning",
+  "medium": "Balances speed and reasoning depth for everyday tasks",
+  "high": "Greater reasoning depth for complex problems",
+  "xhigh": "Extra high reasoning depth for complex problems",
+  "max": "Maximum reasoning depth for the hardest problems",
+  "ultra": "Maximum reasoning with automatic task delegation"
+} %]
+[% set fallback_model = bundled_models_by_slug.get("gpt-5.5") or bundled_models_by_slug.get("gpt-5.4-mini") or {} %]
+[% set catalog_models = [] %]
+[% for deployment in deployments %]
+  [% if deployment.name == "azure" %]
+    [% for model in deployment.models %]
+      [% if model.id.startswith("gpt-") %]
+        [% set bundled_model = bundled_models_by_slug.get(model.id) %]
+        [% set catalog_model = (bundled_model or fallback_model).copy() %]
+        [% set bundled_descriptions = {} %]
+        [% for level in catalog_model.get("supported_reasoning_levels", []) %]
+          [% set _ = bundled_descriptions.update({level.get("effort"): level.get("description", "")}) %]
+        [% endfor %]
+        [% set reasoning_levels = [] %]
+        [% for level in model.reasoning_levels %]
+          [% if level != "off" %]
+            [% set _ = reasoning_levels.append(level) %]
+          [% endif %]
+        [% endfor %]
+        [% set supported_reasoning_levels = [] %]
+        [% for level in reasoning_levels %]
+          [% set _ = supported_reasoning_levels.append({
+            "effort": level,
+            "description": bundled_descriptions.get(level) or effort_descriptions.get(level, "")
+          }) %]
+        [% endfor %]
+        [% set _ = catalog_model.update({
+          "slug": model.id ~ "-sdlc-gs",
+          "display_name": model.name,
+          "description": model.name,
+          "context_window": model.context_window,
+          "max_context_window": model.context_window,
+          "default_reasoning_level": reasoning_levels[0] if reasoning_levels else "medium",
+          "supported_reasoning_levels": supported_reasoning_levels,
+          "input_modalities": model.input
+        }) %]
+        [% set _ = catalog_models.append(catalog_model) %]
+      [% endif %]
+    [% endfor %]
+  [% endif %]
+[% endfor %]
 [[ {"models": catalog_models} | tojson(2) ]]
