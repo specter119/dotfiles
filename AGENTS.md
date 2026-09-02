@@ -172,6 +172,7 @@ Enterprise gateway provider data has two sources:
 | --- | --- | --- | --- |
 | `codex.model_provider` | string | `global + local` | Reverse-synced from `config.toml.model_provider`; omitted when empty |
 | `raft.api_key` | string | `global + local` | Optional; service renders normally even when empty |
+| `agent_tunnel.extra_ca_certs` | string | `global + local` | Optional PEM path for the agent-tunnel group's Node/Bun TLS trust; omitted when empty |
 | `enterprise_proxy.url` | string | `global + local` | Optional; provided by the `enterprise-proxy` variable-only package, used by raft via `WSS_PROXY` and by yt-dlp when set |
 | `yt-dlp.output_dir` | string | `global + local` | yt-dlp output root; defaults to `~/Videos` and can be overridden per machine |
 | `codex.projects` | array of strings | `global + local` | Reverse-synced from trusted live Codex `[projects]` entries and renders that trust list |

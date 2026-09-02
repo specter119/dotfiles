@@ -7,6 +7,9 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=%h/.local/lib/lody
 Environment=LODY_DATA_DIR=%D/lody
+# {{#if agent_tunnel.extra_ca_certs}}
+Environment=NODE_EXTRA_CA_CERTS={{agent_tunnel.extra_ca_certs}}
+# {{/if}}
 ExecStartPre=bun update --latest --production --force lody
 ExecStart=bun run lody start
 Restart=always
