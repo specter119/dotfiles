@@ -3,11 +3,14 @@
   [% for deployment in deployments %]
     [% set models = {} %]
     [% for model in deployment.models %]
-      [% set options = {
-        "extra_body": {
-          "stream_options": {"include_usage": true}
-        }
-      } %]
+      [% set options = {} %]
+      [% if deployment.name != "azure" %]
+        [% set _ = options.update({
+          "extra_body": {
+            "stream_options": {"include_usage": true}
+          }
+        }) %]
+      [% endif %]
       [% if deployment.name != "azure" and model.reasoning_enabled %]
         [% set _ = options.extra_body.update({"enable_thinking": true}) %]
       [% endif %]
@@ -51,15 +54,18 @@
       [% set _ = models.update({model.id: entry}) %]
     [% endfor %]
     [% set provider_key = client_key ~ "|" ~ deployment.name %]
+    [% set provider_options = {
+      "baseURL": deployment.base_url,
+      "apiKey": client.api_key,
+      "setCacheKey": true
+    } %]
+    [% if deployment.name == "azure" %]
+      [% set _ = provider_options.update({"compatibility": "responses"}) %]
+    [% endif %]
     [% set _ = providers.update({provider_key: {
       "npm": "@ai-sdk/openai" if deployment.name == "azure" else "@ai-sdk/openai-compatible",
       "name": provider_key,
-      "options": {
-        "baseURL": deployment.base_url,
-        "apiKey": client.api_key,
-        "useDeploymentBasedUrls": true,
-        "setCacheKey": true
-      },
+      "options": provider_options,
       "models": models
     }}) %]
   [% endfor %]

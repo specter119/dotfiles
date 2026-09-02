@@ -1,4 +1,4 @@
-# Shared enterprise LLM model catalog.
+# Shared enterprise LLM model catalog. See README.md for routing notes.
 
 schema_version = 1
 
@@ -10,6 +10,27 @@ max_tokens = 384000
 input = ["text", "image"]
 reasoning = ["off", "high", "max"]
 reasoning_format = "deepseek"
+
+[[ali.models]]
+id = "deepseek-v4-pro-0813"
+name = "DeepSeek V4 Pro 0813"
+context_window = 272000
+max_tokens = 128000
+input = ["text"]
+reasoning = ["off", "high", "max"]
+reasoning_format = "deepseek"
+
+# Disabled: bare `deepseek-v4-flash` would collide with the azure deployment
+# model of the same id in the shared provider; prefer the dated
+# deepseek-v4-flash-0731 snapshot on ali.
+# [[ali.models]]
+# id = "deepseek-v4-flash"
+# name = "DeepSeek V4 Flash"
+# context_window = 223232
+# max_tokens = 32768
+# input = ["text"]
+# reasoning = ["off", "high", "max"]
+# reasoning_format = "deepseek"
 
 [[ali.models]]
 id = "deepseek-v4-flash-0731"
@@ -45,6 +66,22 @@ input = ["text", "image"]
 reasoning = true
 
 [[ali.models]]
+id = "qwen3.8-max"
+name = "Qwen3.8-Max"
+context_window = 872000
+max_tokens = 128000
+input = ["text", "image"]
+reasoning = true
+
+[[ali.models]]
+id = "qwen3.8-flash"
+name = "Qwen3.8-Flash"
+context_window = 872000
+max_tokens = 128000
+input = ["text", "image"]
+reasoning = true
+
+[[ali.models]]
 id = "kimi-k2.6"
 name = "Kimi-K2.6"
 context_window = 262144
@@ -62,13 +99,30 @@ input = ["text", "image"]
 reasoning = true
 reasoning_format = "deepseek"
 
+[[ali.models]]
+id = "kimi-k3"
+name = "Kimi-K3"
+context_window = 872000
+max_tokens = 128000
+input = ["text", "image"]
+reasoning = true
+reasoning_format = "deepseek"
+
+[[azure.models]]
+id = "gpt-5.1-codex-mini"
+name = "GPT-5.1 Codex Mini"
+context_window = 272000
+max_tokens = 128000
+input = ["text", "image"]
+reasoning = ["off", "low", "medium", "high", "xhigh", "max"]
+
 [[azure.models]]
 id = "gpt-5.4-mini"
 name = "GPT-5.4 Mini"
 context_window = 400000
 max_tokens = 128000
 input = ["text", "image"]
-reasoning = ["off", "minimal", "low", "medium", "high", "xhigh", "max"]
+reasoning = ["off", "low", "medium", "high", "xhigh", "max"]
 
 [[azure.models]]
 id = "gpt-5.5"
@@ -76,7 +130,7 @@ name = "GPT-5.5"
 context_window = 1050000
 max_tokens = 128000
 input = ["text", "image"]
-reasoning = ["off", "minimal", "low", "medium", "high", "xhigh", "max"]
+reasoning = ["off", "low", "medium", "high", "xhigh", "max"]
 
 [[azure.models]]
 id = "gpt-5.6-luna"
@@ -84,7 +138,7 @@ name = "GPT-5.6 Luna"
 context_window = 1050000
 max_tokens = 128000
 input = ["text", "image"]
-reasoning = ["off", "minimal", "low", "medium", "high", "xhigh", "max"]
+reasoning = ["off", "low", "medium", "high", "xhigh", "max"]
 
 [[azure.models]]
 id = "gpt-5.6-terra"
@@ -92,7 +146,7 @@ name = "GPT-5.6 Terra"
 context_window = 1050000
 max_tokens = 128000
 input = ["text", "image"]
-reasoning = ["off", "minimal", "low", "medium", "high", "xhigh", "max"]
+reasoning = ["off", "low", "medium", "high", "xhigh", "max"]
 
 [[azure.models]]
 id = "gpt-5.6-sol"
@@ -100,4 +154,12 @@ name = "GPT-5.6 Sol"
 context_window = 1050000
 max_tokens = 128000
 input = ["text", "image"]
-reasoning = ["off", "minimal", "low", "medium", "high", "xhigh", "max"]
+reasoning = ["off", "low", "medium", "high", "xhigh", "max"]
+
+[[azure.models]]
+id = "deepseek-v4-flash"
+name = "DeepSeek V4 Flash (SDLC GS)"
+context_window = 223232
+max_tokens = 32768
+input = ["text"]
+reasoning = false

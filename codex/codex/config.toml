@@ -1,23 +1,32 @@
-model = "gpt-5.5"
+model = "gpt-5.6-luna-sdlc-gs"
 # {{#if codex.model_provider}}
 model_provider = "{{codex.model_provider}}"
+model_catalog_json = "enterprise-model-catalog.json"
 # {{/if}}
 personality = "pragmatic"
 disable_response_storage = true
 web_search = "live"
 notify = ["~/.local/share/cli-hooks/notify.sh"]
-model_reasoning_effort = "high"
+model_reasoning_effort = "max"
 plan_mode_reasoning_effort = "high"
 suppress_unstable_features_warning = true
 default_permissions = "workspace-plus-cache"
 
+# Providers authenticate through the stored OPENAI_API_KEY credential
+# (requires_openai_auth = true); write the key into auth.json.
 [model_providers]
 
 [model_providers.packycode]
 name = "packycode"
 base_url = "https://www.packyapi.com/v1"
-wire_api = "responses"
 requires_openai_auth = true
+
+{{#if agent.enterprise_deployments.azure}}
+[model_providers.enterprise]
+name = "Enterprise"
+base_url = "{{agent.enterprise_deployments.azure.base_url}}"
+requires_openai_auth = true
+{{/if}}
 
 [features]
 collaboration_modes = true
