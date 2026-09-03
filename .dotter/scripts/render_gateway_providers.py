@@ -26,7 +26,7 @@ MODEL_CATALOG_PATH = (
 CONSUMER_TEMPLATES = {
     'pi': REPO_ROOT / 'pi' / 'gateway-providers.json.j2',
     'opencode': REPO_ROOT / 'opencode' / 'gateway-providers.json.j2',
-    'codex-catalog': REPO_ROOT / 'codex' / 'enterprise-model-catalog.json.j2',
+    'codex-catalog': REPO_ROOT / 'codex' / 'codex' / 'enterprise-model-catalog.json.j2',
 }
 
 

@@ -49,7 +49,7 @@ agent/config/enterprise_llm_gateway/models.toml
 .dotter/scripts/render_gateway_providers.py
     ├── pi/gateway-providers.json.j2
     ├── opencode/gateway-providers.json.j2
-    └── codex/enterprise-model-catalog.json.j2
+    └── codex/codex/enterprise-model-catalog.json.j2
     ↓
 command_output in pi/models.json, opencode/config/opencode.jsonc,
 or codex/codex/enterprise-model-catalog.json

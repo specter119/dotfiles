@@ -13,7 +13,7 @@ Each top-level deployment table (`ali`, `azure`) owns one model list.
   deployments.
 - gpt-5.x `reasoning.effort` accepts `none|low|medium|high|xhigh|max`;
   `minimal` is rejected, so `reasoning` arrays exclude it.
-- `deepseek-v4-flash` (azure) also answers the responses endpoint but rejects
+- `deepseek-v4-flash` (azure) also answers the Responses API but rejects
   the `reasoning.effort` parameter entirely, hence `reasoning = false` in the
   catalog. Its bare id collides with the disabled ali snapshot of the same
   name (see `models.toml`).

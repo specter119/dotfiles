@@ -11,7 +11,7 @@
 [% for deployment in deployments %]
   [% if deployment.name == "azure" %]
     [% for model in deployment.models %]
-      [% if model.id.startswith("gpt-") %]
+      [% if model.id.startswith("gpt-") or model.id == "deepseek-v4-flash" %]
         [% set bundled_model = bundled_models_by_slug.get(model.id) %]
         [% set catalog_model = (bundled_model or fallback_model).copy() %]
         [% set bundled_descriptions = {} %]
@@ -37,10 +37,16 @@
           "description": model.name,
           "context_window": model.context_window,
           "max_context_window": model.context_window,
-          "default_reasoning_level": reasoning_levels[0] if reasoning_levels else "medium",
-          "supported_reasoning_levels": supported_reasoning_levels,
-          "input_modalities": model.input
+          "input_modalities": model.input,
+          "supported_reasoning_levels": supported_reasoning_levels
         }) %]
+        [% if model.reasoning_enabled %]
+          [% set _ = catalog_model.update({
+            "default_reasoning_level": reasoning_levels[0]
+          }) %]
+        [% else %]
+          [% set _ = catalog_model.pop("default_reasoning_level", None) %]
+        [% endif %]
         [% set _ = catalog_models.append(catalog_model) %]
       [% endif %]
     [% endfor %]
