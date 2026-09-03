@@ -11,7 +11,7 @@
 [% for deployment in deployments %]
   [% if deployment.name == "azure" %]
     [% for model in deployment.models %]
-      [% if model.id.startswith("gpt-") or model.id == "deepseek-v4-flash" %]
+      [% if model.id.startswith("gpt-") %]
         [% set bundled_model = bundled_models_by_slug.get(model.id) %]
         [% set catalog_model = (bundled_model or fallback_model).copy() %]
         [% set bundled_descriptions = {} %]

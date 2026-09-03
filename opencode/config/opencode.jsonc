@@ -3,7 +3,7 @@
 // {{#if opencode.default_model}}
   "model": "{{opencode.default_model}}",
 // {{/if}}
-  "provider": {{command_output "uv run .dotter/scripts/render_gateway_providers.py opencode"}},
+  "provider": {{command_output "uv run .dotter/scripts/render_gateway_providers.py opencode | jq . | sed '2,$s/^/  /'"}},
   "mcp": {
     "fast-context": {
       "type": "local",
