@@ -73,4 +73,4 @@ or codex/codex/enterprise-model-catalog.json
 
 - Runtime artifacts are deploy-time files, distinct from the inline enterprise provider rendering above. When multiple templates need the same derived value, prefer writing a machine-local artifact under `$XDG_RUNTIME_DIR/dotter/` from `.dotter/pre_deploy.sh` instead of duplicating generation logic in each template.
 - Treat files in `$XDG_RUNTIME_DIR/dotter/` as disposable runtime artifacts. Templates may read them with `command_output`, but they must not be committed back into repo-managed config.
-- Current registry flow: `nodejs.registry` supplies the shared npm/Bun registry URL; `.dotter/pre_deploy.sh` writes `registry-auth-encode` for npm/.npmrc and Docker consumers, while `bun/.bunfig.toml` consumes `registry-auth.access_token` directly for Bun auth.
+- Current registry flow: `nodejs.registry` supplies the shared npm/Bun registry URL; `npm/.npmrc` and `docker/config.json` compute base64 auth inline when the `registry-auth` table exists, while `bun/.bunfig.toml` and `netrc/.netrc` consume the raw registry credentials directly. `.dotter/pre_deploy.sh` does not depend on registry-auth variables.

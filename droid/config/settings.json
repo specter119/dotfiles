@@ -6,15 +6,15 @@
   "missionModelSettings": {
     "skipScrutiny": true,
     "skipUserTesting": false,
-    "validationWorkerModel": "glm-5.2",
-    "validationWorkerReasoningEffort": "high",
-    "workerModel": "grok-4.6",
-    "workerReasoningEffort": "high"
+    "validationWorkerModel": "gpt-5.6-luna",
+    "validationWorkerReasoningEffort": "max",
+    "workerModel": "gpt-5.6-luna",
+    "workerReasoningEffort": "max"
   },
   "missionOrchestratorModel": "claude-opus-4-6",
   "missionOrchestratorReasoningEffort": "high",
   "modelFavorites": [
-    "glm-5.2",
+    "glm-5.3",
     "grok-4.6",
     "gpt-5.6-sol",
     "kimi-k3"
@@ -50,7 +50,7 @@
     "lightReasoningEffort": "max",
     "mediumModel": "gpt-5.6-luna",
     "mediumReasoningEffort": "max",
-    "heavyModel": "gpt-5.5",
+    "heavyModel": "glm-5.3",
     "heavyReasoningEffort": "high"
   },
   "subagentAutonomyLevel": "inherit",

@@ -2,7 +2,7 @@
   "auths": {
 # {{#each docker.registry_hosts}}
     "{{this}}": {
-      "auth": "{{command_output "cat \"$XDG_RUNTIME_DIR\"/dotter/registry-auth-encode"}}"
+      "auth": "{{#if registry-auth}}{{replace (command_output (replace (replace "printf '%s:%s' '__USER_ID__' '__ACCESS_TOKEN__' | base64" "__USER_ID__" registry-auth.user_id) "__ACCESS_TOKEN__" registry-auth.access_token)) "\n" ""}}{{/if}}"
     }{{#unless @last}},{{/unless}}
 # {{/each}}
   }

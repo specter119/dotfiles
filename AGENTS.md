@@ -200,11 +200,11 @@ Enterprise gateway provider data has two sources:
 | `ssh.{site}.hosts` | array of tables | `global + local` | Each item has `alias` and `hostname`; renders specific Host entries under site prefix |
 | `scoop.lastupdate` | string | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop lastupdate timestamp |
 | `uv.index_url` | string | `global + local` | uv pip index URL; defaults to USTC mirror, overridable per machine |
-| `registry-auth.host` | string | `global + local` | Docker registry host; variable-only `registry-auth` package, base64-encoded with user_id/access_token by `pre_deploy.sh` into a runtime artifact read by docker/npm/.npmrc/netrc |
-| `registry-auth.user_id` | string | `global + local` | Registry user id; combined with access_token into the `registry-auth-encode` runtime artifact |
-| `registry-auth.access_token` | string | `global + local` | Registry access token; base64-encoded with user_id, never written to tracked files |
+| `registry-auth.host` | string | `global + local` | Docker registry host; consumed directly by `netrc/.netrc` |
+| `registry-auth.user_id` | string | `global + local` | Registry user id; consumed directly by `netrc/.netrc` and combined inline with access_token by npm/Docker templates |
+| `registry-auth.access_token` | string | `global + local` | Registry access token; consumed directly by Bun/netrc and combined inline with user_id by npm/Docker templates |
 | `nodejs.registry` | string | `global + local` | Shared npm/Bun registry URL; npm uses it in `~/.npmrc`, while Bun uses it with `registry-auth` credentials in `~/.bunfig.toml` |
-| `docker.registry_hosts` | array of strings | `global + local` | Docker registry hosts; each renders an `auths` entry reading the base64 token from the `registry-auth` runtime artifact |
+| `docker.registry_hosts` | array of strings | `global + local` | Docker registry hosts; each renders an `auths` entry with inline base64 auth when credentials are configured |
 
 #### Git Repo Identities
 
@@ -311,7 +311,7 @@ JSON has no comments, so Handlebars control blocks split into two forms:
   "auths": {
 # {{#each docker.registry_hosts}}
     "{{this}}": {
-      "auth": "{{command_output "cat \"$XDG_RUNTIME_DIR\"/dotter/registry-auth-encode"}}"
+      "auth": "{{#if registry-auth}}{{replace (command_output (replace (replace "printf '%s:%s' '__USER_ID__' '__ACCESS_TOKEN__' | base64" "__USER_ID__" registry-auth.user_id) "__ACCESS_TOKEN__" registry-auth.access_token)) "\n" ""}}{{/if}}"
     }{{#unless @last}},{{/unless}}
 # {{/each}}
   }
