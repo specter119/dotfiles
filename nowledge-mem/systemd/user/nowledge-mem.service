@@ -1,0 +1,12 @@
+[Unit]
+Description=Nowledge Mem headless server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/nmem serve --host 127.0.0.1 --port 14242
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

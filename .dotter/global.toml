@@ -61,12 +61,12 @@ jj = '~/.config/jj'
 ssh = '~/.ssh'
 
 [ssh.variables.ssh]
-hkg = {user = "", hosts = []}
-zha = {user = "", hosts = []}
-azure = {user = "", hosts = []}
+hkg = { user = '', hosts = [] }
+zha = { user = '', hosts = [] }
+azure = { user = '', hosts = [] }
 
 [scoop.variables.scoop]
-lastupdate = ""
+lastupdate = ''
 
 [pip.files]
 pip = '~/.config/pip'
@@ -84,12 +84,12 @@ mamba = '~/.config'
 uv = '~/.config/uv'
 
 [uv.variables.uv]
-index_url = "https://mirrors.ustc.edu.cn/pypi/simple"
+index_url = 'https://mirrors.ustc.edu.cn/pypi/simple'
 
 [registry-auth.variables.registry-auth]
-host = ""
-user_id = ""
-access_token = ""
+host = ''
+user_id = ''
+access_token = ''
 
 [bun]
 depends = ['nodejs', 'registry-auth']
@@ -100,7 +100,7 @@ bun = '~'
 [nodejs]
 
 [nodejs.variables.nodejs]
-registry = ""
+registry = ''
 
 [npm]
 depends = ['nodejs', 'registry-auth']
@@ -135,7 +135,7 @@ rust = '~/.config'
 [julia.files]
 julia = '~/.julia'
 
-["llama.cpp".files]
+['llama.cpp'.files]
 'llama.cpp/config' = '~/.config'
 'llama.cpp/lib' = '~/.local/lib'
 
@@ -149,8 +149,8 @@ stylua = '~/.config/stylua'
 codex = '~/.config'
 
 [codex.variables.codex]
-model = ""
-model_provider = ""
+model = ''
+model_provider = ''
 projects = []
 hook_states = []
 
@@ -161,19 +161,19 @@ chatgpt = '~/.config'
 glab = '~/.config/glab-cli'
 
 [glab.variables.glab]
-default_host = ""
+default_host = ''
 hosts = []
-last_update_check_timestamp = ""
-last_seen_version = ""
+last_update_check_timestamp = ''
+last_seen_version = ''
 
 [pi.files]
 pi = '~/.config/pi'
 
 [pi.variables.pi]
-default_model = ""
-default_provider = ""
+default_model = ''
+default_provider = ''
 enterprise_packages = []
-last_changelog_version = ""
+last_changelog_version = ''
 subagent_model = {}
 
 [copilot.files]
@@ -206,7 +206,7 @@ trusted_workspaces = []
 'opencode/share' = '~/.local/share/opencode'
 
 [opencode.variables.opencode]
-default_model = ""
+default_model = ''
 enterprise_tui_plugins = []
 
 [skm.files]
@@ -233,6 +233,12 @@ kagi = '~/.config'
 
 [nowledge-mem.files]
 'nowledge-mem' = '~/.config'
+
+[nmem.files]
+nmem = '~/.config'
+
+[nmem.variables.nmem]
+api_url = 'http://127.0.0.1:14242'
 
 [ollama.files]
 ollama = '~/.config/fish/functions'
@@ -263,7 +269,7 @@ bub = '~/.config'
 'lody/config' = '~/.config'
 
 [enterprise-proxy.variables.enterprise_proxy]
-url = ""
+url = ''
 
 [raft]
 depends = ['enterprise-proxy']
@@ -273,7 +279,7 @@ depends = ['enterprise-proxy']
 'raft/config' = '~/.config'
 
 [raft.variables.raft]
-api_key = ""
+api_key = ''
 
 [ipython.files]
 ipython = '~/.ipython'
@@ -319,7 +325,7 @@ depends = ['enterprise-proxy']
 yt-dlp = '~/.config/yt-dlp'
 
 [yt-dlp.variables.yt-dlp]
-output_dir = "~/Videos"
+output_dir = '~/Videos'
 
 [cliamp.files]
 cliamp = '~/.config/cliamp'
@@ -347,7 +353,7 @@ depends = [
   'opencode',
   'claude-code',
   'antigravity',
-  'amp'
+  'amp',
 ]
 
 [agent.files]
@@ -357,19 +363,19 @@ depends = [
 [agent.variables.agent]
 enterprise_clients = []
 enterprise_deployments = {}
-otel_url = ""
+otel_url = ''
 
 [agent-tunnel]
 depends = ['bub', 'lody', 'raft']
 
 [agent-tunnel.variables.agent_tunnel]
-extra_ca_certs = ""
+extra_ca_certs = ''
 
 [browser-use]
 depends = ['playwright']
 
 [agent-runtime]
-depends = ['browser-use', 'skm', 'zellij']
+depends = ['browser-use', 'skm', 'zellij', 'nmem']
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'
