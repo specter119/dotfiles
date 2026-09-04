@@ -1,0 +1,12 @@
+# Bun 1.4 reads this legacy global path. Move to the XDG path after the
+# global bunfig lookup fix is available in the installed Bun version.
+
+[install]
+globalDir = "~/.local/share/bun"
+globalBinDir = "~/.local/bin"
+# {{#if nodejs.registry}}
+registry = { url = "https://{{nodejs.registry}}/", token = "{{registry-auth.access_token}}" }
+# {{/if}}
+
+[install.cache]
+dir = "~/.cache/bun"

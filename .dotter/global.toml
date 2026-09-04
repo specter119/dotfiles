@@ -92,19 +92,21 @@ user_id = ""
 access_token = ""
 
 [bun]
-depends = ['npmrc']
+depends = ['nodejs', 'registry-auth']
 
 [bun.files]
-bun = '~/.config'
+bun = '~'
 
-[npmrc]
-depends = ['registry-auth']
+[nodejs]
 
-[npmrc.variables.npmrc]
-registry_auth_npm = ""
+[nodejs.variables.nodejs]
+registry = ""
 
-[npmrc.files]
-npmrc = '~'
+[npm]
+depends = ['nodejs', 'registry-auth']
+
+[npm.files]
+npm = '~'
 
 [netrc]
 depends = ['registry-auth']
@@ -374,9 +376,6 @@ depends = ['browser-use', 'skm', 'zellij']
 
 [python]
 depends = ['uv']
-
-[nodejs]
-depends = ['bun']
 
 [lua]
 depends = ['stylua']

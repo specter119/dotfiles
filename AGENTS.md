@@ -200,10 +200,10 @@ Enterprise gateway provider data has two sources:
 | `ssh.{site}.hosts` | array of tables | `global + local` | Each item has `alias` and `hostname`; renders specific Host entries under site prefix |
 | `scoop.lastupdate` | string | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop lastupdate timestamp |
 | `uv.index_url` | string | `global + local` | uv pip index URL; defaults to USTC mirror, overridable per machine |
-| `registry-auth.host` | string | `global + local` | Docker registry host; variable-only `registry-auth` package, base64-encoded with user_id/access_token by `pre_deploy.sh` into a runtime artifact read by docker/npmrc/netrc |
+| `registry-auth.host` | string | `global + local` | Docker registry host; variable-only `registry-auth` package, base64-encoded with user_id/access_token by `pre_deploy.sh` into a runtime artifact read by docker/npm/.npmrc/netrc |
 | `registry-auth.user_id` | string | `global + local` | Registry user id; combined with access_token into the `registry-auth-encode` runtime artifact |
 | `registry-auth.access_token` | string | `global + local` | Registry access token; base64-encoded with user_id, never written to tracked files |
-| `npmrc.registry_auth_npm` | string | `global + local` | npm registry `_auth` value injected into `~/.npmrc`; Bun inherits auth via the deployed npmrc |
+| `nodejs.registry` | string | `global + local` | Shared npm/Bun registry URL; npm uses it in `~/.npmrc`, while Bun uses it with `registry-auth` credentials in `~/.bunfig.toml` |
 | `docker.registry_hosts` | array of strings | `global + local` | Docker registry hosts; each renders an `auths` entry reading the base64 token from the `registry-auth` runtime artifact |
 
 #### Git Repo Identities

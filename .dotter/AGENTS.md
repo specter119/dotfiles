@@ -8,6 +8,7 @@ Scope: `.dotter/`
   - ✅ `package = '~/.config/package'` (directory mapping — Dotter creates symlinks per file, including subdirectories)
   - ❌ Splitting into `package/config.toml` + `package/subdir/file.toml`
 - Principle: write one line when possible; use multiple lines only when prefixes differ.
+- Prefer directory mappings and minimize entries in the global mapping table. Add another mapping only when the target root or mapping semantics differ; do not use exact-file mappings when one directory mapping can express the same relationship.
 
 ## Deploy Workflow
 
@@ -72,4 +73,4 @@ or codex/codex/enterprise-model-catalog.json
 
 - Runtime artifacts are deploy-time files, distinct from the inline enterprise provider rendering above. When multiple templates need the same derived value, prefer writing a machine-local artifact under `$XDG_RUNTIME_DIR/dotter/` from `.dotter/pre_deploy.sh` instead of duplicating generation logic in each template.
 - Treat files in `$XDG_RUNTIME_DIR/dotter/` as disposable runtime artifacts. Templates may read them with `command_output`, but they must not be committed back into repo-managed config.
-- Current registry flow: `.dotter/pre_deploy.sh` writes `registry-auth-encode` from `registry-auth.user_id` and `registry-auth.access_token`, `npmrc/.npmrc` reads it for npm auth, and Bun inherits that auth through the deployed `~/.npmrc`.
+- Current registry flow: `nodejs.registry` supplies the shared npm/Bun registry URL; `.dotter/pre_deploy.sh` writes `registry-auth-encode` for npm/.npmrc and Docker consumers, while `bun/.bunfig.toml` consumes `registry-auth.access_token` directly for Bun auth.
