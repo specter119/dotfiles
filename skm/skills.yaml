@@ -7,17 +7,23 @@ agents:
       install_mode: symlink
 packages:
   - repo: https://github.com/specter119/skills
-  - repo: https://github.com/Xuanwo/xurl
+  ## development
   - repo: https://github.com/PsiACE/skills
+  # - repo: https://github.com/Xuanwo/xurl
+  - repo: https://github.com/tommy0103/obelisk-skill # replace xurl
   # - repo: https://github.com/onevcat/skills
-  # - repo: https://github.com/yaojingang/yao-meta-skill
-  - repo: https://github.com/yizhiyanhua-ai/fireworks-tech-graph
+  - repo: https://github.com/ast-grep/agent-skill
+  ## parser
   - repo: https://github.com/run-llama/llamaparse-agent-skills
     skills:
       - liteparse
-  - repo: https://github.com/ast-grep/agent-skill
-  - repo: https://github.com/tw93/Kami.git
-  - repo: https://github.com/nyblnet/bento.git
+  ## codespace visulization
+  - repo: https://github.com/yizhiyanhua-ai/fireworks-tech-graph
+  - repo: https://github.com/tt-a1i/archify
+  ## design
+  - repo: https://github.com/tw93/Kami
+  ## slide
+  - repo: https://github.com/nyblnet/bento
   # {{#each skm.local_packages}}
   - repo: "{{repo}}"
     # {{#if skills}}
