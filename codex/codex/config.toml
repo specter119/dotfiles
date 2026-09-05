@@ -12,17 +12,10 @@ notify = ["~/.local/share/cli-hooks/notify.sh"]
 model_reasoning_effort = "max"
 plan_mode_reasoning_effort = "high"
 suppress_unstable_features_warning = true
-default_permissions = "workspace-plus-cache"
+default_permissions = "workspace-ext"
 service_tier = "default"
 
-# Providers authenticate through the stored OPENAI_API_KEY credential
-# (requires_openai_auth = true); write the key into auth.json.
 [model_providers]
-
-[model_providers.packycode]
-name = "packycode"
-base_url = "https://www.packyapi.com/v1"
-requires_openai_auth = true
 
 {{#if agent.enterprise_deployments.azure}}
 [model_providers.enterprise]
@@ -46,16 +39,15 @@ js_repl = false
 
 [permissions]
 
-[permissions.workspace-plus-cache]
+[permissions.workspace-ext]
+extends = ":workspace"
 
-[permissions.workspace-plus-cache.filesystem]
-":root" = "read"
+[permissions.workspace-ext.filesystem]
 ":workspace_roots" = { "." = "write", ".git" = "write" }
 "~/.cache" = "write"
-"/tmp" = "write"
 "/run/user/1000" = "write"
 
-[permissions.workspace-plus-cache.network]
+[permissions.workspace-ext.network]
 enabled = true
 
 [tui]
@@ -64,41 +56,6 @@ status_line = ["model-with-reasoning", "context-remaining", "current-dir"]
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
-
-[plugins]
-
-[plugins."github@openai-curated"]
-enabled = true
-
-[plugins."documents@openai-primary-runtime"]
-enabled = true
-
-[plugins."spreadsheets@openai-primary-runtime"]
-enabled = true
-
-[plugins."presentations@openai-primary-runtime"]
-enabled = true
-
-[plugins."openai-developers@openai-curated"]
-enabled = true
-
-[plugins."pdf@openai-primary-runtime"]
-enabled = true
-
-[plugins."template-creator@openai-primary-runtime"]
-enabled = true
-
-[plugins."sites@openai-bundled"]
-enabled = true
-
-[plugins."browser@openai-bundled"]
-enabled = true
-
-[plugins."visualize@openai-bundled"]
-enabled = true
-
-[plugins."codex-app-tools@openai-bundled"]
-enabled = true
 
 [projects]
 # {{#each codex.projects}}
@@ -114,7 +71,11 @@ url = "https://developers.openai.com/mcp"
 
 [mcp_servers.context7]
 command = "bunx"
-args = ["@upstash/context7-mcp", "--api-key", "{{replace (command_output 'rbw get context7-api-key') '\n' ''}}"]
+args = [
+  "@upstash/context7-mcp",
+  "--api-key",
+  "{{replace (command_output 'rbw get context7-api-key') '\n' ''}}",
+]
 
 [mcp_servers.fast-context]
 command = "bunx"
@@ -128,38 +89,6 @@ WINDSURF_API_KEY = "{{replace (command_output 'rbw get windsurf-api-key') '\n' '
 
 [mcp_servers.fast-context.tools.fast_context_search]
 approval_mode = "approve"
-
-[mcp_servers.node_repl]
-args = []
-command = "/usr/lib/chatgpt/resources/cua_node/bin/node_repl"
-startup_timeout_sec = 120
-
-[mcp_servers.node_repl.env]
-NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-NODE_REPL_NODE_MODULE_DIRS = "/usr/lib/chatgpt/resources/cua_node/lib/node_modules"
-NODE_REPL_NODE_PATH = "/usr/lib/chatgpt/resources/cua_node/bin/node"
-NODE_REPL_TRUSTED_CODE_PATHS = "/home/specter119/.config/codex:/usr/lib/chatgpt/resources/cua_node/lib/node_modules"
-CODEX_HOME = "/home/specter119/.config/codex"
-BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-BROWSER_USE_TINYSKY_ENABLED = "0"
-NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
-NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
-BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.818.22352"
-NODE_REPL_TRUSTED_SERVICES = '{"browser":"/home/specter119/.config/codex/plugins/cache/openai-bundled/browser/26.818.22352/scripts/browser-service.mjs"}'
-CODEX_CLI_PATH = "/usr/lib/chatgpt/resources/codex"
-
-[marketplaces]
-
-[marketplaces.openai-primary-runtime]
-last_updated = "2026-08-22T09:14:47Z"
-source_type = "local"
-source = "{{env_var "HOME"}}/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
-
-[marketplaces.openai-bundled]
-last_updated = "2026-08-22T09:26:03Z"
-source_type = "local"
-source = "/home/specter119/.config/codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [hooks]
 
@@ -175,50 +104,5 @@ generate_memories = true
 use_memories = true
 disable_on_external_context = true
 
-[desktop]
-ambient-suggestions-enabled = true
-appearanceLightCodeThemeId = "catppuccin"
-appearanceDarkCodeThemeId = "catppuccin"
-reviewDelivery = "inline"
-selected-avatar-id = "seedy"
-conversationDetailMode = "STEPS_COMMANDS"
-preventSleepWhileRunning = true
-keepRemoteControlAwakeWhilePluggedIn = true
-followUpQueueMode = "queue"
-
-[desktop.appearanceLightChromeTheme]
-accent = "#8839ef"
-contrast = 45
-ink = "#4c4f69"
-opaqueWindows = false
-surface = "#eff1f5"
-
-[desktop.appearanceLightChromeTheme.fonts]
-
-[desktop.appearanceLightChromeTheme.semanticColors]
-diffAdded = "#40a02b"
-diffRemoved = "#d20f39"
-skill = "#8839ef"
-
-[desktop.appearanceDarkChromeTheme]
-accent = "#cba6f7"
-contrast = 60
-ink = "#cdd6f4"
-opaqueWindows = false
-surface = "#1e1e2e"
-
-[desktop.appearanceDarkChromeTheme.fonts]
-
-[desktop.appearanceDarkChromeTheme.semanticColors]
-diffAdded = "#a6e3a1"
-diffRemoved = "#f38ba8"
-skill = "#cba6f7"
-
-[desktop.open-in-target-preferences]
-global = "systemDefault"
-
 [notice]
 hide_rate_limit_model_nudge = true
-
-[shell_environment_policy.set]
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "e7fc907079d6797973cb63f97d2562c965aad8d33f52fb726005bf6702f30afc"

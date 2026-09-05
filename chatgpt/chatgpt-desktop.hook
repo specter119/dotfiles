@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = chatgpt-desktop
+
+[Action]
+Description = Configure ChatGPT Desktop Codex home...
+When = PostTransaction
+Exec = /usr/bin/sed -i '2i export CODEX_HOME="${HOME}/.config/chatgpt"; mkdir -p "${CODEX_HOME}"' /usr/lib/chatgpt/codex-launcher
