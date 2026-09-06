@@ -306,11 +306,10 @@ depends = ['vscode']
 'roo-code' = '~/.config/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings'
 
 [abaqus]
-depends = ['weston']
+# depends = ['weston']
 
 [abaqus.files]
-'abaqus/xdg-desktop' = '~/.local/share'
-'abaqus/bwrap' = '~/.local/share/bwrap'
+abaqus = '~/.local'
 
 [steam.files]
 steam = '~/.config'
