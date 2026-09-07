@@ -225,6 +225,10 @@ qoder = '~/.config'
 [nix.files]
 nix = '~/.config'
 
+[nix.files.'nix/home-manager']
+target = '~/.config/home-manager'
+type = 'template'
+
 [atuin.files]
 atuin = '~/.config'
 
