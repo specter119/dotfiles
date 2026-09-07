@@ -25,17 +25,15 @@ requires_openai_auth = true
 {{/if}}
 
 [features]
-collaboration_modes = true
+code_mode = true
 multi_agent = true
 shell_snapshot = true
 hooks = true
 prevent_idle_sleep = true
 memories = true
-terminal_resize_reflow = true
 mentions_v2 = true
 goals = true
 browser_use = true
-js_repl = false
 
 [permissions]
 
