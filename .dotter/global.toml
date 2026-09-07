@@ -95,7 +95,8 @@ access_token = ''
 depends = ['nodejs', 'registry-auth']
 
 [bun.files]
-bun = '~'
+'bun/bunfig.toml' = '~/.bunfig.toml'
+'bun/config' = '~/.config'
 
 [nodejs]
 

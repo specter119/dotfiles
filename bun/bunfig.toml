@@ -1,0 +1,16 @@
+# Bun 1.4.2 does not expand `~` or shell variables in bunfig paths. Dotter
+# resolves HOME while rendering so Bun receives absolute paths.
+# Bun 1.4.2 also ignores [install].globalDir for -g commands
+# (oven-sh/bun#35454); ~/.config/environment.d/bun.conf keeps the global paths working.
+
+[install]
+globalDir = '{{env_var "HOME"}}/.local/share/bun'
+globalBinDir = '{{env_var "HOME"}}/.local/bin'
+# {{#if nodejs.registry}}
+[install.registry]
+url = "https://{{nodejs.registry}}/"
+token = "{{registry-auth.access_token}}"
+# {{/if}}
+
+[install.cache]
+dir = '{{env_var "HOME"}}/.cache/bun'
