@@ -1,7 +1,13 @@
 # Rio terminal configuration
 # https://rioterm.com/docs/config
 
-theme = "dracula"
+[adaptive-theme]
+light = "belafonte-day"
+dark = "belafonte-night"
+
+[shell]
+program = "pwsh"
+args = ["-l"]
 
 [fonts]
 size = 14
