@@ -1,15 +1,13 @@
 { pkgs, lib, ... }:
 {
-  home.username = "liuky3";
-  home.homeDirectory = "/home/liuky3";
+  home.username = "{{env_var 'USER'}}";
+  home.homeDirectory = "{{env_var 'HOME'}}";
   home.stateVersion = "24.11";
 
   home.packages = with pkgs; [
-    ast-grep
-    cliamp
-    dotter
-    herdr
-    wsl2-ssh-agent
+# {{#each nix.home_packages}}
+    {{this}}
+# {{/each}}
     # CUDA 版 llama-cpp（对应 AUR 的 llama.cpp-cuda），构建时间长，需要时解除注释：
     # (llama-cpp.override { cudaSupport = true; })
   ];

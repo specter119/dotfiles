@@ -13,9 +13,20 @@
   outputs = { nixpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      overlay = final: prev: {
+        damask-solvers = final.callPackage ./packages/damask-solvers.nix { };
+        python-damask = final.python3Packages.callPackage ./packages/python-damask.nix { };
+        damask = final.callPackage ./packages/damask.nix { };
+      };
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+        overlays = [ overlay ];
+      };
     in {
-      homeConfigurations.liuky3 = home-manager.lib.homeManagerConfiguration {
+      overlays.default = overlay;
+      packages.${system}.damask = pkgs.damask;
+      homeConfigurations."{{env_var 'USER'}}" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
         modules = [ ./home.nix ];
       };

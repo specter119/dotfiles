@@ -1,3 +1,4 @@
+#!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.11"
 # dependencies = ["tomlkit"]
@@ -12,7 +13,6 @@ from pathlib import Path
 
 import tomlkit
 from tomlkit.exceptions import ParseError
-
 
 DOTTER_DIR = Path(__file__).resolve().parent.parent
 LOCAL_TOML = DOTTER_DIR / 'local.toml'
@@ -36,6 +36,12 @@ ANTIGRAVITY_SETTINGS = agent_path('ANTIGRAVITY_CLI_HOME', Path.home() / '.config
 GLAB_CONFIG = XDG_CONFIG_HOME / 'glab-cli' / 'config.yml'
 SSH_CONFIG_D = Path.home() / '.ssh' / 'config.d'
 SCOOP_CONFIG = XDG_CONFIG_HOME / 'scoop' / 'config.json'
+HOME_MANAGER_HOME = XDG_CONFIG_HOME / 'home-manager' / 'home.nix'
+NIX_ATTR_PATH = re.compile(r"^[A-Za-z_][A-Za-z0-9_'-]*(?:\.[A-Za-z_][A-Za-z0-9_'-]*)*$")
+HOME_PACKAGES_BLOCK = re.compile(
+    r'^[ \t]*home\.packages\s*=\s*with\s+pkgs;\s*\[\s*(.*?)^[ \t]*\];',
+    re.MULTILINE | re.DOTALL,
+)
 
 
 def read_json(path: Path) -> dict | None:
@@ -225,6 +231,57 @@ def _is_live_file(path: Path) -> bool:
         return False
     real = path.resolve()
     return str(DOTTER_DIR.parent) not in str(real)
+
+
+def normalize_nix_packages(value: object) -> list[str]:
+    """Normalize Home Manager package attributes to sorted unique paths."""
+    if not isinstance(value, list):
+        return []
+    return sorted(
+        {
+            item
+            for item in value
+            if isinstance(item, str) and NIX_ATTR_PATH.fullmatch(item)
+        }
+    )
+
+
+def parse_home_manager_packages(path: Path) -> list[str] | None:
+    """Read a rendered Home Manager package block, or skip malformed state."""
+    if not _is_live_file(path):
+        return None
+    try:
+        text = path.read_text()
+    except (OSError, UnicodeDecodeError):
+        return None
+
+    match = HOME_PACKAGES_BLOCK.search(text)
+    if match is None:
+        return None
+
+    packages: list[str] = []
+    for line in match.group(1).splitlines():
+        package = line.split('#', 1)[0].strip()
+        if not package:
+            continue
+        if NIX_ATTR_PATH.fullmatch(package) is None:
+            return None
+        packages.append(package)
+    return normalize_nix_packages(packages)
+
+
+def sync_nix_packages(doc: tomlkit.TOMLDocument) -> bool:
+    """Reverse-sync the deployed Home Manager package list into local.toml."""
+    live = parse_home_manager_packages(HOME_MANAGER_HOME)
+    if live is None:
+        return False
+
+    nix_table = ensure_table(doc, 'variables', 'nix')
+    existing = normalize_nix_packages(nix_table.get('home_packages', []))
+    if existing == live:
+        return False
+    nix_table['home_packages'] = live
+    return True
 
 
 def _parse_glab_hosts(filepath: Path) -> dict[str, dict[str, str]] | None:
@@ -545,6 +602,9 @@ def main() -> None:
     # ssh: config.d sites (user + hosts per site)
     ssh_changed = sync_ssh_sites(doc)
     changed |= ssh_changed
+
+    # nix: rendered Home Manager package attributes
+    changed |= sync_nix_packages(doc)
 
     if changed:
         LOCAL_TOML.write_text(tomlkit.dumps(doc))

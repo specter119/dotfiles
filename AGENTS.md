@@ -199,6 +199,7 @@ Enterprise gateway provider data has two sources:
 | `ssh.{site}.user` | string | `global + local` | Per-site SSH wildcard user (e.g. `ssh.hkg.user`); omitted when empty |
 | `ssh.{site}.hosts` | array of tables | `global + local` | Each item has `alias` and `hostname`; renders specific Host entries under site prefix |
 | `scoop.lastupdate` | string | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop lastupdate timestamp |
+| `nix.home_packages` | array of strings | `global + local` | Machine-local Home Manager package attributes; reverse-synced from the deployed `home-manager/home.nix` package block |
 | `uv.index_url` | string | `global + local` | uv pip index URL; defaults to USTC mirror, overridable per machine |
 | `registry-auth.host` | string | `global + local` | Docker registry host; consumed directly by `netrc/.netrc` |
 | `registry-auth.user_id` | string | `global + local` | Registry user id; consumed directly by `netrc/.netrc` and combined inline with access_token by npm/Docker templates |
@@ -391,6 +392,7 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 | `dict[path, {trust_level: "trusted"}]` | `string[]` | `sync_projects` — uses `normalize_projects` | codex `projects` |
 | `dict[str, {trustedAt: str}]` | `[[aot]]` array of tables | `sync_trusted_folders` — uses `normalize_trusted_folders` (live) + `normalize_existing_trusted_folders` (TOML) | droid `trusted_folders` |
 | `string[]` | inline array | `sync_trusted_workspaces` — uses `normalize_trusted_workspaces` for both sides | antigravity `trusted_workspaces` |
+| `home.packages` Nix attr list | `string[]` | `sync_nix_packages` — validates and normalizes the deployed package block | nix `home_packages` |
 
 ### Current Coverage
 
@@ -408,6 +410,7 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 | glab | `hosts` | `[[aot]]` | `config.yml.hosts` |
 | glab | `last_update_check_timestamp` | string | `config.yml.last_update_check_timestamp` |
 | glab | `last_seen_version` | string | `config.yml.last_seen_version` |
+| nix | `home_packages` | `string[]` | deployed `~/.config/home-manager/home.nix` `home.packages` block |
 | ssh | `{site}.user` | string | `config.d/{site}` wildcard `User` |
 | ssh | `{site}.hosts` | `[[aot]]` | `config.d/{site}` specific `Host`/`HostName` pairs |
 | scoop | `lastupdate` | string | `config.json.lastupdate` (Windows only) |

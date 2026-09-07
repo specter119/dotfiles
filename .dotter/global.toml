@@ -61,9 +61,6 @@ jj = '~/.config/jj'
 ssh = '~/.ssh'
 
 [ssh.variables.ssh]
-hkg = { user = '', hosts = [] }
-zha = { user = '', hosts = [] }
-azure = { user = '', hosts = [] }
 
 [scoop.variables.scoop]
 lastupdate = ''
@@ -226,9 +223,8 @@ qoder = '~/.config'
 [nix.files]
 nix = '~/.config'
 
-[nix.files.'nix/home-manager']
-target = '~/.config/home-manager'
-type = 'template'
+[nix.variables.nix]
+home_packages = []
 
 [atuin.files]
 atuin = '~/.config'
