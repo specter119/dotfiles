@@ -222,6 +222,9 @@ qoder = '~/.config'
 'vscode/config' = '~/.config'
 'vscode/share' = '~/.local/share'
 
+[nix.files]
+'nix/systemd/user' = '~/.config/systemd/user'
+
 [atuin.files]
 atuin = '~/.config'
 
