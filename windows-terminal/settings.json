@@ -3,15 +3,15 @@
   "$schema": "https://aka.ms/terminal-profiles-schema",
   "actions": [
     {
+      "command": "find",
+      "id": "User.find"
+    },
+    {
       "command": {
         "action": "copy",
         "singleLine": false
       },
       "id": "User.copy"
-    },
-    {
-      "command": "find",
-      "id": "User.find"
     },
     {
       "command": "paste",
@@ -66,6 +66,18 @@
         "hidden": false,
         "name": "PowerShell",
         "source": "Windows.Terminal.PowershellCore"
+      },
+      {
+        "closeOnExit": "always",
+        "font": {
+          "face": "Sarasa Term SC Nerd",
+          "size": 12,
+          "weight": "medium"
+        },
+        "guid": "{1d0ff8fa-3f5d-5e5d-bcf5-4bd5caa60be8}",
+        "hidden": false,
+        "name": "DebianWSL",
+        "source": "Microsoft.WSL"
       },
       {
         "closeOnExit": "always",

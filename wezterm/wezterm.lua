@@ -6,11 +6,11 @@ local launch_menu = {}
 -- config.enable_kitty_keyboard = true
 
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
-  config.default_domain = 'WSL:archlinux'
+  config.default_domain = 'WSL:DebianWSL'
   -- Initial GUI window attaches to 'main' session; new tabs start plain zellij
   config.default_gui_startup_args = { 'start', '--', 'zellij', 'attach', '--create', 'main' }
   config.wsl_domains = {
-    { name = 'WSL:archlinux', distribution = 'archlinux', default_prog = { 'zellij' } },
+    { name = 'WSL:DebianWSL', distribution = 'DebianWSL', default_prog = { 'zellij' } },
   }
   table.insert(launch_menu, { label = 'Zellij', args = { 'zellij' } })
   table.insert(launch_menu, {
