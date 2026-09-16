@@ -34,14 +34,7 @@ OPENCODE_CONFIG = XDG_CONFIG_HOME / 'opencode' / 'opencode.jsonc'
 CODEX_CONFIG = agent_path('CODEX_HOME', Path.home() / '.codex', 'config.toml')
 ANTIGRAVITY_SETTINGS = agent_path('ANTIGRAVITY_CLI_HOME', Path.home() / '.config/antigravity', 'settings.json')
 GLAB_CONFIG = XDG_CONFIG_HOME / 'glab-cli' / 'config.yml'
-SSH_CONFIG_D = Path.home() / '.ssh' / 'config.d'
 SCOOP_CONFIG = XDG_CONFIG_HOME / 'scoop' / 'config.json'
-HOME_MANAGER_HOME = XDG_CONFIG_HOME / 'home-manager' / 'home.nix'
-NIX_ATTR_PATH = re.compile(r"^[A-Za-z_][A-Za-z0-9_'-]*(?:\.[A-Za-z_][A-Za-z0-9_'-]*)*$")
-HOME_PACKAGES_BLOCK = re.compile(
-    r'^[ \t]*home\.packages\s*=\s*with\s+pkgs;\s*\[\s*(.*?)^[ \t]*\];',
-    re.MULTILINE | re.DOTALL,
-)
 
 
 def read_json(path: Path) -> dict | None:
@@ -225,63 +218,54 @@ def sync_projects(table: tomlkit.items.Table, key: str, value: object) -> bool:
     return True
 
 
+def normalize_hook_states(value: object) -> list[dict[str, str]]:
+    """Normalize Codex hooks.state table to sorted key/hash entries."""
+    if not isinstance(value, dict):
+        return []
+    result = []
+    for key, entry in value.items():
+        if (
+            isinstance(key, str)
+            and key
+            and isinstance(entry, dict)
+            and isinstance(entry.get('trusted_hash'), str)
+            and entry.get('trusted_hash')
+        ):
+            result.append({'key': key, 'trusted_hash': entry['trusted_hash']})
+    return sorted(result, key=lambda item: item['key'])
+
+
+def normalize_existing_hook_states(value: object) -> list[dict[str, str]]:
+    """Normalize TOML array-of-tables to sorted list of {key, trusted_hash}."""
+    if not isinstance(value, list):
+        return []
+    result: list[dict[str, str]] = []
+    for item in value:
+        if isinstance(item, dict):
+            result.append({
+                'key': str(item.get('key', '')),
+                'trusted_hash': str(item.get('trusted_hash', '')),
+            })
+    result.sort(key=lambda x: x['key'])
+    return result
+
+
+def sync_hook_states(table: tomlkit.items.Table, key: str, value: object) -> bool:
+    """Sync Codex hook trust state (runtime-written) into local.toml."""
+    live = normalize_hook_states(value)
+    existing = normalize_existing_hook_states(table.get(key, []))
+    if existing == live:
+        return False
+    table[key] = live
+    return True
+
+
 def _is_live_file(path: Path) -> bool:
     """Check that a file exists and is not symlinked back to repo source."""
     if not path.exists():
         return False
     real = path.resolve()
     return str(DOTTER_DIR.parent) not in str(real)
-
-
-def normalize_nix_packages(value: object) -> list[str]:
-    """Normalize Home Manager package attributes to sorted unique paths."""
-    if not isinstance(value, list):
-        return []
-    return sorted(
-        {
-            item
-            for item in value
-            if isinstance(item, str) and NIX_ATTR_PATH.fullmatch(item)
-        }
-    )
-
-
-def parse_home_manager_packages(path: Path) -> list[str] | None:
-    """Read a rendered Home Manager package block, or skip malformed state."""
-    if not _is_live_file(path):
-        return None
-    try:
-        text = path.read_text()
-    except (OSError, UnicodeDecodeError):
-        return None
-
-    match = HOME_PACKAGES_BLOCK.search(text)
-    if match is None:
-        return None
-
-    packages: list[str] = []
-    for line in match.group(1).splitlines():
-        package = line.split('#', 1)[0].strip()
-        if not package:
-            continue
-        if NIX_ATTR_PATH.fullmatch(package) is None:
-            return None
-        packages.append(package)
-    return normalize_nix_packages(packages)
-
-
-def sync_nix_packages(doc: tomlkit.TOMLDocument) -> bool:
-    """Reverse-sync the deployed Home Manager package list into local.toml."""
-    live = parse_home_manager_packages(HOME_MANAGER_HOME)
-    if live is None:
-        return False
-
-    nix_table = ensure_table(doc, 'variables', 'nix')
-    existing = normalize_nix_packages(nix_table.get('home_packages', []))
-    if existing == live:
-        return False
-    nix_table['home_packages'] = live
-    return True
 
 
 def _parse_glab_hosts(filepath: Path) -> dict[str, dict[str, str]] | None:
@@ -410,122 +394,6 @@ def sync_glab_config(doc: tomlkit.TOMLDocument) -> bool:
     return changed
 
 
-def normalize_ssh_hosts(value: object) -> list[dict[str, str]]:
-    """Normalize TOML array-of-tables to sorted list of {alias, hostname}."""
-    if not isinstance(value, list):
-        return []
-    result = [
-        {'alias': str(item.get('alias', '')), 'hostname': str(item.get('hostname', ''))}
-        for item in value
-        if isinstance(item, dict)
-    ]
-    result.sort(key=lambda x: x['alias'])
-    return result
-
-
-def parse_ssh_config_site(filepath: Path, site_name: str) -> dict | None:
-    """Parse an ssh config.d file for a site.
-
-    Extracts:
-    - user: from wildcard 'Host <site>_*' block's User directive
-    - hosts: from specific 'Host <site>_<alias>' blocks with HostName directives
-
-    Returns {user: str, hosts: [{alias, hostname}]} or None.
-    """
-    if not _is_live_file(filepath):
-        return None
-    content = filepath.read_text()
-    if not content.strip():
-        return None
-
-    user = ''
-    hosts: list[dict[str, str]] = []
-    wildcard_pattern = f'{site_name}_*'
-
-    # Parse into Host blocks
-    blocks: dict[str, dict[str, str]] = {}
-    current_host: str | None = None
-    current_directives: dict[str, str] = {}
-
-    for line in content.splitlines():
-        stripped = line.strip()
-        if not stripped or stripped.startswith('#'):
-            continue
-        host_match = re.match(r'^Host\s+(.+)$', stripped, re.IGNORECASE)
-        if host_match:
-            if current_host is not None:
-                blocks[current_host] = current_directives
-            current_host = host_match.group(1).strip()
-            current_directives = {}
-            continue
-        kv_match = re.match(r'^(\w+)\s*[= ]\s*(.+)$', stripped, re.IGNORECASE)
-        if kv_match and current_host is not None:
-            current_directives[kv_match.group(1)] = kv_match.group(2).strip()
-
-    if current_host is not None:
-        blocks[current_host] = current_directives
-
-    # User from wildcard block
-    if wildcard_pattern in blocks:
-        user = blocks[wildcard_pattern].get('User', '')
-
-    # Specific hosts
-    prefix = f'{site_name}_'
-    host_users: list[str] = []
-    for host_pattern, directives in blocks.items():
-        if host_pattern == wildcard_pattern:
-            continue
-        if host_pattern.startswith(prefix):
-            alias = host_pattern[len(prefix):]
-            hostname = directives.get('HostName', '')
-            host_user = directives.get('User', '')
-            if host_user:
-                host_users.append(host_user)
-            if alias and hostname:
-                hosts.append({'alias': alias, 'hostname': hostname})
-
-    if not user:
-        unique_host_users = sorted(set(host_users))
-        if len(unique_host_users) == 1:
-            user = unique_host_users[0]
-
-    hosts.sort(key=lambda x: x['alias'])
-    return {'user': user, 'hosts': hosts}
-
-
-def sync_ssh_sites(doc: tomlkit.TOMLDocument) -> bool:
-    """Reverse-sync ssh config.d sites from live config into local.toml."""
-    if not SSH_CONFIG_D.exists():
-        return False
-
-    changed = False
-    ssh_table = ensure_table(doc, 'variables', 'ssh')
-
-    for site_file in sorted(SSH_CONFIG_D.iterdir()):
-        if site_file.name.startswith('.') or not site_file.is_file():
-            continue
-        parsed = parse_ssh_config_site(site_file, site_file.name)
-        if parsed is None:
-            continue
-
-        site_table = ensure_table(ssh_table, site_file.name)
-        changed |= sync_string(site_table, 'user', parsed['user'])
-
-        live_hosts = parsed['hosts']
-        existing_hosts = normalize_ssh_hosts(site_table.get('hosts', []))
-        if existing_hosts != live_hosts:
-            aot = tomlkit.aot()
-            for entry in live_hosts:
-                t = tomlkit.table()
-                t.add('alias', entry['alias'])
-                t.add('hostname', entry['hostname'])
-                aot.append(t)
-            site_table['hosts'] = aot
-            changed = True
-
-    return changed
-
-
 def main() -> None:
     if LOCAL_TOML.exists():
         doc = tomlkit.parse(LOCAL_TOML.read_text())
@@ -578,6 +446,11 @@ def main() -> None:
             'projects',
             codex_data.get('projects', {}),
         )
+        changed |= sync_hook_states(
+            codex_table,
+            'hook_states',
+            codex_data.get('hooks', {}).get('state', {}),
+        )
 
     # antigravity: trustedWorkspaces
     antigravity_data = read_json(ANTIGRAVITY_SETTINGS)
@@ -598,13 +471,6 @@ def main() -> None:
     # glab: runtime state + host container_registry_domains
     glab_changed = sync_glab_config(doc)
     changed |= glab_changed
-
-    # ssh: config.d sites (user + hosts per site)
-    ssh_changed = sync_ssh_sites(doc)
-    changed |= ssh_changed
-
-    # nix: rendered Home Manager package attributes
-    changed |= sync_nix_packages(doc)
 
     if changed:
         LOCAL_TOML.write_text(tomlkit.dumps(doc))

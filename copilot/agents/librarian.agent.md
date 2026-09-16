@@ -1,7 +1,7 @@
 ---
 name: librarian
 description: 查询官方文档、第三方库、OSS 示例和迁移资料，提供外部参考结论
-model: claude-haiku-4.5
+model: gpt-5.6-luna
 tools: ["read", "search", "web"]
 ---
 

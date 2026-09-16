@@ -16,6 +16,34 @@ if [[ "$1" == "view" ]]; then
   exec npm "$@"
 fi
 
+# Normalize npm lockfile 'resolved' URLs to the configured mirror origin.
+# Bun honours `resolved` URLs from a migrated package-lock.json verbatim,
+# bypassing the [install.registry] mirror in ~/.bunfig.toml. Upstream git
+# extension repos track npm lockfiles whose resolved URLs point at
+# registry.npmjs.org, which is unreachable on this network, so bun fails with
+# ConnectionClosed. Rewriting only the origin keeps the upstream version pins
+# and integrity hashes while sending downloads through the mirror (the npm
+# path layout is registry-agnostic, and the mirror accepts both encodings of
+# scoped names). Idempotent: no-op when no foreign host is present.
+sanitize_npm_lockfile() {
+  local dir="$1" lockfile mirror mirror_host
+  lockfile="$dir/package-lock.json"
+  [[ -f "$lockfile" ]] || return 0
+
+  # Same mirror source as the rendered ~/.bunfig.toml [install.registry].
+  mirror=$(sed -n 's/^url = "\([^"]*\)"/\1/p' "${HOME}/.bunfig.toml" 2>/dev/null | tail -1)
+  [[ -n "$mirror" ]] || return 0
+  mirror_host=$(printf '%s' "$mirror" | sed -E 's|^https?://([^/]+).*|\1|')
+  [[ -n "$mirror_host" ]] || return 0
+
+  if grep -Pq "\"resolved\": \"https?://(?!${mirror_host})[^/\"]+/" "$lockfile"; then
+    mirror="${mirror%/}"
+    perl -i -pe 's{"resolved": "https?://[^"/]+/}{"resolved": "'"$mirror"'/}g' "$lockfile"
+    printf '[pi-npm-bun] redirected "resolved" URLs in %s to %s\n' "$lockfile" "$mirror" >&2
+  fi
+  return 0
+}
+
 args=()
 prefix_dir=""
 is_install=false
@@ -59,6 +87,7 @@ fi
 # update, so the recorded trustedDependencies are ephemeral and re-applied every
 # install — idempotent and safe.
 if [[ "$is_install" == true ]]; then
+  sanitize_npm_lockfile "$PWD"
   bun "${args[@]}"
   rc=$?
   if [[ $rc -eq 0 ]]; then

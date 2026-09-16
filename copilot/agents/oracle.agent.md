@@ -1,7 +1,7 @@
 ---
 name: oracle
 description: 提供只读咨询，用于架构取舍、困难调试和高不确定性裁决
-model: gpt-5.4
+model: kimi-k3
 tools: ["read", "search"]
 ---
 

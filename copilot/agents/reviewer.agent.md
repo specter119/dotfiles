@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: 进行 findings-first code review，识别回归风险、边界问题和缺失测试
-model: claude-sonnet-4.6
+model: gpt-5.6-terra
 tools: ["read", "search", "execute"]
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: explorer
 description: 搜索代码、读取实现、归纳事实，只做上下文收集与现状说明
-model: claude-haiku-4.5
+model: gpt-5.6-luna
 tools: ["read", "search"]
 ---
 

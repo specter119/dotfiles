@@ -4,10 +4,9 @@
   home.homeDirectory = "{{env_var 'HOME'}}";
   home.stateVersion = "24.11";
 
+  # Machine-local user profile packages are managed with `nix profile`.
+  # Keep only custom declarative Home Manager packages in this block.
   home.packages = with pkgs; [
-# {{#each nix.home_packages}}
-    {{this}}
-# {{/each}}
     # CUDA 版 llama-cpp（对应 AUR 的 llama.cpp-cuda），构建时间长，需要时解除注释：
     # (llama-cpp.override { cudaSupport = true; })
   ];

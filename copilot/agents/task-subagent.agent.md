@@ -1,7 +1,7 @@
 ---
 name: task-subagent
 description: 承接明确范围的实现任务，完成改动、验证结果并汇报交付状态
-model: claude-sonnet-4.6
+model: gpt-5.6-luna
 tools: ["read", "search", "edit", "execute"]
 ---
 

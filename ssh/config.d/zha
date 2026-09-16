@@ -1,8 +1,0 @@
-# {{#if ssh.zha.user}}
-# {{#each ssh.zha.hosts}}
-Host zha_{{this.alias}}
-	HostName {{this.hostname}}
-# {{/each}}
-Host zha_*
-	User {{ssh.zha.user}}
-# {{/if}}

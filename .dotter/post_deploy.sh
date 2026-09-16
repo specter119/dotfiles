@@ -147,10 +147,6 @@ fix_ssh_permissions() {
 	if [ -f "$HOME/.ssh/config" ]; then
 		chmod 600 "$HOME/.ssh/config" 2>/dev/null || true
 	fi
-	if [ -d "$HOME/.ssh/config.d" ]; then
-		chmod 700 "$HOME/.ssh/config.d" 2>/dev/null || true
-		find "$HOME/.ssh/config.d" -maxdepth 1 -type f -exec chmod 600 {} \; 2>/dev/null || true
-	fi
 }
 
 fix_glab_permissions() {
