@@ -1,34 +1,26 @@
 {
-  description = "Home Manager configuration for Nix user packages";
+  description = "Custom Nix packages maintained outside nixpkgs";
 
   inputs = {
     # USTC 镜像 (github fetcher 的 codeload 302 超时, 改用镜像 tarball)
     nixpkgs.url = "https://mirrors.ustc.edu.cn/nix-channels/nixpkgs-unstable/nixexprs.tar.xz";
-    home-manager = {
-      url = "git+https://github.com/nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = { nixpkgs, home-manager, ... }:
+  outputs = { nixpkgs, ... }:
     let
       system = "x86_64-linux";
-      overlay = final: prev: {
-        damask-solvers = final.callPackage ./packages/damask-solvers.nix { };
-        python-damask = final.python3Packages.callPackage ./packages/python-damask.nix { };
-        damask = final.callPackage ./packages/damask.nix { };
-      };
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = [ overlay ];
+      };
+      damask-solvers = pkgs.callPackage ./packages/damask-solvers.nix { };
+      python-damask = pkgs.python3Packages.callPackage ./packages/python-damask.nix { };
+      damask = pkgs.callPackage ./packages/damask.nix {
+        inherit damask-solvers python-damask;
       };
     in {
-      overlays.default = overlay;
-      packages.${system}.damask = pkgs.damask;
-      homeConfigurations."{{env_var 'USER'}}" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        modules = [ ./home.nix ];
-      };
+      # Ordinary software is installed and upgraded through `nix profile`.
+      # Keep this flake limited to the locally maintained DAMASK package.
+      packages.${system}.damask = damask;
     };
 }

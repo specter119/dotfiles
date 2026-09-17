@@ -129,7 +129,7 @@ def parse_glab_timestamp_value(value: str) -> str:
 
 
 def normalize_trusted_folders(value: object) -> list[dict[str, str]]:
-    """Normalize trustedFolders dict to sorted list of {dir, trustedAt}."""
+    """Normalize trustedFolders dict to an insertion-ordered list."""
     if not isinstance(value, dict):
         return []
     result: list[dict[str, str]] = []
@@ -138,12 +138,11 @@ def normalize_trusted_folders(value: object) -> list[dict[str, str]]:
             trusted_at = meta.get('trustedAt')
             if isinstance(trusted_at, str):
                 result.append({'dir': path, 'trustedAt': trusted_at})
-    result.sort(key=lambda x: x['dir'])
     return result
 
 
 def normalize_existing_trusted_folders(value: object) -> list[dict[str, str]]:
-    """Normalize TOML array-of-tables to sorted list of {dir, trustedAt}."""
+    """Normalize TOML array-of-tables while preserving entry order."""
     if not isinstance(value, list):
         return []
     result: list[dict[str, str]] = []
@@ -153,7 +152,6 @@ def normalize_existing_trusted_folders(value: object) -> list[dict[str, str]]:
                 'dir': str(item.get('dir', '')),
                 'trustedAt': str(item.get('trustedAt', '')),
             })
-    result.sort(key=lambda x: x['dir'])
     return result
 
 
@@ -430,10 +428,11 @@ def main() -> None:
         opencode_table = ensure_table(doc, 'variables', 'opencode')
         changed |= sync_string(opencode_table, 'default_model', opencode_data.get('model'))
 
-    # codex: model_provider and trusted projects
+    # codex: model, model_provider, and trusted projects
     codex_data = read_toml(CODEX_CONFIG)
     if codex_data:
         codex_table = ensure_table(doc, 'variables', 'codex')
+        changed |= sync_string(codex_table, 'model', codex_data.get('model'))
         changed |= sync_string(
             codex_table,
             'model_provider',

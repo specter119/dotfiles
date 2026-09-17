@@ -16,8 +16,8 @@
   "modelFavorites": [
     "glm-5.3",
     "grok-4.6",
-    "gpt-5.6-sol",
-    "kimi-k3"
+    "kimi-k3",
+    "gpt-6-astra"
   ],
   "nerdFont": true,
   "sessionDefaultSettings": {
@@ -29,7 +29,14 @@
   },
   "showTokenUsageIndicator": true,
   "reauthBannerShownTui": true,
-  "extraKnownMarketplaces": {},
+  "extraKnownMarketplaces": {
+    "factory-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "Factory-AI/factory-plugins"
+      }
+    }
+  },
   "ideExtensionPromptedAt": {
     "vscode": 1782694674288
   },
@@ -42,8 +49,11 @@
   },
   "enabledPlugins": {
     "autoresearch@factory-plugins": true,
+    "droid-control@factory-plugins": true,
+    "core@factory-plugins": true,
+    "code-review@factory-plugins": true,
     "droid-evolved@factory-plugins": true,
-    "code-review@factory-plugins": true
+    "debugging@factory-plugins": true
   },
   "subagentModelSettings": {
     "lightModel": "gpt-5.6-luna",

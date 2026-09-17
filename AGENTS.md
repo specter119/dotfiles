@@ -170,6 +170,7 @@ Enterprise gateway provider data has two sources:
 
 | Variable | Shape | Source | Notes |
 | --- | --- | --- | --- |
+| `codex.model` | string | `global + local` | Reverse-synced from `config.toml.model`; omitted when empty |
 | `codex.model_provider` | string | `global + local` | Reverse-synced from `config.toml.model_provider`; omitted when empty |
 | `raft.api_key` | string | `global + local` | Optional; service renders normally even when empty |
 | `agent_tunnel.extra_ca_certs` | string | `global + local` | Optional PEM path for the agent-tunnel group's Node/Bun TLS trust; omitted when empty |
@@ -385,7 +386,7 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 
 | live config format | local.toml format | recommended approach | reference function |
 |---|---|---|---|
-| string | string | `sync_string(table, 'key', data.get('field'))` | pi `default_model` |
+| string | string | `sync_string(table, 'key', data.get('field'))` | pi `default_model`, codex `model` |
 | string (conditional) | string | `sync_string(table, 'key', val, fallback='', remove_if_empty=True)` | codex `model_provider` |
 | `dict[path, {trust_level: "trusted"}]` | `string[]` | `sync_projects` — uses `normalize_projects` | codex `projects` |
 | `dict[str, {trustedAt: str}]` | `[[aot]]` array of tables | `sync_trusted_folders` — uses `normalize_trusted_folders` (live) + `normalize_existing_trusted_folders` (TOML) | droid `trusted_folders` |
@@ -395,6 +396,7 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 
 | Agent | Variable | Format | Source |
 |---|---|---|---|
+| codex | `model` | string | `config.toml.model` |
 | pi | `default_model` | string | `settings.json.defaultModel` |
 | pi | `default_provider` | string | `settings.json.defaultProvider` |
 | pi | `last_changelog_version` | string | `settings.json.lastChangelogVersion` |
