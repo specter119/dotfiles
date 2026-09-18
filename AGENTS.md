@@ -183,6 +183,7 @@ Enterprise gateway provider data has two sources:
 | `mihomo.direct_suffixes` | array of strings | `global + local` | Optional; extra direct rules are omitted when unset |
 | `agent.enterprise_clients` | array of tables | `global + local` | Enterprise gateway client identities; each entry has `client_id` and `api_key`; paired with every deployment by the provider renderer |
 | `agent.enterprise_deployments` | table of tables | `global + local` | Machine-local enterprise gateway deployments keyed by name; each contains `base_url` and must match a deployment table in the shared model catalog |
+| `agent_tunnel.systemd_exec_search_paths` | array of strings | `global + local` | Extra executable search paths prepended to systemd tunnel service units; every entry must follow `ExecSearchPath=` path syntax, including systemd specifiers such as `%h`, not shell expansion |
 | `agent.otel_url` | string | `global + local` | Optional; when set, renders the pi `otel` settings block pointing at this OTLP endpoint |
 | `pi.default_model` | string | `global + local` | Pi default model ID; synced from deploy side by sync script |
 | `pi.default_provider` | string | `global + local` | Pi default provider name; synced from deploy side by sync script |

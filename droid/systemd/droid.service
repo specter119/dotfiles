@@ -5,6 +5,7 @@ Wants=network-online.target
 
 [Service]
 Type=simple
+ExecSearchPath={{#each agent_tunnel.systemd_exec_search_paths}}{{this}}:{{/each}}{{trim (command_output "systemd-path search-binaries-default")}}
 ExecStart=%h/.local/bin/droid daemon --remote-access
 Restart=always
 RestartSec=5

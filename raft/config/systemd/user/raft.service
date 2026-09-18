@@ -6,6 +6,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=%h/.local/lib/raft
+ExecSearchPath={{#each agent_tunnel.systemd_exec_search_paths}}{{this}}:{{/each}}{{trim (command_output "systemd-path search-binaries-default")}}
 ExecStartPre=bun update --latest --force @botiverse/raft-daemon
 ExecStart=bun run raft-daemon --server-url https://api.raft.build --api-key {{raft.api_key}}
 Environment=SLOCK_HOME=%D/raft

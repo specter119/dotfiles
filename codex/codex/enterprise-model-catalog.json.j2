@@ -38,6 +38,7 @@
           "context_window": model.context_window,
           "max_context_window": model.context_window,
           "input_modalities": model.input,
+          "shell_type": catalog_model.get("shell_type", "unified_exec"),
           "supported_reasoning_levels": supported_reasoning_levels
         }) %]
         [% if model.reasoning_enabled %]
