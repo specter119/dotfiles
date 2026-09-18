@@ -75,8 +75,10 @@ model id as shown by `/v1/models` (typically the GGUF filename).
 - `--reasoning-preserve` returns Qwen3.8's ` thinking` as `reasoning_content`
   for agents. Some clients pass `enable_thinking: false` but llama.cpp's
   OpenAI layer does not forward it — set `max_tokens` generously.
-- CUDA libs: unit sets `LD_LIBRARY_PATH=/opt/cuda/lib64`; `sudo ldconfig` was
-  also run so interactive shells resolve them too.
+- CUDA libs: the WSL unit sets `LD_LIBRARY_PATH=/usr/lib/wsl/lib` so Nix's
+  CUDA build can load the Windows driver's `libcuda.so.1`. CUDA runtime and
+  cuBLAS libraries are carried by the Nix derivation; do not install a Linux
+  display driver in WSL.
 
 ## Community background (Qwen3.8-27B + llama.cpp)
 
