@@ -267,6 +267,15 @@ bub = '~/.config'
 'lody/lib' = '~/.local/lib/lody'
 'lody/config' = '~/.config'
 
+[multica]
+
+[multica.files]
+'multica/config' = '~/.config'
+
+[multica.variables.multica]
+app_url = ''
+server_url = ''
+
 [enterprise-proxy.variables.enterprise_proxy]
 url = ''
 
@@ -352,6 +361,7 @@ depends = [
   'claude-code',
   'antigravity',
   'amp',
+  'multica',
 ]
 
 [agent.files]

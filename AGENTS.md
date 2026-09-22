@@ -311,7 +311,7 @@ JSON has no comments, so Handlebars control blocks split into two forms:
   "auths": {
 # {{#each docker.registry_hosts}}
     "{{this}}": {
-      "auth": "{{#if registry-auth}}{{replace (command_output (replace (replace "printf '%s:%s' '__USER_ID__' '__ACCESS_TOKEN__' | base64" "__USER_ID__" registry-auth.user_id) "__ACCESS_TOKEN__" registry-auth.access_token)) "\n" ""}}{{/if}}"
+      "auth": "{{#if @root.registry-auth}}{{replace (command_output (replace (replace "printf '%s:%s' '__USER_ID__' '__ACCESS_TOKEN__' | base64" "__USER_ID__" @root.registry-auth.user_id) "__ACCESS_TOKEN__" @root.registry-auth.access_token)) "\n" ""}}{{/if}}"
     }{{#unless @last}},{{/unless}}
 # {{/each}}
   }
@@ -319,6 +319,7 @@ JSON has no comments, so Handlebars control blocks split into two forms:
 ```
 
 - `post_deploy.sh` identifies templates with `# `-prefixed `#if`/`#each` controls by content and strips residual blank `# ` lines from both the rendered target and the Dotter cache.
+- **Use `@root.` for package-level variables inside `{{#each}}`**: `#each` makes each item the current context, so relative paths in helper arguments (e.g. `registry-auth.user_id`) fail to resolve inside the loop and the whole expression **silently renders empty** (deploy does not error). The `{{#if registry-auth}}` condition fails the same way. Write `{{#if @root.registry-auth}}` and `@root.registry-auth.user_id` instead. Templates with only `#if` and no `#each` (e.g. `npm/.npmrc`) are unaffected because the root context is preserved. The same rule applies to `#each` loops in TOML and YAML templates (e.g. `{{#each skm.local_packages}}` referencing package-level variables).
 
 ## Live Config Reverse Sync Pattern
 
