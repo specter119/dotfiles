@@ -1,0 +1,27 @@
+# Configuration file for `prek`, a git hook framework written in Rust.
+# See https://prek.j178.dev for more information.
+#:schema https://www.schemastore.org/prek.json
+
+[[repos]]
+repo = "builtin"
+hooks = [
+  {id = "check-added-large-files"},
+  {id = "check-case-conflict"},
+  {id = "check-symlinks"},
+  {id = "check-toml", exclude = '^(alacritty/alacritty\.toml|bun/bunfig\.toml|codex/codex/config\.toml|jj/config\.toml|uv/uv\.toml|yazi/yazi\.toml)$'},
+  {id = "check-yaml", exclude = '^(glab/config\.yml|mihomo/config\.yaml|skm/skills\.yaml)$'},
+  {id = "check-json", exclude = '^(amp/settings\.json|antigravity/antigravity/(mcp_config|settings)\.json|codex/codex/enterprise-model-catalog\.json|copilot/mcp-config\.json|docker/config\.json|droid/config/(mcp|settings)\.json|opencode/(config/tui|share/auth)\.json|pi/(auth|models|settings)\.json)$'},
+  {id = "detect-private-key"},
+  {id = "end-of-file-fixer", exclude = '^fcitx5/fcitx5'},
+  {id = "forbid-new-submodules"},
+  {id = "mixed-line-ending"},
+  {id = "trailing-whitespace"},
+  {id = "pretty-format-json", args = ["--autofix"], exclude = '^(docker/config\.json|amp/settings\.json|antigravity/antigravity/(mcp_config|settings)\.json|codex/codex/enterprise-model-catalog\.json|copilot/mcp-config\.json|droid/config/(mcp|settings)\.json|opencode/(config/tui|share/auth)\.json|pi/(auth|models|settings)\.json)$'},
+]
+
+[[repos]]
+repo = "https://github.com/pappasam/toml-sort"
+rev = "v0.24.4"
+hooks = [
+  {id = "toml-sort-fix", args = ["--in-place", "--no-sort-tables"], exclude = '^(\.dotter/global\.toml|agent/config/enterprise_llm_gateway/models\.toml|alacritty/alacritty\.toml|bun/bunfig\.toml|codex/codex/config\.toml|jj/config\.toml|prek\.toml|uv/uv\.toml|yazi/yazi\.toml)$'}
+]

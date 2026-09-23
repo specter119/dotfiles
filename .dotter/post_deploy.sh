@@ -38,15 +38,15 @@ PY
 	done
 }
 
-audit_pre_commit_parser_coverage() {
+audit_prek_parser_coverage() {
 	python3 - <<'PY'
 import re
 import tomllib
 from pathlib import Path
 
 cache_toml = Path(".dotter/cache.toml")
-pre_commit_config = Path(".pre-commit-config.yaml")
-if not cache_toml.exists() or not pre_commit_config.exists():
+prek_config = Path("prek.toml")
+if not cache_toml.exists() or not prek_config.exists():
     raise SystemExit(0)
 
 with cache_toml.open("rb") as fh:
@@ -59,24 +59,25 @@ hooks_by_suffix = {
     ".yaml": ("check-yaml", "yamlfmt"),
     ".yml": ("check-yaml", "yamlfmt"),
 }
-
-excludes = {}
-current_hook = None
-for line in pre_commit_config.read_text(encoding="utf-8").splitlines():
-    hook = re.match(r"^\s*-\s+id:\s*([\w-]+)\s*$", line)
-    if hook:
-        current_hook = hook.group(1)
-        continue
-    exclude = re.match(r"^\s+exclude:\s*(.+?)\s*$", line)
-    if exclude and current_hook in {
-        hook for hooks in hooks_by_suffix.values() for hook in hooks
-    }:
-        try:
-            excludes[current_hook] = re.compile(exclude.group(1))
-        except re.error as error:
-            print(
-                f"[WARN] pre-commit coverage: invalid {current_hook} exclude regex: {error}"
-            )
+known_hooks = {hook for hooks in hooks_by_suffix.values() for hook in hooks}
+configured_excludes = {}
+with prek_config.open("rb") as fh:
+    config = tomllib.load(fh)
+for repo in config.get("repos", []):
+    for hook_config in repo.get("hooks", []):
+        hook = hook_config.get("id")
+        if hook not in known_hooks:
+            continue
+        exclude = None
+        raw_exclude = hook_config.get("exclude")
+        if raw_exclude is not None:
+            try:
+                exclude = re.compile(raw_exclude)
+            except re.error as error:
+                print(
+                    f"[WARN] prek coverage: invalid {hook} exclude regex: {error}"
+                )
+        configured_excludes.setdefault(hook, []).append(exclude)
 
 for source in templates:
     source_path = Path(source)
@@ -91,12 +92,14 @@ for source in templates:
         continue
 
     for hook in hooks:
-        exclude = excludes.get(hook)
-        if exclude and exclude.search(source):
+        excludes = configured_excludes.get(hook)
+        if not excludes:
+            continue
+        if all(exclude is not None and exclude.search(source) for exclude in excludes):
             continue
         print(
-            f"[WARN] pre-commit coverage: template {source} is not excluded from "
-            f"{hook}; review .pre-commit-config.yaml."
+            f"[WARN] prek coverage: template {source} is not excluded from "
+            f"{hook}; review prek.toml."
         )
 PY
 }
