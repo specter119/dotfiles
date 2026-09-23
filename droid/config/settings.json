@@ -6,13 +6,13 @@
   "missionModelSettings": {
     "skipScrutiny": true,
     "skipUserTesting": false,
-    "validationWorkerModel": "gpt-5.6-luna",
+    "validationWorkerModel": "deepseek-v4.1-flash",
     "validationWorkerReasoningEffort": "max",
-    "workerModel": "gpt-5.6-luna",
+    "workerModel": "deepseek-v4.1-flash",
     "workerReasoningEffort": "max"
   },
-  "missionOrchestratorModel": "claude-opus-4-6",
-  "missionOrchestratorReasoningEffort": "high",
+  "missionOrchestratorModel": "claude-opus-5-5",
+  "missionOrchestratorReasoningEffort": "medium",
   "modelFavorites": [
     "glm-5.3",
     "grok-4.6",
@@ -24,8 +24,8 @@
     "autonomyLevel": "medium",
     "autonomyMode": "auto-medium",
     "interactionMode": "auto",
-    "model": "gpt-5.6-luna",
-    "reasoningEffort": "max",
+    "model": "claude-sonnet-5-5",
+    "reasoningEffort": "high",
     "specModeModel": "claude-opus-5-5",
     "specModeReasoningEffort": "medium"
   },
@@ -58,11 +58,11 @@
     "debugging@factory-plugins": true
   },
   "subagentModelSettings": {
-    "lightModel": "gpt-5.6-luna",
+    "lightModel": "deepseek-v4.1-flash",
     "lightReasoningEffort": "max",
-    "mediumModel": "gpt-5.6-luna",
+    "mediumModel": "deepseek-v4.1-flash",
     "mediumReasoningEffort": "max",
-    "heavyModel": "glm-5.3",
+    "heavyModel": "kimi-k3",
     "heavyReasoningEffort": "high"
   },
   "subagentAutonomyLevel": "inherit",

@@ -186,6 +186,7 @@ Enterprise gateway provider data has two sources:
 | `agent.enterprise_deployments` | table of tables | `global + local` | Machine-local enterprise gateway deployments keyed by name; each contains `base_url` and must match a deployment table in the shared model catalog |
 | `agent.otel_url` | string | `global + local` | Optional; when set, renders the pi `otel` settings block pointing at this OTLP endpoint |
 | `pi.default_model` | string | `global + local` | Pi default model ID; synced from deploy side by sync script |
+| `pi.auth` | table | `global + local` | Runtime OAuth credentials keyed by provider name (e.g. `github-copilot`); reverse-synced from `auth.json` and rendered verbatim via `json_to_str` into the deployed `pi/auth.json`. Never committed (`local.toml` is gitignored) |
 | `pi.default_provider` | string | `global + local` | Pi default provider name; synced from deploy side by sync script |
 | `pi.enterprise_packages` | array of strings | `global + local` | Optional; extra packages appended to Pi packages list |
 | `pi.last_changelog_version` | string | `global + local` | Pi read changelog version; synced by sync script to avoid deploy overwriting local value |
@@ -398,6 +399,7 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 |---|---|---|---|
 | codex | `model` | string | `config.toml.model` |
 | pi | `default_model` | string | `settings.json.defaultModel` |
+| pi | `auth` | `dict[str, ...]` | `auth.json` OAuth credential (e.g. `github-copilot`); rendered whole via `json_to_str` |
 | pi | `default_provider` | string | `settings.json.defaultProvider` |
 | pi | `last_changelog_version` | string | `settings.json.lastChangelogVersion` |
 | droid | `trusted_folders` | `[[aot]]` | `settings.json.trustedFolders` |

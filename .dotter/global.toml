@@ -172,6 +172,7 @@ last_seen_version = ''
 pi = '~/.config/pi'
 
 [pi.variables.pi]
+auth = {}
 default_model = ''
 default_provider = ''
 enterprise_packages = []

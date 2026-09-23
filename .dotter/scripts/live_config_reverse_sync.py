@@ -29,6 +29,7 @@ def agent_path(env_name: str, fallback: str | Path, *parts: str) -> Path:
 
 XDG_CONFIG_HOME = expand_path(os.environ.get('XDG_CONFIG_HOME') or Path.home() / '.config')
 PI_SETTINGS = agent_path('PI_CODING_AGENT_DIR', Path.home() / '.pi', 'settings.json')
+PI_AUTH = agent_path('PI_CODING_AGENT_DIR', Path.home() / '.pi', 'auth.json')
 DROID_SETTINGS = Path.home() / '.factory/settings.json'
 OPENCODE_CONFIG = XDG_CONFIG_HOME / 'opencode' / 'opencode.jsonc'
 CODEX_CONFIG = agent_path('CODEX_HOME', Path.home() / '.codex', 'config.toml')
@@ -86,6 +87,48 @@ def ensure_table(doc: tomlkit.TOMLDocument, *keys: str) -> tomlkit.items.Table:
             current.add(key, tomlkit.table())
         current = current[key]
     return current
+
+
+def normalize_auth_credential(value: object) -> dict[str, object] | None:
+    """Normalize one auth.json provider credential, preserving field order."""
+    if not isinstance(value, dict):
+        return None
+    result = {field: item for field, item in value.items() if item is not None}
+    return result or None
+
+
+def credential_from_toml(value: object) -> dict[str, object] | None:
+    """Read and normalize a credential stored as a TOML table value."""
+    if isinstance(value, (tomlkit.items.Table, tomlkit.items.InlineTable)):
+        return normalize_auth_credential(dict(value))
+    if isinstance(value, dict):
+        return normalize_auth_credential(value)
+    return None
+
+
+def sync_auth_credential(table: tomlkit.items.Table, provider: str, value: object) -> bool:
+    """Sync one runtime-written OAuth credential from auth.json into local.toml.
+
+    Stored under variables.<table-key>.<provider>; consumer templates render the
+    whole credential object back into the deployed auth.json.
+    """
+    auth_table = ensure_table(table, 'auth')
+    live = normalize_auth_credential(value)
+    existing = credential_from_toml(auth_table.get(provider))
+    if existing is None and live is None:
+        return False
+    if existing == live:
+        return False
+    if live is None:
+        del auth_table[provider]
+        if not auth_table:
+            del table['auth']
+        return True
+    new_table = tomlkit.table()
+    for field, field_value in live.items():
+        new_table[field] = field_value
+    auth_table[provider] = new_table
+    return True
 
 
 def sync_string(table: tomlkit.items.Table, key: str, value: object, fallback: str | None = None, remove_if_empty: bool = False) -> bool:
@@ -400,17 +443,25 @@ def main() -> None:
 
     changed = False
 
-    # pi-agent: defaultModel, defaultProvider, lastChangelogVersion
+    # pi-agent: defaultModel, defaultProvider, lastChangelogVersion, OAuth credentials
     pi_data = read_json(PI_SETTINGS)
-    if pi_data:
+    pi_auth = read_json(PI_AUTH)
+    if pi_data or pi_auth is not None:
         pi_table = ensure_table(doc, 'variables', 'pi')
-        changed |= sync_string(pi_table, 'default_model', pi_data.get('defaultModel'))
-        changed |= sync_string(pi_table, 'default_provider', pi_data.get('defaultProvider'))
-        changed |= sync_string(
-            pi_table,
-            'last_changelog_version',
-            pi_data.get('lastChangelogVersion'),
-        )
+        if pi_data:
+            changed |= sync_string(pi_table, 'default_model', pi_data.get('defaultModel'))
+            changed |= sync_string(pi_table, 'default_provider', pi_data.get('defaultProvider'))
+            changed |= sync_string(
+                pi_table,
+                'last_changelog_version',
+                pi_data.get('lastChangelogVersion'),
+            )
+        if pi_auth is not None:
+            changed |= sync_auth_credential(
+                pi_table,
+                'github-copilot',
+                pi_auth.get('github-copilot'),
+            )
 
     # droid: tool-managed trusted folders only
     droid_data = read_json(DROID_SETTINGS)

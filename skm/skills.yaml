@@ -22,6 +22,7 @@ packages:
   ## codespace visulization
   - repo: https://github.com/yizhiyanhua-ai/fireworks-tech-graph
   - repo: https://github.com/tt-a1i/archify
+  - repo: https://github.com/markdown-viewer/skills
   ## design
   - repo: https://github.com/tw93/Kami
   ## slide

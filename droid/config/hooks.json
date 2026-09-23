@@ -1,0 +1,14 @@
+{
+  "PostToolUse": [
+    {
+      "hooks": [
+        {
+          "command": "bash \"$HOME/.factory/hooks/auto-format.sh\"",
+          "timeout": 90,
+          "type": "command"
+        }
+      ],
+      "matcher": "Create|Edit|Write|ApplyPatch"
+    }
+  ]
+}
