@@ -24,6 +24,12 @@ depends = ['mako', 'waybar', 'avizo']
 [sway.files]
 sway = '~/.config'
 
+[voxtype]
+depends = ['sway']
+
+[voxtype.files]
+voxtype = '~/.config'
+
 [fontconfig.files]
 fontconfig = '~/.config/fontconfig'
 
@@ -220,6 +226,9 @@ qoder = '~/.config'
 
 [nix.files]
 nix = '~/.config'
+[nix.files.'nix/home-manager']
+target = '~/.config/home-manager'
+type = 'template'
 
 [atuin.files]
 atuin = '~/.config'

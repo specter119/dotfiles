@@ -1,0 +1,40 @@
+# Voxtype configuration. Reference:
+# https://github.com/peteonrails/voxtype/blob/dev/docs/CONFIGURATION.md
+# The daemon does not hot-reload; run `systemctl --user restart voxtype` after edits.
+
+# sensevoice (zh/en/ja/ko/yue) or paraformer (zh/en); both need the ONNX build
+# from nix/home-manager/flake.nix and a model from `voxtype setup model`.
+engine = "sensevoice"
+state_file = "auto"
+
+[hotkey]
+# Sway owns the hotkey (see sway/config.d/40-vibekey-voxtype.conf), so the
+# evdev listener, which would require the `input` group, stays off.
+enabled = false
+
+[audio]
+device = "default"
+sample_rate = 16000
+max_duration_secs = 60
+
+[sensevoice]
+model = "small"
+language = "auto"
+
+[paraformer]
+model = "paraformer-zh"
+
+[output]
+mode = "type"
+fallback_to_clipboard = true
+type_delay_ms = 0
+pre_type_delay_ms = 0
+
+[output.notification]
+on_recording_start = false
+on_recording_stop = false
+on_transcription = false
+
+[osd]
+# Neither OSD frontend (gtk4/native) ships in the nix package.
+enabled = false
