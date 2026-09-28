@@ -1,0 +1,23 @@
+#!/bin/sh
+# wtype's virtual keyboard goes through fcitx5's keyboard grab, so an active
+# pinyin engine would swallow the typed text into its preedit. voxtype calls
+# `pre` before typing and `post` afterwards; only a state we changed is restored.
+marker="${XDG_RUNTIME_DIR:-/tmp}/voxtype/fcitx5-was-active"
+
+case "$1" in
+pre)
+    # 0 = not running, 1 = inactive (Latin), 2 = active (pinyin)
+    if [ "$(fcitx5-remote 2>/dev/null)" = 2 ]; then
+        mkdir -p "${marker%/*}"
+        : >"$marker"
+        fcitx5-remote -c
+    fi
+    ;;
+post)
+    if [ -e "$marker" ]; then
+        rm -f "$marker"
+        fcitx5-remote -o
+    fi
+    ;;
+esac
+exit 0
