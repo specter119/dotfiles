@@ -1,5 +1,5 @@
 {
-  "compactionModel": "deepseek-v4-flash-0731",
+  "compactionModel": "deepseek-v4.1-flash",
   "compactionTokenLimit": 250000,
   "includeCoAuthoredByDroid": false,
   "logoAnimation": "off",
@@ -25,7 +25,9 @@
     "autonomyMode": "auto-medium",
     "interactionMode": "auto",
     "model": "gpt-5.6-luna",
-    "reasoningEffort": "max"
+    "reasoningEffort": "max",
+    "specModeModel": "claude-opus-5-5",
+    "specModeReasoningEffort": "medium"
   },
   "showTokenUsageIndicator": true,
   "reauthBannerShownTui": true,
@@ -64,8 +66,5 @@
     "heavyReasoningEffort": "high"
   },
   "subagentAutonomyLevel": "inherit",
-  "compactionTokenLimitPerModel": {
-    "minimax-m3": 250000,
-    "gemini-3.6-flash": 250000
-  }
+  "compactionTokenLimitPerModel": {}
 }
