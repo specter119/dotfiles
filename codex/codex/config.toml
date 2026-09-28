@@ -3,7 +3,6 @@ model_provider = "{{codex.model_provider}}"
 model_catalog_json = "enterprise-model-catalog.json"
 # {{/if}}
 personality = "pragmatic"
-disable_response_storage = true
 web_search = "live"
 notify = ["~/.local/share/cli-hooks/notify.sh"]
 model_reasoning_effort = "max"

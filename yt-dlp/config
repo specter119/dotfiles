@@ -11,8 +11,8 @@
 # Do not copy the mtime
 --no-mtime
 
-# to specific dir
---output {{yt-dlp.output_dir}}/%(webpage_url_domain)s/%(title)s-%(id)s.%(ext)s
+# Cap the title at 120 UTF-8 bytes while keeping the video ID intact.
+--output {{yt-dlp.output_dir}}/%(webpage_url_domain)s/%(title).120B-%(id)s.%(ext)s
 
 # sub title
 --write-auto-sub
