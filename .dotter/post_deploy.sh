@@ -164,7 +164,7 @@ fix_glab_permissions() {
 
 # Clean up rendered templates (YAML, TOML, JSON and Markdown) after deployment.
 cleanup_rendered_templates
-audit_pre_commit_parser_coverage
+audit_prek_parser_coverage
 normalize_glab_yaml_keys
 fix_ssh_permissions
 fix_glab_permissions
