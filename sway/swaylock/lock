@@ -5,5 +5,7 @@ lock_file="$runtime_dir/swaylock.lock"
 
 (
 	flock -n 9 || exit 0
-	exec swaylock
+	# Detach once locked so swayidle -w can resume, while the inherited flock
+	# descriptor keeps this lock held in the daemonized process.
+	exec swaylock -f
 ) 9>"$lock_file"
