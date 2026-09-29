@@ -1,0 +1,9 @@
+#!/bin/sh
+
+runtime_dir="${XDG_RUNTIME_DIR:?XDG_RUNTIME_DIR is required}"
+lock_file="$runtime_dir/swaylock.lock"
+
+(
+	flock -n 9 || exit 0
+	exec swaylock
+) 9>"$lock_file"
