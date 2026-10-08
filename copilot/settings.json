@@ -1,14 +1,5 @@
 {
   "colorMode": "default",
   "effortLevel": "high",
-  "experimental": true,
-  "hooks": {
-    "SessionStart": [
-      {
-        "bash": "bash '/home/liuky3/.config/copilot/hooks/herdr-agent-state.sh'",
-        "timeoutSec": 10,
-        "type": "command"
-      }
-    ]
-  }
+  "experimental": true
 }

@@ -6,7 +6,7 @@ After=sway-session.target pipewire.service pipewire-pulse.service
 
 [Service]
 Type=simple
-ExecStart=%h/.nix-profile/bin/voxtype -q daemon
+ExecStart=voxtype -q daemon
 Restart=on-failure
 RestartSec=5
 

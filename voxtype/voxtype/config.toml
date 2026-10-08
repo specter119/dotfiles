@@ -2,8 +2,8 @@
 # https://github.com/peteonrails/voxtype/blob/dev/docs/CONFIGURATION.md
 # The daemon does not hot-reload; run `systemctl --user restart voxtype` after edits.
 
-# sensevoice (zh/en/ja/ko/yue) or paraformer (zh/en); both need the ONNX build
-# from nix/home-manager/flake.nix and a model from `voxtype setup model`.
+# sensevoice (zh/en/ja/ko/yue) or paraformer (zh/en); both need Voxtype
+# built with ONNX enabled and a model from `voxtype setup model`.
 engine = "sensevoice"
 state_file = "auto"
 
@@ -13,7 +13,7 @@ state_file = "auto"
 enabled = false
 
 [audio]
-device = "default"
+device = "sysdefault:CARD=AU05"
 sample_rate = 16000
 max_duration_secs = 60
 
