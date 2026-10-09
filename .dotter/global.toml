@@ -384,7 +384,6 @@ depends = ['bub', 'lody', 'raft']
 
 [agent-tunnel.variables.agent_tunnel]
 extra_ca_certs = ''
-systemd_exec_search_paths = []
 
 [browser-use]
 depends = ['playwright']
