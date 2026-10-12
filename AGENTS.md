@@ -198,7 +198,6 @@ Enterprise gateway provider data has two sources:
 | `glab.hosts` | array of tables | `global + local` | Each item has `host`, `token`, `user`, optional `container_registry_domains`; renders glab host config |
 | `glab.last_update_check_timestamp` | string | `global + local` | Reverse-synced from live config; avoids deploy overwriting update check state |
 | `glab.last_seen_version` | string | `global + local` | Reverse-synced from live config; avoids deploy overwriting version marker |
-| `mkcert.ssl_cert_file` | string | `global + local` | mkcert root CA path (used as `SSL_CERT_FILE`); lets local CLIs such as the multica daemon trust local Traefik certificates; omitted when empty |
 | `multica.server_url` | string | `global + local` | Multica backend API URL; global default `http://localhost:8080` matches the CLI default, overridden per machine |
 | `multica.app_url` | string | `global + local` | Multica web app URL; global default `http://localhost:3000` matches the CLI default, overridden per machine |
 | `scoop.lastupdate` | string | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop lastupdate timestamp |
