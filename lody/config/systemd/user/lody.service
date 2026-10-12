@@ -6,7 +6,6 @@ Wants=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=%h/.local/lib/lody
-ExecSearchPath={{trim (command_output "systemd-path search-binaries-default")}}
 Environment=LODY_DATA_DIR=%D/lody
 ExecStartPre=bun update --latest --production --force lody
 ExecStart=bun run lody start

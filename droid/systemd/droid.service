@@ -5,7 +5,6 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-ExecSearchPath={{trim (command_output "systemd-path search-binaries-default")}}
 ExecStart=%h/.local/bin/droid daemon --remote-access
 Restart=always
 RestartSec=5
