@@ -207,20 +207,6 @@ Enterprise gateway provider data has two sources:
 | `nodejs.registry` | string | `global + local` | Shared npm/Bun registry URL; npm uses it in `~/.npmrc`, while Bun uses it with `registry-auth` credentials in `~/.bunfig.toml` |
 | `docker.registry_hosts` | array of strings | `global + local` | Docker registry hosts; each renders an `auths` entry with inline base64 auth when credentials are configured |
 
-#### Trusting a local CA in the system trust store
-
-Prefer installing a CA into the **system trust store** over per-tool env overrides
-(`SSL_CERT_FILE`, `NODE_EXTRA_CA_CERTS`, ...). Tools such as Node/Bun, uv and
-Rust CLIs pick the CA up via the system store, and nothing machine-specific is
-left in the repo.
-
-Install per distro:
-
-- Debian / Ubuntu: `sudo install -m 644 <ca.pem> /usr/local/share/ca-certificates/<name>.crt && sudo update-ca-certificates`
-- Arch Linux: `sudo install -m 644 <ca.pem> /etc/ca-certificates/trust-source/anchors/<name>.crt && sudo update-ca-trust`
-
-Verify with, e.g.: `openssl s_client -connect <host>:443 -servername <host> </dev/null 2>/dev/null | grep 'Verify return code'`
-
 #### Git Repo Identities
 
 Repo-scoped Git identities are defined in `.dotter/local.toml` under `variables.git.repo_identities`:
