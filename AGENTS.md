@@ -198,6 +198,7 @@ Enterprise gateway provider data has two sources:
 | `glab.hosts` | array of tables | `global + local` | Each item has `host`, `token`, `user`, optional `container_registry_domains`; renders glab host config |
 | `glab.last_update_check_timestamp` | string | `global + local` | Reverse-synced from live config; avoids deploy overwriting update check state |
 | `glab.last_seen_version` | string | `global + local` | Reverse-synced from live config; avoids deploy overwriting version marker |
+| `mkcert.ssl_cert_file` | string | `global + local` | mkcert root CA 路径（`SSL_CERT_FILE`）；供 multica daemon 等本机 CLI 信任 local Traefik 证书；omitted when empty |
 | `scoop.lastupdate` | string | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop lastupdate timestamp |
 | `uv.index_url` | string | `global + local` | uv pip index URL; defaults to USTC mirror, overridable per machine |
 | `registry-auth.host` | string | `global + local` | Docker registry host; consumed directly by `netrc/.netrc` |

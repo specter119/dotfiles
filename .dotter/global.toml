@@ -275,6 +275,7 @@ bub = '~/.config'
 'lody/config' = '~/.config'
 
 [multica]
+depends = ['mkcert']
 
 [multica.files]
 'multica/config' = '~/.config'
@@ -282,6 +283,8 @@ bub = '~/.config'
 [multica.variables.multica]
 app_url = ''
 server_url = ''
+
+[mkcert.variables.mkcert]
 ssl_cert_file = ''
 
 [enterprise-proxy.variables.enterprise_proxy]
