@@ -281,8 +281,8 @@ depends = ['mkcert']
 'multica/config' = '~/.config'
 
 [multica.variables.multica]
-app_url = ''
-server_url = ''
+app_url = 'http://localhost:3000'
+server_url = 'http://localhost:8080'
 
 [mkcert.variables.mkcert]
 ssl_cert_file = ''

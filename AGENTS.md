@@ -199,6 +199,8 @@ Enterprise gateway provider data has two sources:
 | `glab.last_update_check_timestamp` | string | `global + local` | Reverse-synced from live config; avoids deploy overwriting update check state |
 | `glab.last_seen_version` | string | `global + local` | Reverse-synced from live config; avoids deploy overwriting version marker |
 | `mkcert.ssl_cert_file` | string | `global + local` | mkcert root CA 路径（`SSL_CERT_FILE`）；供 multica daemon 等本机 CLI 信任 local Traefik 证书；omitted when empty |
+| `multica.server_url` | string | `global + local` | Multica backend API URL；global 默认 `http://localhost:8080`（CLI 默认），本机覆盖为域名 |
+| `multica.app_url` | string | `global + local` | Multica web app URL；global 默认 `http://localhost:3000`（CLI 默认），本机覆盖为域名 |
 | `scoop.lastupdate` | string | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop lastupdate timestamp |
 | `uv.index_url` | string | `global + local` | uv pip index URL; defaults to USTC mirror, overridable per machine |
 | `registry-auth.host` | string | `global + local` | Docker registry host; consumed directly by `netrc/.netrc` |
