@@ -275,7 +275,6 @@ bub = '~/.config'
 'lody/config' = '~/.config'
 
 [multica]
-depends = ['mkcert']
 
 [multica.files]
 'multica/config' = '~/.config'
