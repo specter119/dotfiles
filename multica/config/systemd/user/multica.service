@@ -6,6 +6,9 @@ Wants=network-online.target
 [Service]
 Type=simple
 ExecSearchPath={{trim (command_output "systemd-path search-binaries-default")}}
+# {{#if multica.ssl_cert_file}}
+Environment=SSL_CERT_FILE={{multica.ssl_cert_file}}
+# {{/if}}
 # {{#if multica.server_url}}
 ExecStartPre=multica config set server_url {{multica.server_url}}
 # {{/if}}

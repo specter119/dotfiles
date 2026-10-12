@@ -282,6 +282,7 @@ bub = '~/.config'
 [multica.variables.multica]
 app_url = ''
 server_url = ''
+ssl_cert_file = ''
 
 [enterprise-proxy.variables.enterprise_proxy]
 url = ''
