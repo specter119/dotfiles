@@ -383,9 +383,6 @@ otel_url = ''
 [agent-tunnel]
 depends = ['bub', 'lody', 'raft']
 
-[agent-tunnel.variables.agent_tunnel]
-extra_ca_certs = ''
-
 [browser-use]
 depends = ['playwright']
 

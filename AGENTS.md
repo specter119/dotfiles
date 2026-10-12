@@ -173,7 +173,6 @@ Enterprise gateway provider data has two sources:
 | `codex.model` | string | `global + local` | Reverse-synced from `config.toml.model`; omitted when empty |
 | `codex.model_provider` | string | `global + local` | Reverse-synced from `config.toml.model_provider`; omitted when empty |
 | `raft.api_key` | string | `global + local` | Optional; service renders normally even when empty |
-| `agent_tunnel.extra_ca_certs` | string | `global + local` | Optional PEM path for the agent-tunnel group's Node/Bun TLS trust; omitted when empty |
 | `enterprise_proxy.url` | string | `global + local` | Optional; provided by the `enterprise-proxy` variable-only package, used by raft via `WSS_PROXY` and by yt-dlp when set |
 | `yt-dlp.output_dir` | string | `global + local` | yt-dlp output root; defaults to `~/Videos` and can be overridden per machine |
 | `codex.projects` | array of strings | `global + local` | Reverse-synced from trusted live Codex `[projects]` entries and renders that trust list |
@@ -207,6 +206,20 @@ Enterprise gateway provider data has two sources:
 | `registry-auth.access_token` | string | `global + local` | Registry access token; consumed directly by Bun/netrc and combined inline with user_id by npm/Docker templates |
 | `nodejs.registry` | string | `global + local` | Shared npm/Bun registry URL; npm uses it in `~/.npmrc`, while Bun uses it with `registry-auth` credentials in `~/.bunfig.toml` |
 | `docker.registry_hosts` | array of strings | `global + local` | Docker registry hosts; each renders an `auths` entry with inline base64 auth when credentials are configured |
+
+#### Trusting a local CA in the system trust store
+
+Prefer installing a CA into the **system trust store** over per-tool env overrides
+(`SSL_CERT_FILE`, `NODE_EXTRA_CA_CERTS`, ...). Tools such as Node/Bun, uv and
+Rust CLIs pick the CA up via the system store, and nothing machine-specific is
+left in the repo.
+
+Install per distro:
+
+- Debian / Ubuntu: `sudo install -m 644 <ca.pem> /usr/local/share/ca-certificates/<name>.crt && sudo update-ca-certificates`
+- Arch Linux: `sudo install -m 644 <ca.pem> /etc/ca-certificates/trust-source/anchors/<name>.crt && sudo update-ca-trust`
+
+Verify with, e.g.: `openssl s_client -connect <host>:443 -servername <host> </dev/null 2>/dev/null | grep 'Verify return code'`
 
 #### Git Repo Identities
 
