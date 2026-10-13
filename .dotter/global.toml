@@ -357,19 +357,7 @@ depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
 depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
 
 [agent]
-depends = [
-  'agent-runtime',
-  'droid',
-  'pi',
-  'codex',
-  'chatgpt',
-  'copilot',
-  'opencode',
-  'claude-code',
-  'antigravity',
-  'amp',
-  'multica',
-]
+depends = ['agent-runtime', 'droid', 'pi', 'codex', 'chatgpt', 'amp', 'multica']
 
 [agent.files]
 'agent/config' = '~/.config'
