@@ -7,7 +7,7 @@ id = "deepseek-v4-pro"
 name = "DeepSeek V4 Pro"
 context_window = 1000000
 max_tokens = 384000
-input = ["text", "image"]
+input = ["text"]
 reasoning = ["off", "high", "max"]
 reasoning_format = "deepseek"
 
@@ -37,8 +37,17 @@ id = "deepseek-v4-flash-0731"
 name = "DeepSeek V4 Flash 0731"
 context_window = 1000000
 max_tokens = 384000
-input = ["text", "image"]
+input = ["text"]
 reasoning = ["off", "high", "max"]
+reasoning_format = "deepseek"
+
+[[ali.models]]
+id = "deepseek-v4.1-flash"
+name = "DeepSeek V4.1 Flash"
+context_window = 272000
+max_tokens = 128000
+input = ["text", "image"]
+reasoning = ["off", "low", "high", "max"]
 reasoning_format = "deepseek"
 
 [[ali.models]]
@@ -46,32 +55,40 @@ id = "glm-5.1"
 name = "GLM-5.1"
 context_window = 200000
 max_tokens = 131072
-input = ["text", "image"]
+input = ["text"]
 reasoning = true
 
 [[ali.models]]
 id = "glm-5.2"
 name = "GLM-5.2"
-context_window = 1000000
-max_tokens = 131072
-input = ["text", "image"]
+context_window = 367232
+max_tokens = 32768
+input = ["text"]
 reasoning = ["high", "max"]
+
+[[ali.models]]
+id = "glm-5.3"
+name = "GLM-5.3"
+context_window = 367232
+max_tokens = 32768
+input = ["text"]
+reasoning = ["low", "high", "max"]
 
 [[ali.models]]
 id = "qwen3.7-max"
 name = "Qwen3.7-Max"
 context_window = 1000000
 max_tokens = 65536
-input = ["text", "image"]
+input = ["text"]
 reasoning = true
 
 [[ali.models]]
-id = "qwen3.8-max"
-name = "Qwen3.8-Max"
+id = "qwen3.8-max-0902"
+name = "Qwen3.8-Max 0902"
 context_window = 872000
 max_tokens = 128000
 input = ["text", "image"]
-reasoning = true
+reasoning = ["off", "low", "medium", "xhigh"]
 
 [[ali.models]]
 id = "qwen3.8-flash"
@@ -79,7 +96,7 @@ name = "Qwen3.8-Flash"
 context_window = 872000
 max_tokens = 128000
 input = ["text", "image"]
-reasoning = true
+reasoning = ["off", "low", "medium", "xhigh"]
 
 [[ali.models]]
 id = "kimi-k2.6"
@@ -105,7 +122,7 @@ name = "Kimi-K3"
 context_window = 872000
 max_tokens = 128000
 input = ["text", "image"]
-reasoning = true
+reasoning = ["low", "high", "max"]
 reasoning_format = "deepseek"
 
 [[azure.models]]
@@ -114,7 +131,7 @@ name = "GPT-5.1 Codex Mini"
 context_window = 272000
 max_tokens = 128000
 input = ["text", "image"]
-reasoning = ["off", "low", "medium", "high", "xhigh", "max"]
+reasoning = ["low", "medium", "high"]
 
 [[azure.models]]
 id = "gpt-5.4-mini"
@@ -122,7 +139,7 @@ name = "GPT-5.4 Mini"
 context_window = 400000
 max_tokens = 128000
 input = ["text", "image"]
-reasoning = ["off", "low", "medium", "high", "xhigh", "max"]
+reasoning = ["off", "low", "medium", "high", "xhigh"]
 
 [[azure.models]]
 id = "gpt-5.5"
@@ -130,7 +147,7 @@ name = "GPT-5.5"
 context_window = 1050000
 max_tokens = 128000
 input = ["text", "image"]
-reasoning = ["off", "low", "medium", "high", "xhigh", "max"]
+reasoning = ["off", "low", "medium", "high", "xhigh"]
 
 [[azure.models]]
 id = "gpt-5.6-luna"
@@ -155,6 +172,38 @@ context_window = 1050000
 max_tokens = 128000
 input = ["text", "image"]
 reasoning = ["off", "low", "medium", "high", "xhigh", "max"]
+
+[[azure.models]]
+id = "gpt-6-astra"
+name = "GPT-6 Astra"
+context_window = 872000
+max_tokens = 128000
+input = ["text", "image"]
+reasoning = ["low", "medium", "high", "xhigh", "max"]
+
+[[azure.models]]
+id = "gpt-6-luna"
+name = "GPT-6 Luna"
+context_window = 872000
+max_tokens = 128000
+input = ["text", "image"]
+reasoning = ["off", "low", "medium", "high", "xhigh", "max"]
+
+[[azure.models]]
+id = "gpt-6-sol"
+name = "GPT-6 Sol"
+context_window = 872000
+max_tokens = 128000
+input = ["text", "image"]
+reasoning = ["off", "low", "medium", "high", "xhigh", "max"]
+
+[[azure.models]]
+id = "gpt-6.1-sol"
+name = "GPT-6.1 Sol"
+context_window = 872000
+max_tokens = 128000
+input = ["text", "image"]
+reasoning = ["low", "medium", "high", "xhigh", "max"]
 
 [[azure.models]]
 id = "deepseek-v4-flash"
