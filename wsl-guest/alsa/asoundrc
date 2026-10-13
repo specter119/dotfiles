@@ -1,0 +1,11 @@
+# WSLg exposes the host microphone only through its own PulseAudio server and
+# provides no ALSA sound cards, so route ALSA's default PCM to PulseAudio.
+# `type pulse` is looked up inside ALSA_PLUGIN_DIR by the ALSA library, so this
+# file stays free of plugin paths. Pair it with a voxtype build that points
+# ALSA_PLUGIN_DIR at an ALSA plugin directory containing the PulseAudio plugin.
+pcm.!default {
+    type pulse
+}
+ctl.!default {
+    type pulse
+}

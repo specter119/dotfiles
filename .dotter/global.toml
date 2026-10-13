@@ -30,6 +30,9 @@ depends = ['sway']
 [voxtype.files]
 voxtype = '~/.config'
 
+[voxtype.variables.voxtype]
+device = ''
+
 [fontconfig.files]
 fontconfig = '~/.config/fontconfig'
 

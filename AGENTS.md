@@ -206,6 +206,7 @@ Enterprise gateway provider data has two sources:
 | `registry-auth.access_token` | string | `global + local` | Registry access token; consumed directly by Bun/netrc and combined inline with user_id by npm/Docker templates |
 | `nodejs.registry` | string | `global + local` | Shared npm/Bun registry URL; npm uses it in `~/.npmrc`, while Bun uses it with `registry-auth` credentials in `~/.bunfig.toml` |
 | `docker.registry_hosts` | array of strings | `global + local` | Docker registry hosts; each renders an `auths` entry with inline base64 auth when credentials are configured |
+| `voxtype.device` | string | `global + local` | Optional; ALSA capture device for voxtype; the `device` key is omitted when empty, so voxtype follows the system default |
 
 #### Git Repo Identities
 
