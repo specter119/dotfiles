@@ -5,11 +5,11 @@ PartOf=sway-session.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/swayidle -w \
+ExecStart=swayidle -w \
   timeout 150 %h/.config/swaylock/lock \
   timeout 300 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
   before-sleep %h/.config/swaylock/lock
-ExecStop=/bin/kill -2 $MAINPID
+ExecStop=kill -2 $MAINPID
 Restart=on-failure
 RestartSec=1
 TimeoutStopSec=10

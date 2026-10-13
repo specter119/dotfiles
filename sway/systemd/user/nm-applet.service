@@ -4,7 +4,7 @@ PartOf=sway-session.target
 After=sway-session.target
 
 [Service]
-ExecStart=/usr/bin/nm-applet --indicator
+ExecStart=nm-applet --indicator
 Restart=on-failure
 
 [Install]

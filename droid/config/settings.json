@@ -49,14 +49,7 @@
     }{{#unless @last}},{{/unless}}
 # {{/each}}
   },
-  "enabledPlugins": {
-    "autoresearch@factory-plugins": true,
-    "droid-control@factory-plugins": true,
-    "core@factory-plugins": true,
-    "code-review@factory-plugins": true,
-    "droid-evolved@factory-plugins": true,
-    "debugging@factory-plugins": true
-  },
+  "enabledPlugins": {},
   "subagentModelSettings": {
     "lightModel": "deepseek-v4.1-flash",
     "lightReasoningEffort": "max",

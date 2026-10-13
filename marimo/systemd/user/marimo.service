@@ -5,8 +5,8 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=%D/marimo
-ExecStartPre=/usr/bin/mkdir -p %D/marimo
-ExecStart=%h/.local/bin/uvx --with "marimo[recommended,lsp,mcp],watchdog,httpx2[http2]" marimo edit --watch --headless --no-token --host 127.0.0.1 --port 2718
+ExecStartPre=mkdir -p %D/marimo
+ExecStart=uvx --with "marimo[recommended,lsp,mcp],watchdog,httpx2[http2]" marimo edit --watch --headless --no-token --host 127.0.0.1 --port 2718
 Restart=on-failure
 RestartSec=5
 
