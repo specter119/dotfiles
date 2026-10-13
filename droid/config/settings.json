@@ -15,7 +15,6 @@
   "missionOrchestratorReasoningEffort": "medium",
   "modelFavorites": [
     "glm-5.3",
-    "grok-4.6",
     "kimi-k3",
     "gpt-6-astra"
   ],

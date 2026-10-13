@@ -107,7 +107,7 @@ def credential_from_toml(value: object) -> dict[str, object] | None:
 
 
 def sync_auth_credential(table: tomlkit.items.Table, provider: str, value: object) -> bool:
-    """Sync one runtime-written OAuth credential from auth.json into local.toml.
+    """Sync one runtime-written provider credential from auth.json into local.toml.
 
     Stored under variables.<table-key>.<provider>; consumer templates render the
     whole credential object back into the deployed auth.json.
@@ -443,7 +443,7 @@ def main() -> None:
 
     changed = False
 
-    # pi-agent: defaultModel, defaultProvider, lastChangelogVersion, OAuth credentials
+    # pi-agent: settings plus all runtime auth providers except the rbw-managed opencode key
     pi_data = read_json(PI_SETTINGS)
     pi_auth = read_json(PI_AUTH)
     if pi_data or pi_auth is not None:
@@ -457,11 +457,23 @@ def main() -> None:
                 pi_data.get('lastChangelogVersion'),
             )
         if pi_auth is not None:
-            changed |= sync_auth_credential(
-                pi_table,
-                'github-copilot',
-                pi_auth.get('github-copilot'),
+            auth_table = pi_table.get('auth')
+            local_providers = (
+                set(auth_table.keys())
+                if isinstance(
+                    auth_table,
+                    (tomlkit.items.Table, tomlkit.items.InlineTable),
+                )
+                else set()
             )
+            live_providers = set(pi_auth) if isinstance(pi_auth, dict) else set()
+            providers = (local_providers | live_providers) - {'opencode'}
+            for provider in sorted(providers):
+                changed |= sync_auth_credential(
+                    pi_table,
+                    provider,
+                    pi_auth.get(provider) if isinstance(pi_auth, dict) else None,
+                )
 
     # droid: tool-managed trusted folders only
     droid_data = read_json(DROID_SETTINGS)
