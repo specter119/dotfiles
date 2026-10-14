@@ -13,6 +13,8 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
     { name = 'WSL:DebianWSL', distribution = 'DebianWSL', default_prog = { 'zellij' } },
   }
   table.insert(launch_menu, { label = 'Zellij', args = { 'zellij' } })
+  -- herdr resolves from the Nix profile PATH, so go through a login fish shell
+  table.insert(launch_menu, { label = 'Herdr', args = { 'fish', '-lc', 'exec herdr' } })
   table.insert(launch_menu, {
     label = 'PowerShell Core',
     domain = { DomainName = 'local' },
