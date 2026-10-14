@@ -24,9 +24,6 @@ depends = ['mako', 'waybar', 'avizo']
 [sway.files]
 sway = '~/.config'
 
-[voxtype]
-depends = ['sway']
-
 [voxtype.files]
 voxtype = '~/.config'
 
