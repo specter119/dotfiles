@@ -2,18 +2,19 @@ local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 local launch_menu = {}
 
--- Enable Kitty Keyboard Protocol for better key handling (required for zellij Ctrl+Shift bindings)
+-- Kitty Keyboard Protocol: good for key handling, but bad for display
 -- config.enable_kitty_keyboard = true
 
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   config.default_domain = 'WSL:DebianWSL'
-  -- Initial GUI window attaches to 'main' session; new tabs start plain zellij
-  config.default_gui_startup_args = { 'start', '--', 'zellij', 'attach', '--create', 'main' }
+  -- zellij/herdr come from the Nix profile, which is not on the PATH of a bare WSL
+  -- command, so launch them (and everything they spawn) via a login fish shell
+  -- TODO: add login shell support to wezterm
+  config.default_gui_startup_args = { 'start', '--', 'fish', '-lc', 'exec zellij attach --create main' }
   config.wsl_domains = {
-    { name = 'WSL:DebianWSL', distribution = 'DebianWSL', default_prog = { 'zellij' } },
+    { name = 'WSL:DebianWSL', distribution = 'DebianWSL', default_prog = { 'fish', '-lc', 'exec zellij' } },
   }
-  table.insert(launch_menu, { label = 'Zellij', args = { 'zellij' } })
-  -- herdr resolves from the Nix profile PATH, so go through a login fish shell
+  table.insert(launch_menu, { label = 'Zellij', args = { 'fish', '-lc', 'exec zellij' } })
   table.insert(launch_menu, { label = 'Herdr', args = { 'fish', '-lc', 'exec herdr' } })
   table.insert(launch_menu, {
     label = 'PowerShell Core',
@@ -38,6 +39,7 @@ end
 config.launch_menu = launch_menu
 
 config.term = 'wezterm'
+-- TODO: term = 'wezterm' breaks ssh to hosts without wezterm terminfo, solve it later.
 config.font = wezterm.font('Sarasa Term SC Nerd', { weight = 'DemiBold' })
 config.font_size = 13.0
 config.window_background_opacity = 0.86
