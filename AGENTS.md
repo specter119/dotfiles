@@ -150,7 +150,7 @@ nested_value = { key_b = "overridden" }
 #### Source Rules
 
 - **Per-machine / not synced across machines**: define a placeholder in `global.toml`, then override it from top-level `[variables]` in `.dotter/local.toml`.
-- **Tool-private variables**: must use namespaced tables, e.g. `[raft.variables.raft]` and `[variables.raft]`. Never use flat variable names like `raft_api_key`.
+- **Tool-private variables**: must use namespaced tables, e.g. `[magpie.variables.magpie]` and `[variables.magpie]`.
 - **Variables must be namespaced**: in `global.toml`, variables must be defined under `[pkg.variables.pkg]` (e.g. `[opencode.variables.opencode]`), not flat under `[pkg.variables]`. Dotter strict mode requires that the template access path `pkg.var_name` matches the variable definition path; un-namespaced variables trigger `Failed to access variable in strict mode` when used in `#each` (`#if` silently skips so it does not error, but the variable is not actually registered correctly).
 - **Cross-package shared variables**: use the owning tool's namespace, e.g. `git.repo_identities` is defined by `git` / `jj` and consumed by both Git and Jujutsu templates.
 - **Shareable secrets**: keep using inline `rbw get` in templates or scripts instead of storing them in `local.toml`.
@@ -170,7 +170,6 @@ Magpie owns provider-level model configuration (`~/.config/magpie/providers.json
 | Variable | Shape | Source | Notes |
 | --- | --- | --- | --- |
 | `codex.model` | string | `global + local` | Reverse-synced from `config.toml.model`; omitted when empty |
-| `raft.api_key` | string | `global + local` | Optional; service renders normally even when empty |
 | `enterprise_proxy.url` | string | `global + local` | Optional; provided by the `enterprise-proxy` variable-only package, used by raft via `WSS_PROXY` and by yt-dlp when set |
 | `yt-dlp.output_dir` | string | `global + local` | yt-dlp output root; defaults to `~/Videos` and can be overridden per machine |
 | `codex.model_provider` | string | `global` | Codex model provider; defaults to `magpie` in `global.toml`, not reverse-synced |
