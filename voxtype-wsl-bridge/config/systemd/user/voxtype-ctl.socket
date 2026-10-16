@@ -1,0 +1,12 @@
+[Unit]
+Description=Voxtype control socket for the Windows AutoHotkey bridge
+Documentation=https://voxtype.io
+
+[Socket]
+# WSL2 forwards loopback listeners to Windows, so AutoHotkey reaches this without
+# paying wsl.exe's ~1s startup cost on every key press.
+ListenStream=127.0.0.1:{{voxtype-wsl-bridge.port}}
+Accept=yes
+
+[Install]
+WantedBy=sockets.target
