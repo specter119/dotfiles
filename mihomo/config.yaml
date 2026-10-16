@@ -11,12 +11,12 @@ p: &p {type: http, interval: 3600, health-check: {enable: true, url: "https://ww
 
 # url 里填写自己的订阅,名称不能重复
 proxy-providers:
-  Doggygo:
+  TAGMeta:
     !!merge <<: *p
-    url: "{{replace (command_output 'rbw get doggygo_subscription_url') '\n' ''}}"
+    url: "{{replace (command_output 'rbw get tagmeta_subscription_url') '\n' ''}}"
   BoostNet:
     !!merge <<: *p
-    url: "{{replace (command_output 'rbw get boostnet2_subscription_url') '\n' ''}}"
+    url: "{{replace (command_output 'rbw get boostnet_subscription_url') '\n' ''}}"
 ipv6: true
 allow-lan: true
 mixed-port: 7890
