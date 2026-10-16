@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@botiverse/raft-daemon": "^1.0.17"
-  },
-  "name": "raft-daemon",
-  "private": true
-}

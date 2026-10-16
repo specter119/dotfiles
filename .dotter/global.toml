@@ -298,11 +298,7 @@ url = ''
 depends = ['enterprise-proxy']
 
 [raft.files]
-'raft/lib' = '~/.local/lib/raft'
-'raft/config' = '~/.config'
-
-[raft.variables.raft]
-api_key = ''
+raft = '~/.config'
 
 [ipython.files]
 ipython = '~/.ipython'
@@ -365,7 +361,7 @@ depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
 depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
 
 [agent]
-depends = ['agent-runtime', 'droid', 'pi', 'codex', 'chatgpt', 'amp', 'multica']
+depends = ['agent-runtime', 'droid', 'pi', 'codex', 'chatgpt', 'multica']
 
 [agent.files]
 'agent/config' = '~/.config'
