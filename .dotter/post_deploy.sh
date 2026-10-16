@@ -162,8 +162,76 @@ fix_glab_permissions() {
 	fi
 }
 
+# Codex wants its model catalog as a file. The magpie gateway serves it in
+# Codex's own format on the ChatGPT-style models route, so fetch it from there
+# instead of driving `magpie codex`, which rewrites config.toml and stash.json.
+refresh_magpie_codex_catalog() {
+	config="$HOME/.config/codex/config.toml"
+	[ -f "$config" ] || return 0
+	grep -q '^model_catalog_json = "magpie-models.json"' "$config" || return 0
+	command -v codex >/dev/null 2>&1 || return 0
+	version=$(codex --version 2>/dev/null | awk '{print $NF}')
+	[ -n "$version" ] || return 0
+
+	out=$(mktemp) || return 0
+	if python3 - "$config" "$version" "$out" <<'PY'
+import json
+import sys
+import tomllib
+import urllib.parse
+import urllib.request
+
+config, version, out = sys.argv[1:4]
+with open(config, "rb") as fh:
+    provider = tomllib.load(fh).get("model_providers", {}).get("magpie", {})
+base = urllib.parse.urlsplit(provider.get("base_url", ""))
+token = provider.get("experimental_bearer_token", "")
+if not base.scheme or not token:
+    raise SystemExit(1)
+url = f"{base.scheme}://{base.netloc}/backend-api/codex/models?client_version={version}"
+request = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
+with urllib.request.urlopen(request, timeout=10) as response:
+    catalog = json.load(response)
+if not catalog.get("models"):
+    raise SystemExit(1)
+with open(out, "w", encoding="utf-8") as fh:
+    json.dump(catalog, fh, ensure_ascii=False)
+PY
+	then
+		mv "$out" "$HOME/.config/codex/magpie-models.json"
+	else
+		rm -f "$out"
+		echo "[WARN] magpie codex catalog refresh failed; keeping the existing catalog"
+	fi
+}
+
+# Pi reads its model list from ~/.config/pi/models.json, which only
+# `magpie pi <model>` writes. Re-apply the model Dotter just rendered into
+# settings.json: the values are identical, so settings.json stays byte-equal to
+# the Dotter cache and only models.json is refreshed.
+refresh_magpie_pi_models() {
+	command -v magpie >/dev/null 2>&1 || return 0
+	[ -f .dotter/local.toml ] || return 0
+
+	model=$(python3 - <<'PY'
+import tomllib
+
+with open(".dotter/local.toml", "rb") as fh:
+    pi = tomllib.load(fh).get("variables", {}).get("pi", {})
+if pi.get("default_provider") == "magpie":
+    print(pi.get("default_model", ""))
+PY
+	)
+	[ -n "$model" ] || return 0
+
+	magpie pi "$model" >/dev/null 2>&1 ||
+		echo "[WARN] magpie pi $model failed; keeping the existing pi models.json"
+}
+
 # Clean up rendered templates (YAML, TOML, JSON and Markdown) after deployment.
 cleanup_rendered_templates
+refresh_magpie_codex_catalog
+refresh_magpie_pi_models
 audit_prek_parser_coverage
 normalize_glab_yaml_keys
 fix_ssh_permissions

@@ -1,3 +1,0 @@
-{
-  "providers": {{command_output "uv run .dotter/scripts/render_gateway_providers.py pi | jq . | sed '2,$s/^/  /'"}}
-}
