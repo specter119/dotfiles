@@ -7,7 +7,6 @@ Wants=network-online.target
 Type=exec
 ExecStart=raft-computer start --foreground
 ExecStop=raft-computer stop
-Environment=SLOCK_HOME=%D/raft
 {{#if enterprise_proxy.url}}
 Environment=WSS_PROXY={{enterprise_proxy.url}}
 {{/if}}
