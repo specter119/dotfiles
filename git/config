@@ -70,7 +70,6 @@
 # {{/each}}
 # {{/if}}
 
-
 [credential]
 	helper = {{env_var "WSL_WIN_HOME"}}/scoop/apps/mingit/current/ucrt64/bin/git-credential-manager.exe
 

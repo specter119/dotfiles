@@ -1,0 +1,8 @@
+# magpie installs its plugins with Bun and needs its own registry credentials.
+# Both values are the shared nodejs/registry-auth ones, exactly as in
+# ~/.bunfig.toml.
+# {{#if nodejs.registry}}
+[install.registry]
+url = "https://{{nodejs.registry}}/"
+token = "{{registry-auth.access_token}}"
+# {{/if}}

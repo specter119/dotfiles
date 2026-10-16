@@ -1,0 +1,14 @@
+{
+  "theme": "system",
+  "lang": "system",
+  "tray": "panel",
+  "currency": "usd",
+  "otel": {},
+  "redactPersonal": true,
+  "gatewayConversations": true,
+  "updateEvery": 360,
+  "trayUsageEvery": 3,
+  "plainNames": true,
+  "textSize": 110,
+  "modelWires": {{json_to_str magpie.model_wires}}
+}

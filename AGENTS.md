@@ -35,6 +35,7 @@ This repo manages configs for multiple AI coding agents. Their paths follow XDG 
 | Copilot | `COPILOT_HOME`        | `~/.config/copilot` |
 | Antigravity | `ANTIGRAVITY_CLI_HOME` | `~/.config/antigravity` |
 | Qoder   | `QODERCLI_HOME`       | `~/.config/qoder`   |
+| Magpie  | —                     | `~/.config/magpie`  |
 
 When reading or writing agent configs, use these paths.
 
@@ -49,7 +50,7 @@ This repo uses Dotter packages as a layered grouping system rather than a flat l
 - Current agent-related grouping is intentionally nested:
   - `agent`: shared entry package for agent-facing configs and common glue
   - `agent-tunnel`: agent-adjacent remote/service integrations
-  - `agent-runtime`: local runtime support for agent workflows
+  - `agent-runtime`: local runtime support for agent workflows (including the `magpie` gateway)
 
 When changing package names, dependencies, or file mappings, preserve this layered relationship unless the change is explicitly a package-architecture refactor.
 
@@ -158,34 +159,31 @@ nested_value = { key_b = "overridden" }
 
 #### Enterprise Gateway Provider Data
 
-Enterprise gateway provider data has two sources:
+Magpie owns provider-level model configuration (`~/.config/magpie/providers.json`) and the agent-side model lists derived from it. Dotter does not manage `providers.json`: the `magpie` package deploys only `settings.json` and `plugins/`, and nothing reverse-syncs the provider list.
 
-- [`agent/config/enterprise_llm_gateway/models.toml`](./agent/config/enterprise_llm_gateway/models.toml) is the tracked, shared source for enterprise model metadata: IDs, display names, capabilities, limits, and reasoning metadata. Each top-level deployment table owns a model list. See the adjacent [`README.md`](./agent/config/enterprise_llm_gateway/README.md) for the rendering pipeline and local configuration format.
-- `.dotter/local.toml` holds machine-local client credentials and deployment `base_url` values. Its deployment keys must exactly match the catalog.
-- The renderer combines every configured client with every catalog deployment. Consumer templates choose the resulting provider shape.
-- Do not duplicate model lists in `local.toml` or consumer-specific model files.
-- For the Dotter/Jinja lifecycle, delimiter rules, Pi mapping boundary, and validation commands, read [`.dotter/AGENTS.md` — Enterprise Provider Rendering](./.dotter/AGENTS.md#enterprise-provider-rendering) before modifying the renderer or either consumer template.
+- **Codex** uses the `magpie` provider (`codex.model_provider` defaults to `magpie` in `global.toml`; `model_providers.magpie`, key from `agent.magpie_apikey`). Its `model_catalog_json` is `magpie-models.json`, a runtime artifact that `.dotter/post_deploy.sh` fetches from the magpie gateway on every deploy; do not commit or hand-edit it.
+- **Pi** no longer has a `pi/models.json` template. `magpie pi <model>` merges a `magpie` provider into the live `~/.config/pi/models.json`, which magpie owns; `.dotter/post_deploy.sh` re-runs it on every deploy with `pi.default_model` from `local.toml` (only when `pi.default_provider` is `magpie`). The `magpie` credential in `pi/auth.json` renders from `agent.magpie_apikey`.
+- **OpenCode** has no enterprise provider block.
 
 #### Approved Variable Schema
 
 | Variable | Shape | Source | Notes |
 | --- | --- | --- | --- |
 | `codex.model` | string | `global + local` | Reverse-synced from `config.toml.model`; omitted when empty |
-| `codex.model_provider` | string | `global + local` | Reverse-synced from `config.toml.model_provider`; omitted when empty |
 | `raft.api_key` | string | `global + local` | Optional; service renders normally even when empty |
 | `enterprise_proxy.url` | string | `global + local` | Optional; provided by the `enterprise-proxy` variable-only package, used by raft via `WSS_PROXY` and by yt-dlp when set |
 | `yt-dlp.output_dir` | string | `global + local` | yt-dlp output root; defaults to `~/Videos` and can be overridden per machine |
+| `codex.model_provider` | string | `global` | Codex model provider; defaults to `magpie` in `global.toml`, not reverse-synced |
 | `codex.projects` | array of strings | `global + local` | Reverse-synced from trusted live Codex `[projects]` entries and renders that trust list |
 | `codex.hook_states` | array of tables | `global + local` | Each item has `key` and `trusted_hash`; renders Codex hook trust state |
 | `antigravity.trusted_workspaces` | array of strings | `global + local` | Optional; renders Antigravity `trustedWorkspaces` |
 | `git.repo_identities` | table | `global + local` | Keyed by identity name; values contain `repo_dir`, `name`, `email` |
 | `skm.local_packages` | array of tables | `global + local` | Each item has `repo`, optional `skills` |
 | `mihomo.direct_suffixes` | array of strings | `global + local` | Optional; extra direct rules are omitted when unset |
-| `agent.enterprise_clients` | array of tables | `global + local` | Enterprise gateway client identities; each entry has `client_id` and `api_key`; paired with every deployment by the provider renderer |
-| `agent.enterprise_deployments` | table of tables | `global + local` | Machine-local enterprise gateway deployments keyed by name; each contains `base_url` and must match a deployment table in the shared model catalog |
+| `agent.magpie_apikey` | string | `global + local` | Magpie gateway key rendered into the Codex `model_providers.magpie` bearer token and the Pi `auth.json` `magpie` credential; user-maintained, not reverse-synced |
 | `agent.otel_url` | string | `global + local` | Optional; when set, renders the pi `otel` settings block pointing at this OTLP endpoint |
+| `magpie.model_wires` | table | `global + local` | Maps a provider glob to a model-name rule (e.g. `"oocl-azure/*"` → `"*-sdlc-gs"`); rendered into the magpie `settings.json` `modelWires` field |
 | `pi.default_model` | string | `global + local` | Pi default model ID; synced from deploy side by sync script |
-| `pi.auth` | table | `global + local` | Runtime credentials keyed by provider name; reverse-synced from `auth.json` for all providers except `opencode`, whose API key is injected from Bitwarden, then rendered via `json_to_str`. Never committed (`local.toml` is gitignored) |
 | `pi.default_provider` | string | `global + local` | Pi default provider name; synced from deploy side by sync script |
 | `pi.enterprise_packages` | array of strings | `global + local` | Optional; extra packages appended to Pi packages list |
 | `pi.last_changelog_version` | string | `global + local` | Pi read changelog version; synced by sync script to avoid deploy overwriting local value |
@@ -390,7 +388,6 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 | live config format | local.toml format | recommended approach | reference function |
 |---|---|---|---|
 | string | string | `sync_string(table, 'key', data.get('field'))` | pi `default_model`, codex `model` |
-| string (conditional) | string | `sync_string(table, 'key', val, fallback='', remove_if_empty=True)` | codex `model_provider` |
 | `dict[path, {trust_level: "trusted"}]` | `string[]` | `sync_projects` — uses `normalize_projects` | codex `projects` |
 | `dict[str, {trustedAt: str}]` | `[[aot]]` array of tables | `sync_trusted_folders` — uses `normalize_trusted_folders` (live) + `normalize_existing_trusted_folders` (TOML) | droid `trusted_folders` |
 | `string[]` | inline array | `sync_trusted_workspaces` — uses `normalize_trusted_workspaces` for both sides | antigravity `trusted_workspaces` |
@@ -401,12 +398,10 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 |---|---|---|---|
 | codex | `model` | string | `config.toml.model` |
 | pi | `default_model` | string | `settings.json.defaultModel` |
-| pi | `auth` | `dict[str, ...]` | All `auth.json` provider credentials except the Bitwarden-managed `opencode` API key; rendered whole via `json_to_str` |
 | pi | `default_provider` | string | `settings.json.defaultProvider` |
 | pi | `last_changelog_version` | string | `settings.json.lastChangelogVersion` |
 | droid | `trusted_folders` | `[[aot]]` | `settings.json.trustedFolders` |
 | opencode | `default_model` | string | `opencode.jsonc.model` |
-| codex | `model_provider` | string (conditional) | `config.toml.model_provider` |
 | codex | `projects` | `string[]` | trusted `config.toml [projects.*]` entries |
 | antigravity | `trusted_workspaces` | `string[]` | `settings.json.trustedWorkspaces` |
 | glab | `default_host` | string | `config.yml.host` |

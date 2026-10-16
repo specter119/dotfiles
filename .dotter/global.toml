@@ -92,6 +92,15 @@ host = ''
 user_id = ''
 access_token = ''
 
+[magpie]
+depends = ['nodejs', 'registry-auth']
+
+[magpie.files]
+magpie = '~/.config/magpie'
+
+[magpie.variables.magpie]
+model_wires = {}
+
 [bun]
 depends = ['nodejs', 'registry-auth']
 
@@ -152,7 +161,7 @@ codex = '~/.config'
 
 [codex.variables.codex]
 model = ''
-model_provider = ''
+model_provider = 'magpie'
 projects = []
 hook_states = []
 
@@ -172,7 +181,6 @@ last_seen_version = ''
 pi = '~/.config/pi'
 
 [pi.variables.pi]
-auth = {}
 default_model = ''
 default_provider = ''
 enterprise_packages = []
@@ -364,8 +372,7 @@ depends = ['agent-runtime', 'droid', 'pi', 'codex', 'chatgpt', 'amp', 'multica']
 'agent/share' = '~/.local/share'
 
 [agent.variables.agent]
-enterprise_clients = []
-enterprise_deployments = {}
+magpie_apikey = ''
 otel_url = ''
 
 [agent-tunnel]
@@ -375,7 +382,7 @@ depends = ['bub', 'lody', 'raft']
 depends = ['playwright']
 
 [agent-runtime]
-depends = ['browser-use', 'skm', 'zellij', 'nmem']
+depends = ['browser-use', 'skm', 'zellij', 'nmem', 'magpie']
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'

@@ -1,7 +1,5 @@
-# {{#if codex.model_provider}}
 model_provider = "{{codex.model_provider}}"
-model_catalog_json = "enterprise-model-catalog.json"
-# {{/if}}
+model_catalog_json = "magpie-models.json"
 personality = "pragmatic"
 web_search = "live"
 notify = ["~/.local/share/cli-hooks/notify.sh"]
@@ -15,13 +13,12 @@ model = "{{codex.model}}"
 # {{/if}}
 
 [model_providers]
-
-{{#if agent.enterprise_deployments.azure}}
-[model_providers.enterprise]
-name = "Enterprise"
-base_url = "{{agent.enterprise_deployments.azure.base_url}}"
-requires_openai_auth = true
-{{/if}}
+[model_providers.magpie]
+name = "Magpie"
+base_url = "http://127.0.0.1:3425/v1"
+experimental_bearer_token = "{{agent.magpie_apikey}}"
+wire_api = "responses"
+supports_websockets = false
 
 [features]
 code_mode = true
