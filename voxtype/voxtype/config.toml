@@ -8,8 +8,9 @@ engine = "sensevoice"
 state_file = "auto"
 
 [hotkey]
-# Sway owns the hotkey (see sway/config.d/40-vibekey-voxtype.conf), so the
-# evdev listener, which would require the `input` group, stays off.
+# The hotkey is owned outside voxtype: Sway on Linux desktops (see
+# sway/config.d/40-vibekey-voxtype.conf), AutoHotkey on Windows/WSL. The evdev
+# listener, which would require the `input` group, stays off.
 enabled = false
 
 [audio]

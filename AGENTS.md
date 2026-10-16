@@ -27,15 +27,15 @@ Use `README.md` for the repository's purpose, user-facing configuration patterns
 
 This repo manages configs for multiple AI coding agents. Their paths follow XDG spec (`~/.config/<name>`) instead of defaults (`~/.<name>`):
 
-| Agent   | Env Var               | Path                |
-| ------- | --------------------- | ------------------- |
-| Codex   | `CODEX_HOME`          | `~/.config/codex`   |
-| Claude  | `CLAUDE_CONFIG_DIR`   | `~/.config/claude`  |
-| Pi      | `PI_CODING_AGENT_DIR` | `~/.config/pi`      |
-| Copilot | `COPILOT_HOME`        | `~/.config/copilot` |
+| Agent       | Env Var                | Path                    |
+| ----------- | ---------------------- | ----------------------- |
+| Codex       | `CODEX_HOME`           | `~/.config/codex`       |
+| Claude      | `CLAUDE_CONFIG_DIR`    | `~/.config/claude`      |
+| Pi          | `PI_CODING_AGENT_DIR`  | `~/.config/pi`          |
+| Copilot     | `COPILOT_HOME`         | `~/.config/copilot`     |
 | Antigravity | `ANTIGRAVITY_CLI_HOME` | `~/.config/antigravity` |
-| Qoder   | `QODERCLI_HOME`       | `~/.config/qoder`   |
-| Magpie  | —                     | `~/.config/magpie`  |
+| Qoder       | `QODERCLI_HOME`        | `~/.config/qoder`       |
+| Magpie      | —                      | `~/.config/magpie`      |
 
 When reading or writing agent configs, use these paths.
 
@@ -167,43 +167,45 @@ Magpie owns provider-level model configuration (`~/.config/magpie/providers.json
 
 #### Approved Variable Schema
 
-| Variable | Shape | Source | Notes |
-| --- | --- | --- | --- |
-| `codex.model` | string | `global + local` | Reverse-synced from `config.toml.model`; omitted when empty |
-| `enterprise_proxy.url` | string | `global + local` | Optional; provided by the `enterprise-proxy` variable-only package, used by raft via `WSS_PROXY` and by yt-dlp when set |
-| `yt-dlp.output_dir` | string | `global + local` | yt-dlp output root; defaults to `~/Videos` and can be overridden per machine |
-| `codex.model_provider` | string | `global` | Codex model provider; defaults to `magpie` in `global.toml`, not reverse-synced |
-| `codex.projects` | array of strings | `global + local` | Reverse-synced from trusted live Codex `[projects]` entries and renders that trust list |
-| `codex.hook_states` | array of tables | `global + local` | Each item has `key` and `trusted_hash`; renders Codex hook trust state |
-| `antigravity.trusted_workspaces` | array of strings | `global + local` | Optional; renders Antigravity `trustedWorkspaces` |
-| `git.repo_identities` | table | `global + local` | Keyed by identity name; values contain `repo_dir`, `name`, `email` |
-| `skm.local_packages` | array of tables | `global + local` | Each item has `repo`, optional `skills` |
-| `mihomo.direct_suffixes` | array of strings | `global + local` | Optional; extra direct rules are omitted when unset |
-| `agent.magpie_apikey` | string | `global + local` | Magpie gateway key rendered into the Codex `model_providers.magpie` bearer token and the Pi `auth.json` `magpie` credential; user-maintained, not reverse-synced |
-| `agent.otel_url` | string | `global + local` | Optional; when set, renders the pi `otel` settings block pointing at this OTLP endpoint |
-| `magpie.model_wires` | table | `global + local` | Maps a provider glob to a model-name rule (e.g. `"oocl-azure/*"` → `"*-sdlc-gs"`); rendered into the magpie `settings.json` `modelWires` field |
-| `pi.default_model` | string | `global + local` | Pi default model ID; synced from deploy side by sync script |
-| `pi.default_provider` | string | `global + local` | Pi default provider name; synced from deploy side by sync script |
-| `pi.enterprise_packages` | array of strings | `global + local` | Optional; extra packages appended to Pi packages list |
-| `pi.last_changelog_version` | string | `global + local` | Pi read changelog version; synced by sync script to avoid deploy overwriting local value |
-| `pi.subagent_model` | table | `global + local` | Keyed by subagent name → model id; injected into `pi/agents/<name>.md` frontmatter. An absent entry inherits the main agent `defaultModel`, so leaving a subagent unset is intentional inheritance, not a gap |
-| `opencode.default_model` | string | `global + local` | opencode default model, format `provider/model`; synced by sync script |
-| `opencode.enterprise_tui_plugins` | array of strings | `global + local` | Optional; TUI plugin entries are omitted when empty |
-| `droid.trusted_folders` | array of tables | `global + local` | Optional; each item has `dir` (folder path) and `trustedAt` (timestamp); renders Droid `trustedFolders` |
-| `glab.default_host` | string | `global + local` | Optional; glab default GitLab hostname; omitted when empty |
-| `glab.hosts` | array of tables | `global + local` | Each item has `host`, `token`, `user`, optional `container_registry_domains`; renders glab host config |
-| `glab.last_update_check_timestamp` | string | `global + local` | Reverse-synced from live config; avoids deploy overwriting update check state |
-| `glab.last_seen_version` | string | `global + local` | Reverse-synced from live config; avoids deploy overwriting version marker |
-| `multica.server_url` | string | `global + local` | Multica backend API URL; global default `http://localhost:8080` matches the CLI default, overridden per machine |
-| `multica.app_url` | string | `global + local` | Multica web app URL; global default `http://localhost:3000` matches the CLI default, overridden per machine |
-| `scoop.lastupdate` | string | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop lastupdate timestamp |
-| `uv.index_url` | string | `global + local` | uv pip index URL; defaults to USTC mirror, overridable per machine |
-| `registry-auth.host` | string | `global + local` | Docker registry host; consumed directly by `netrc/.netrc` |
-| `registry-auth.user_id` | string | `global + local` | Registry user id; consumed directly by `netrc/.netrc` and combined inline with access_token by npm/Docker templates |
-| `registry-auth.access_token` | string | `global + local` | Registry access token; consumed directly by Bun/netrc and combined inline with user_id by npm/Docker templates |
-| `nodejs.registry` | string | `global + local` | Shared npm/Bun registry URL; npm uses it in `~/.npmrc`, while Bun uses it with `registry-auth` credentials in `~/.bunfig.toml` |
-| `docker.registry_hosts` | array of strings | `global + local` | Docker registry hosts; each renders an `auths` entry with inline base64 auth when credentials are configured |
-| `voxtype.device` | string | `global + local` | Optional; ALSA capture device for voxtype; the `device` key is omitted when empty, so voxtype follows the system default |
+| Variable                           | Shape            | Source           | Notes                                                                                                                                                                                                         |
+| ---------------------------------- | ---------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `codex.model`                      | string           | `global + local` | Reverse-synced from `config.toml.model`; omitted when empty                                                                                                                                                   |
+| `enterprise_proxy.url`             | string           | `global + local` | Optional; provided by the `enterprise-proxy` variable-only package, used by raft via `WSS_PROXY` and by yt-dlp when set                                                                                       |
+| `yt-dlp.output_dir`                | string           | `global + local` | yt-dlp output root; defaults to `~/Videos` and can be overridden per machine                                                                                                                                  |
+| `codex.model_provider`             | string           | `global`         | Codex model provider; defaults to `magpie` in `global.toml`, not reverse-synced                                                                                                                               |
+| `codex.projects`                   | array of strings | `global + local` | Reverse-synced from trusted live Codex `[projects]` entries and renders that trust list                                                                                                                       |
+| `codex.hook_states`                | array of tables  | `global + local` | Each item has `key` and `trusted_hash`; renders Codex hook trust state                                                                                                                                        |
+| `antigravity.trusted_workspaces`   | array of strings | `global + local` | Optional; renders Antigravity `trustedWorkspaces`                                                                                                                                                             |
+| `git.repo_identities`              | table            | `global + local` | Keyed by identity name; values contain `repo_dir`, `name`, `email`                                                                                                                                            |
+| `skm.local_packages`               | array of tables  | `global + local` | Each item has `repo`, optional `skills`                                                                                                                                                                       |
+| `mihomo.direct_suffixes`           | array of strings | `global + local` | Optional; extra direct rules are omitted when unset                                                                                                                                                           |
+| `agent.magpie_apikey`              | string           | `global + local` | Magpie gateway key rendered into the Codex `model_providers.magpie` bearer token and the Pi `auth.json` `magpie` credential; user-maintained, not reverse-synced                                              |
+| `agent.otel_url`                   | string           | `global + local` | Optional; when set, renders the pi `otel` settings block pointing at this OTLP endpoint                                                                                                                       |
+| `magpie.model_wires`               | table            | `global + local` | Maps a provider glob to a model-name rule (e.g. `"oocl-azure/*"` → `"*-sdlc-gs"`); rendered into the magpie `settings.json` `modelWires` field                                                                |
+| `pi.default_model`                 | string           | `global + local` | Pi default model ID; synced from deploy side by sync script                                                                                                                                                   |
+| `pi.default_provider`              | string           | `global + local` | Pi default provider name; synced from deploy side by sync script                                                                                                                                              |
+| `pi.enterprise_packages`           | array of strings | `global + local` | Optional; extra packages appended to Pi packages list                                                                                                                                                         |
+| `pi.last_changelog_version`        | string           | `global + local` | Pi read changelog version; synced by sync script to avoid deploy overwriting local value                                                                                                                      |
+| `pi.subagent_model`                | table            | `global + local` | Keyed by subagent name → model id; injected into `pi/agents/<name>.md` frontmatter. An absent entry inherits the main agent `defaultModel`, so leaving a subagent unset is intentional inheritance, not a gap |
+| `opencode.default_model`           | string           | `global + local` | opencode default model, format `provider/model`; synced by sync script                                                                                                                                        |
+| `opencode.enterprise_tui_plugins`  | array of strings | `global + local` | Optional; TUI plugin entries are omitted when empty                                                                                                                                                           |
+| `droid.trusted_folders`            | array of tables  | `global + local` | Optional; each item has `dir` (folder path) and `trustedAt` (timestamp); renders Droid `trustedFolders`                                                                                                       |
+| `glab.default_host`                | string           | `global + local` | Optional; glab default GitLab hostname; omitted when empty                                                                                                                                                    |
+| `glab.hosts`                       | array of tables  | `global + local` | Each item has `host`, `token`, `user`, optional `container_registry_domains`; renders glab host config                                                                                                        |
+| `glab.last_update_check_timestamp` | string           | `global + local` | Reverse-synced from live config; avoids deploy overwriting update check state                                                                                                                                 |
+| `glab.last_seen_version`           | string           | `global + local` | Reverse-synced from live config; avoids deploy overwriting version marker                                                                                                                                     |
+| `multica.server_url`               | string           | `global + local` | Multica backend API URL; global default `http://localhost:8080` matches the CLI default, overridden per machine                                                                                               |
+| `multica.app_url`                  | string           | `global + local` | Multica web app URL; global default `http://localhost:3000` matches the CLI default, overridden per machine                                                                                                   |
+| `scoop.lastupdate`                 | string           | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop lastupdate timestamp                                                                                                              |
+| `uv.index_url`                     | string           | `global + local` | uv pip index URL; defaults to USTC mirror, overridable per machine                                                                                                                                            |
+| `registry-auth.host`               | string           | `global + local` | Docker registry host; consumed directly by `netrc/.netrc`                                                                                                                                                     |
+| `registry-auth.user_id`            | string           | `global + local` | Registry user id; consumed directly by `netrc/.netrc` and combined inline with access_token by npm/Docker templates                                                                                           |
+| `registry-auth.access_token`       | string           | `global + local` | Registry access token; consumed directly by Bun/netrc and combined inline with user_id by npm/Docker templates                                                                                                |
+| `nodejs.registry`                  | string           | `global + local` | Shared npm/Bun registry URL; npm uses it in `~/.npmrc`, while Bun uses it with `registry-auth` credentials in `~/.bunfig.toml`                                                                                |
+| `docker.registry_hosts`            | array of strings | `global + local` | Docker registry hosts; each renders an `auths` entry with inline base64 auth when credentials are configured                                                                                                  |
+| `voxtype-wsl-bridge.hold_key`      | string           | `global + local` | AutoHotkey key name held to dictate on Windows (default `RAlt`); must be a key the keyboard actually reports, and is rendered into `voxtype-wsl-bridge/windows/voxtype.ahk`                                   |
+| `voxtype-wsl-bridge.port`          | integer          | `global + local` | Loopback TCP port shared by the WSL `voxtype-ctl.socket` and the Windows AutoHotkey client; default `47821`                                                                                                   |
+| `voxtype.device`                   | string           | `global + local` | Optional; ALSA capture device for voxtype; the `device` key is omitted when empty, so voxtype follows the system default                                                                                      |
 
 #### Git Repo Identities
 
@@ -228,11 +230,11 @@ Each entry renders a matching Git conditional include and Jujutsu repository sco
 Use a root-and-leaf layout for a single configuration with multiple independent scopes:
 
 1. Define a namespaced collection in `global.toml` and its per-machine values in `local.toml`.
-2. Render a root dispatcher that includes or selects the relevant leaf configuration, for example Git `includeIf` or SSH `Include`.
-3. Render each leaf configuration from one of two sources:
+1. Render a root dispatcher that includes or selects the relevant leaf configuration, for example Git `includeIf` or SSH `Include`.
+1. Render each leaf configuration from one of two sources:
    - **Fixed instances**: keep a tracked leaf template.
    - **Dynamic instances**: generate ignored leaf artifacts in `pre_deploy.sh` from the variable collection, then deploy them through the package's directory mapping.
-4. Reverse-sync only leaves that users or tools can modify at runtime.
+1. Reverse-sync only leaves that users or tools can modify at runtime.
 
 Do not treat an ignored leaf as disposable unless a pre-deploy generator exists. Without one, it is still required source state and deleting it breaks the root dispatcher's selected configuration.
 
@@ -251,8 +253,8 @@ The `replace ... '\n' ''` removes trailing newline from rbw output.
 **Workflow:**
 
 1. `rbw add my-api-key` - store secret in Bitwarden
-2. Use `{{replace (command_output 'rbw get my-api-key') '\n' ''}}` in template
-3. `dotter deploy` - deploy with secrets injected
+1. Use `{{replace (command_output 'rbw get my-api-key') '\n' ''}}` in template
+1. `dotter deploy` - deploy with secrets injected
 
 #### TOML Template Tips
 
@@ -367,47 +369,48 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 **Needs reverse sync — tool modifies the value, deploy would lose it:**
 
 1. **Machine-specific config** — same setting differs across machines (e.g., default model). The user may switch it via the tool UI on machine A; deploy must preserve that choice, not overwrite with another machine's or the repo's default.
-2. **Tool-side-effect "non-config"** — the user doesn't treat it as config, but the agent tool writes it casually (e.g., trusted folders, dismissal banners). Losing it isn't fatal, but re-setting it after every deploy is annoying.
-3. **Time-sensitive markers** — version numbers, read receipts, changelog versions. They have almost no impact on usage, but deploy rollback is confusing ("I already read this changelog, why is it showing again?").
-4. **Temporary workaround** — switching models because a quota is exhausted, planning to switch back later. Reverse sync ensures deploy doesn't overwrite the workaround before you switch back.
+1. **Tool-side-effect "non-config"** — the user doesn't treat it as config, but the agent tool writes it casually (e.g., trusted folders, dismissal banners). Losing it isn't fatal, but re-setting it after every deploy is annoying.
+1. **Time-sensitive markers** — version numbers, read receipts, changelog versions. They have almost no impact on usage, but deploy rollback is confusing ("I already read this changelog, why is it showing again?").
+1. **Temporary workaround** — switching models because a quota is exhausted, planning to switch back later. Reverse sync ensures deploy doesn't overwrite the workaround before you switch back.
 
 **Does NOT need reverse sync — user maintains the value deliberately:**
+
 - **Intentionally maintained config** — API keys, manually selected models, and plugin lists that the user explicitly manages in `local.toml`. The tool never modifies them.
 - **Static content** — hardcoded in the template, no variable reference.
 
 ### Implementation Steps
 
 1. **Declare the variable** — add an empty placeholder in `global.toml`, register in the Approved Variable Schema in this file
-2. **Reference in template** — render with `{{#each}}` / `{{#if}}` in the corresponding template
-3. **Add sync function** — write a normalize-compare-write function in `live_config_reverse_sync.py`
-4. **Register in main()** — call the sync function in the corresponding agent block
+1. **Reference in template** — render with `{{#each}}` / `{{#if}}` in the corresponding template
+1. **Add sync function** — write a normalize-compare-write function in `live_config_reverse_sync.py`
+1. **Register in main()** — call the sync function in the corresponding agent block
 
 ### Variable Types and Sync Functions
 
-| live config format | local.toml format | recommended approach | reference function |
-|---|---|---|---|
-| string | string | `sync_string(table, 'key', data.get('field'))` | pi `default_model`, codex `model` |
-| `dict[path, {trust_level: "trusted"}]` | `string[]` | `sync_projects` — uses `normalize_projects` | codex `projects` |
-| `dict[str, {trustedAt: str}]` | `[[aot]]` array of tables | `sync_trusted_folders` — uses `normalize_trusted_folders` (live) + `normalize_existing_trusted_folders` (TOML) | droid `trusted_folders` |
-| `string[]` | inline array | `sync_trusted_workspaces` — uses `normalize_trusted_workspaces` for both sides | antigravity `trusted_workspaces` |
+| live config format                     | local.toml format         | recommended approach                                                                                           | reference function                |
+| -------------------------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| string                                 | string                    | `sync_string(table, 'key', data.get('field'))`                                                                 | pi `default_model`, codex `model` |
+| `dict[path, {trust_level: "trusted"}]` | `string[]`                | `sync_projects` — uses `normalize_projects`                                                                    | codex `projects`                  |
+| `dict[str, {trustedAt: str}]`          | `[[aot]]` array of tables | `sync_trusted_folders` — uses `normalize_trusted_folders` (live) + `normalize_existing_trusted_folders` (TOML) | droid `trusted_folders`           |
+| `string[]`                             | inline array              | `sync_trusted_workspaces` — uses `normalize_trusted_workspaces` for both sides                                 | antigravity `trusted_workspaces`  |
 
 ### Current Coverage
 
-| Agent | Variable | Format | Source |
-|---|---|---|---|
-| codex | `model` | string | `config.toml.model` |
-| pi | `default_model` | string | `settings.json.defaultModel` |
-| pi | `default_provider` | string | `settings.json.defaultProvider` |
-| pi | `last_changelog_version` | string | `settings.json.lastChangelogVersion` |
-| droid | `trusted_folders` | `[[aot]]` | `settings.json.trustedFolders` |
-| opencode | `default_model` | string | `opencode.jsonc.model` |
-| codex | `projects` | `string[]` | trusted `config.toml [projects.*]` entries |
-| antigravity | `trusted_workspaces` | `string[]` | `settings.json.trustedWorkspaces` |
-| glab | `default_host` | string | `config.yml.host` |
-| glab | `hosts` | `[[aot]]` | `config.yml.hosts` |
-| glab | `last_update_check_timestamp` | string | `config.yml.last_update_check_timestamp` |
-| glab | `last_seen_version` | string | `config.yml.last_seen_version` |
-| scoop | `lastupdate` | string | `config.json.lastupdate` (Windows only) |
+| Agent       | Variable                      | Format     | Source                                     |
+| ----------- | ----------------------------- | ---------- | ------------------------------------------ |
+| codex       | `model`                       | string     | `config.toml.model`                        |
+| pi          | `default_model`               | string     | `settings.json.defaultModel`               |
+| pi          | `default_provider`            | string     | `settings.json.defaultProvider`            |
+| pi          | `last_changelog_version`      | string     | `settings.json.lastChangelogVersion`       |
+| droid       | `trusted_folders`             | `[[aot]]`  | `settings.json.trustedFolders`             |
+| opencode    | `default_model`               | string     | `opencode.jsonc.model`                     |
+| codex       | `projects`                    | `string[]` | trusted `config.toml [projects.*]` entries |
+| antigravity | `trusted_workspaces`          | `string[]` | `settings.json.trustedWorkspaces`          |
+| glab        | `default_host`                | string     | `config.yml.host`                          |
+| glab        | `hosts`                       | `[[aot]]`  | `config.yml.hosts`                         |
+| glab        | `last_update_check_timestamp` | string     | `config.yml.last_update_check_timestamp`   |
+| glab        | `last_seen_version`           | string     | `config.yml.last_seen_version`             |
+| scoop       | `lastupdate`                  | string     | `config.json.lastupdate` (Windows only)    |
 
 ## Commands
 

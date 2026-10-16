@@ -1,5 +1,8 @@
 [helpers]
 
+[wsl-guest]
+depends = ['voxtype-wsl-bridge']
+
 [wsl-guest.files]
 'wsl-guest' = '~/.config'
 
@@ -29,6 +32,14 @@ voxtype = '~/.config'
 
 [voxtype.variables.voxtype]
 device = ''
+
+[voxtype-wsl-bridge.files]
+'voxtype-wsl-bridge/config' = '~/.config'
+'voxtype-wsl-bridge/windows' = '$WSL_WIN_HOME/AppData/Roaming/voxtype-wsl-bridge'
+
+[voxtype-wsl-bridge.variables.voxtype-wsl-bridge]
+hold_key = 'RAlt'
+port = 47821
 
 [fontconfig.files]
 fontconfig = '~/.config/fontconfig'
@@ -378,7 +389,7 @@ depends = ['bub', 'lody', 'raft']
 depends = ['playwright']
 
 [agent-runtime]
-depends = ['browser-use', 'skm', 'zellij', 'nmem', 'magpie']
+depends = ['browser-use', 'skm', 'zellij', 'nmem', 'magpie', 'voxtype']
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'
