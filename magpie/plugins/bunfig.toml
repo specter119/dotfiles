@@ -1,8 +1,8 @@
 # magpie installs its plugins with Bun and needs its own registry credentials.
-# Both values are the shared nodejs/registry-auth ones, exactly as in
+# Both values come from the enterprise-artifact package, exactly as in
 # ~/.bunfig.toml.
-# {{#if nodejs.registry}}
+# {{#if dotter.packages.enterprise-artifact}}
 [install.registry]
-url = "https://{{nodejs.registry}}/"
-token = "{{registry-auth.access_token}}"
+url = "https://{{enterprise-artifact.npm_registry}}/"
+token = "{{enterprise-artifact.access_token}}"
 # {{/if}}

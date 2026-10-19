@@ -6,10 +6,10 @@
 [install]
 globalDir = '{{env_var "HOME"}}/.local/share/bun'
 globalBinDir = '{{env_var "HOME"}}/.local/bin'
-# {{#if nodejs.registry}}
+# {{#if dotter.packages.enterprise-artifact}}
 [install.registry]
-url = "https://{{nodejs.registry}}/"
-token = "{{registry-auth.access_token}}"
+url = "https://{{enterprise-artifact.npm_registry}}/"
+token = "{{enterprise-artifact.access_token}}"
 # {{/if}}
 
 [install.cache]
