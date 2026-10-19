@@ -51,6 +51,9 @@ This repo uses Dotter packages as a layered grouping system rather than a flat l
   - `agent`: shared entry package for agent-facing configs and common glue
   - `agent-tunnel`: agent-adjacent remote/service integrations
   - `agent-runtime`: local runtime support for agent workflows (including the `magpie` gateway)
+- `enterprise-artifact` is the single source of enterprise Artifactory credentials and registry endpoints (npm, PyPI, Docker). It deploys `~/.netrc` and `~/.docker/config.json`; `uv` authenticates against the enterprise PyPI index through `~/.netrc`. General tools such as `npm`, `bun`, `magpie` and `uv` do not depend on it; their templates test `dotter.packages.enterprise-artifact` and render the enterprise part only when the package is selected
+- `nodejs` is a group of `bun` and `npm`; select `bun` alone on machines that do not need npm
+- `wsl-guest` is a group for WSL guests: it carries the required Windows env vars and WSLg environment itself, and composes `wsl-ssh-agent` and `voxtype-wsl-bridge`
 
 When changing package names, dependencies, or file mappings, preserve this layered relationship unless the change is explicitly a package-architecture refactor.
 
@@ -167,45 +170,46 @@ Magpie owns provider-level model configuration (`~/.config/magpie/providers.json
 
 #### Approved Variable Schema
 
-| Variable                           | Shape            | Source           | Notes                                                                                                                                                                                                         |
-| ---------------------------------- | ---------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `codex.model`                      | string           | `global + local` | Reverse-synced from `config.toml.model`; omitted when empty                                                                                                                                                   |
-| `enterprise_proxy.url`             | string           | `global + local` | Optional; provided by the `enterprise-proxy` variable-only package, used by raft via `WSS_PROXY` and by yt-dlp when set                                                                                       |
-| `yt-dlp.output_dir`                | string           | `global + local` | yt-dlp output root; defaults to `~/Videos` and can be overridden per machine                                                                                                                                  |
-| `codex.model_provider`             | string           | `global`         | Codex model provider; defaults to `magpie` in `global.toml`, not reverse-synced                                                                                                                               |
-| `codex.projects`                   | array of strings | `global + local` | Reverse-synced from trusted live Codex `[projects]` entries and renders that trust list                                                                                                                       |
-| `codex.hook_states`                | array of tables  | `global + local` | Each item has `key` and `trusted_hash`; renders Codex hook trust state                                                                                                                                        |
-| `antigravity.trusted_workspaces`   | array of strings | `global + local` | Optional; renders Antigravity `trustedWorkspaces`                                                                                                                                                             |
-| `git.repo_identities`              | table            | `global + local` | Keyed by identity name; values contain `repo_dir`, `name`, `email`                                                                                                                                            |
-| `skm.local_packages`               | array of tables  | `global + local` | Each item has `repo`, optional `skills`                                                                                                                                                                       |
-| `mihomo.direct_suffixes`           | array of strings | `global + local` | Optional; extra direct rules are omitted when unset                                                                                                                                                           |
-| `agent.magpie_apikey`              | string           | `global + local` | Magpie gateway key rendered into the Codex `model_providers.magpie` bearer token and the Pi `auth.json` `magpie` credential; user-maintained, not reverse-synced                                              |
-| `agent.otel_url`                   | string           | `global + local` | Optional; when set, renders the pi `otel` settings block pointing at this OTLP endpoint                                                                                                                       |
-| `magpie.model_wires`               | table            | `global + local` | Maps a provider glob to a model-name rule (e.g. `"oocl-azure/*"` → `"*-sdlc-gs"`); rendered into the magpie `settings.json` `modelWires` field                                                                |
-| `pi.default_model`                 | string           | `global + local` | Pi default model ID; synced from deploy side by sync script                                                                                                                                                   |
-| `pi.default_provider`              | string           | `global + local` | Pi default provider name; synced from deploy side by sync script                                                                                                                                              |
-| `pi.enterprise_packages`           | array of strings | `global + local` | Optional; extra packages appended to Pi packages list                                                                                                                                                         |
-| `pi.last_changelog_version`        | string           | `global + local` | Pi read changelog version; synced by sync script to avoid deploy overwriting local value                                                                                                                      |
-| `pi.subagent_model`                | table            | `global + local` | Keyed by subagent name → model id; injected into `pi/agents/<name>.md` frontmatter. An absent entry inherits the main agent `defaultModel`, so leaving a subagent unset is intentional inheritance, not a gap |
-| `opencode.default_model`           | string           | `global + local` | opencode default model, format `provider/model`; synced by sync script                                                                                                                                        |
-| `opencode.enterprise_tui_plugins`  | array of strings | `global + local` | Optional; TUI plugin entries are omitted when empty                                                                                                                                                           |
-| `droid.trusted_folders`            | array of tables  | `global + local` | Optional; each item has `dir` (folder path) and `trustedAt` (timestamp); renders Droid `trustedFolders`                                                                                                       |
-| `glab.default_host`                | string           | `global + local` | Optional; glab default GitLab hostname; omitted when empty                                                                                                                                                    |
-| `glab.hosts`                       | array of tables  | `global + local` | Each item has `host`, `token`, `user`, optional `container_registry_domains`; renders glab host config                                                                                                        |
-| `glab.last_update_check_timestamp` | string           | `global + local` | Reverse-synced from live config; avoids deploy overwriting update check state                                                                                                                                 |
-| `glab.last_seen_version`           | string           | `global + local` | Reverse-synced from live config; avoids deploy overwriting version marker                                                                                                                                     |
-| `multica.server_url`               | string           | `global + local` | Multica backend API URL; global default `http://localhost:8080` matches the CLI default, overridden per machine                                                                                               |
-| `multica.app_url`                  | string           | `global + local` | Multica web app URL; global default `http://localhost:3000` matches the CLI default, overridden per machine                                                                                                   |
-| `scoop.lastupdate`                 | string           | `global + local` | Reverse-synced from live config on Windows; avoids deploy overwriting scoop lastupdate timestamp                                                                                                              |
-| `uv.index_url`                     | string           | `global + local` | uv pip index URL; defaults to USTC mirror, overridable per machine                                                                                                                                            |
-| `registry-auth.host`               | string           | `global + local` | Docker registry host; consumed directly by `netrc/.netrc`                                                                                                                                                     |
-| `registry-auth.user_id`            | string           | `global + local` | Registry user id; consumed directly by `netrc/.netrc` and combined inline with access_token by npm/Docker templates                                                                                           |
-| `registry-auth.access_token`       | string           | `global + local` | Registry access token; consumed directly by Bun/netrc and combined inline with user_id by npm/Docker templates                                                                                                |
-| `nodejs.registry`                  | string           | `global + local` | Shared npm/Bun registry URL; npm uses it in `~/.npmrc`, while Bun uses it with `registry-auth` credentials in `~/.bunfig.toml`                                                                                |
-| `docker.registry_hosts`            | array of strings | `global + local` | Docker registry hosts; each renders an `auths` entry with inline base64 auth when credentials are configured                                                                                                  |
-| `voxtype-wsl-bridge.hold_key`      | string           | `global + local` | AutoHotkey key name held to dictate on Windows (default `RAlt`); must be a key the keyboard actually reports, and is rendered into `voxtype-wsl-bridge/windows/voxtype.ahk`                                   |
-| `voxtype-wsl-bridge.port`          | integer          | `global + local` | Loopback TCP port shared by the WSL `voxtype-ctl.socket` and the Windows AutoHotkey client; default `47821`                                                                                                   |
-| `voxtype.device`                   | string           | `global + local` | Optional; ALSA capture device for voxtype; the `device` key is omitted when empty, so voxtype follows the system default                                                                                      |
+| Variable                                    | Shape            | Source           | Notes                                                                                                                                                                                                         |
+| ------------------------------------------- | ---------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `codex.model`                               | string           | `global + local` | Reverse-synced from `config.toml.model`; omitted when empty                                                                                                                                                   |
+| `enterprise_proxy.url`                      | string           | `global + local` | Optional; provided by the `enterprise-proxy` variable-only package, used by raft via `WSS_PROXY` and by yt-dlp when set                                                                                       |
+| `yt-dlp.output_dir`                         | string           | `global + local` | yt-dlp output root; defaults to `~/Videos` and can be overridden per machine                                                                                                                                  |
+| `codex.model_provider`                      | string           | `global`         | Codex model provider; defaults to `magpie` in `global.toml`, not reverse-synced                                                                                                                               |
+| `codex.projects`                            | array of strings | `global + local` | Reverse-synced from trusted live Codex `[projects]` entries and renders that trust list                                                                                                                       |
+| `codex.hook_states`                         | array of tables  | `global + local` | Each item has `key` and `trusted_hash`; reverse-synced from `config.toml` `hooks.state`, renders Codex hook trust state                                                                                       |
+| `antigravity.trusted_workspaces`            | array of strings | `global + local` | Optional; reverse-synced from `settings.json.trustedWorkspaces`                                                                                                                                               |
+| `git.repo_identities`                       | table            | `global + local` | Keyed by identity name; values contain `repo_dir`, `name`, `email`                                                                                                                                            |
+| `skm.local_packages`                        | array of tables  | `global + local` | Each item has `repo`, optional `skills`                                                                                                                                                                       |
+| `mihomo.direct_suffixes`                    | array of strings | `global + local` | Optional; extra direct rules are omitted when unset                                                                                                                                                           |
+| `agent.magpie_apikey`                       | string           | `global + local` | Magpie gateway key rendered into the Codex `model_providers.magpie` bearer token and the Pi `auth.json` `magpie` credential; user-maintained, not reverse-synced                                              |
+| `agent.otel_url`                            | string           | `global + local` | Optional; when set, renders the pi `otel` settings block pointing at this OTLP endpoint                                                                                                                       |
+| `magpie.model_wires`                        | table            | `global + local` | Maps a provider glob to a model-name rule (e.g. `"oocl-azure/*"` → `"*-sdlc-gs"`); rendered into the magpie `settings.json` `modelWires` field                                                                |
+| `pi.default_model`                          | string           | `global + local` | Pi default model ID; reverse-synced from `settings.json.defaultModel`                                                                                                                                         |
+| `pi.default_provider`                       | string           | `global + local` | Pi default provider name; reverse-synced from `settings.json.defaultProvider`                                                                                                                                 |
+| `pi.enterprise_packages`                    | array of strings | `global + local` | Optional; extra packages appended to Pi packages list                                                                                                                                                         |
+| `pi.last_changelog_version`                 | string           | `global + local` | Pi read changelog version; reverse-synced from `settings.json.lastChangelogVersion` to avoid deploy overwriting local value                                                                                   |
+| `pi.subagent_model`                         | table            | `global + local` | Keyed by subagent name → model id; injected into `pi/agents/<name>.md` frontmatter. An absent entry inherits the main agent `defaultModel`, so leaving a subagent unset is intentional inheritance, not a gap |
+| `opencode.default_model`                    | string           | `global + local` | opencode default model, format `provider/model`; reverse-synced from `opencode.jsonc.model`                                                                                                                   |
+| `opencode.enterprise_tui_plugins`           | array of strings | `global + local` | Optional; TUI plugin entries are omitted when empty                                                                                                                                                           |
+| `droid.trusted_folders`                     | array of tables  | `global + local` | Optional; each item has `dir` (folder path) and `trustedAt` (timestamp); reverse-synced from `settings.json.trustedFolders`                                                                                   |
+| `glab.default_host`                         | string           | `global + local` | Optional; glab default GitLab hostname; reverse-synced from `config.yml.host`; omitted when empty                                                                                                             |
+| `glab.hosts`                                | array of tables  | `global + local` | Each item has `host`, `token`, `user`, optional `container_registry_domains`; reverse-synced from `config.yml.hosts`                                                                                          |
+| `glab.last_update_check_timestamp`          | string           | `global + local` | Reverse-synced from `config.yml.last_update_check_timestamp`; avoids deploy overwriting update check state                                                                                                    |
+| `glab.last_seen_version`                    | string           | `global + local` | Reverse-synced from `config.yml.last_seen_version`; avoids deploy overwriting version marker                                                                                                                  |
+| `multica.server_url`                        | string           | `global + local` | Multica backend API URL; global default `http://localhost:8080` matches the CLI default, overridden per machine                                                                                               |
+| `multica.app_url`                           | string           | `global + local` | Multica web app URL; global default `http://localhost:3000` matches the CLI default, overridden per machine                                                                                                   |
+| `scoop.lastupdate`                          | string           | `global + local` | Reverse-synced from `config.json.lastupdate` on Windows; avoids deploy overwriting scoop lastupdate timestamp                                                                                                 |
+| `uv.index_url`                              | string           | `global + local` | uv pip index URL used when `enterprise-artifact` is not selected; defaults to USTC mirror, overridable per machine                                                                                            |
+| `enterprise-artifact.host`                  | string           | `global + local` | Artifactory host; consumed directly by `.netrc`                                                                                                                                                               |
+| `enterprise-artifact.user_id`               | string           | `global + local` | Artifactory user id; consumed directly by `.netrc` and combined inline with access_token by npm/Docker templates                                                                                              |
+| `enterprise-artifact.access_token`          | string           | `global + local` | Artifactory access token; consumed directly by Bun/netrc and combined inline with user_id by npm/Docker templates                                                                                             |
+| `enterprise-artifact.npm_registry`          | string           | `global + local` | Shared npm/Bun registry URL without scheme; used by `~/.npmrc`, `~/.bunfig.toml` and the magpie plugin `bunfig.toml`                                                                                          |
+| `enterprise-artifact.pypi_index`            | string           | `global + local` | Enterprise PyPI index URL; replaces `uv.index_url` in `uv.toml` when the package is selected                                                                                                                  |
+| `enterprise-artifact.docker_registry_hosts` | array of strings | `global + local` | Docker registry hosts; each renders an `auths` entry with inline base64 auth                                                                                                                                  |
+| `voxtype-wsl-bridge.hold_key`               | string           | `global + local` | AutoHotkey key name held to dictate on Windows (default `RAlt`); must be a key the keyboard actually reports, and is rendered into `voxtype-wsl-bridge/windows/voxtype.ahk`                                   |
+| `voxtype-wsl-bridge.port`                   | integer          | `global + local` | Loopback TCP port shared by the WSL `voxtype-wsl-bridge.socket` and the Windows AutoHotkey client; default `47821`                                                                                            |
+| `voxtype.device`                            | string           | `global + local` | Optional; ALSA capture device for voxtype; the `device` key is omitted when empty, so voxtype follows the system default                                                                                      |
 
 #### Git Repo Identities
 
@@ -282,7 +286,7 @@ trust_level = "trusted"
 
 #### YAML Template Tips
 
-When a YAML file is both a Dotter template and pre-commit formatted with `yamlfmt`, keep these rules:
+Keep these rules for YAML Dotter templates:
 
 ```yaml
 # local_packages has global default [], loop directly; skills is per-item optional, keep #if
@@ -298,21 +302,21 @@ When a YAML file is both a Dotter template and pre-commit formatted with `yamlfm
 ```
 
 - Put control blocks like `#each` and `#if` in YAML comments so YAML formatters and editors can still parse the file.
-- Quote inline Handlebars values in YAML scalars, for example `repo: "{{repo}}"` and `- "{{this}}"`. Unquoted forms may be rewritten into invalid `{ { repo } }` style text by formatters.
+- Quote inline Handlebars values in YAML scalars, for example `repo: "{{repo}}"` and `- "{{this}}"`, unless the target tool writes that value unquoted and Dotter must reproduce its exact bytes (see `glab/config.yml`).
 
 #### JSON Template Tips
 
 JSON has no comments, so Handlebars control blocks split into two forms:
 
-- **Standalone control blocks** (`{{#each}}`, `{{/each}}`, `{{#if}}`, `{{/if}}`) go on `# `-prefixed lines. After rendering, leftover `# ` blank lines are removed by `post_deploy.sh` cleanup. Use `docker/config.json` as the reference.
+- **Standalone control blocks** (`{{#each}}`, `{{/each}}`, `{{#if}}`, `{{/if}}`) go on `# `-prefixed lines. After rendering, leftover `# ` blank lines are removed by `post_deploy.sh` cleanup. Use `enterprise-artifact/.docker/config.json` as the reference.
 - **Inline control blocks** (e.g. `{{#unless @last}},{{/unless}}` for comma separation) stay bare, because they must emit literal characters and cannot be commented out.
 
 ```json
 {
   "auths": {
-# {{#each docker.registry_hosts}}
+# {{#each enterprise-artifact.docker_registry_hosts}}
     "{{this}}": {
-      "auth": "{{#if @root.registry-auth}}{{replace (command_output (replace (replace "printf '%s:%s' '__USER_ID__' '__ACCESS_TOKEN__' | base64" "__USER_ID__" @root.registry-auth.user_id) "__ACCESS_TOKEN__" @root.registry-auth.access_token)) "\n" ""}}{{/if}}"
+      "auth": "{{replace (command_output (replace (replace "printf '%s:%s' '__USER_ID__' '__ACCESS_TOKEN__' | base64" "__USER_ID__" @root.enterprise-artifact.user_id) "__ACCESS_TOKEN__" @root.enterprise-artifact.access_token)) "\n" ""}}"
     }{{#unless @last}},{{/unless}}
 # {{/each}}
   }
@@ -320,7 +324,7 @@ JSON has no comments, so Handlebars control blocks split into two forms:
 ```
 
 - `post_deploy.sh` identifies templates with `# `-prefixed `#if`/`#each` controls by content and strips residual blank `# ` lines from both the rendered target and the Dotter cache.
-- **Use `@root.` for package-level variables inside `{{#each}}`**: `#each` makes each item the current context, so relative paths in helper arguments (e.g. `registry-auth.user_id`) fail to resolve inside the loop and the whole expression **silently renders empty** (deploy does not error). The `{{#if registry-auth}}` condition fails the same way. Write `{{#if @root.registry-auth}}` and `@root.registry-auth.user_id` instead. Templates with only `#if` and no `#each` (e.g. `npm/.npmrc`) are unaffected because the root context is preserved. The same rule applies to `#each` loops in TOML and YAML templates (e.g. `{{#each skm.local_packages}}` referencing package-level variables).
+- **Use `@root.` for package-level variables inside `{{#each}}`**: `#each` makes each item the current context, so relative paths in helper arguments (e.g. `enterprise-artifact.user_id`) fail to resolve inside the loop and the whole expression **silently renders empty** (deploy does not error). Conditions on package-level variables fail the same way. Write `@root.enterprise-artifact.user_id` instead. Templates with only `#if` and no `#each` (e.g. `npm/.npmrc`) are unaffected because the root context is preserved. The same rule applies to `#each` loops in TOML and YAML templates (e.g. `{{#each skm.local_packages}}` referencing package-level variables).
 
 ## Live Config Reverse Sync Pattern
 
@@ -393,24 +397,6 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 | `dict[path, {trust_level: "trusted"}]` | `string[]`                | `sync_projects` — uses `normalize_projects`                                                                    | codex `projects`                  |
 | `dict[str, {trustedAt: str}]`          | `[[aot]]` array of tables | `sync_trusted_folders` — uses `normalize_trusted_folders` (live) + `normalize_existing_trusted_folders` (TOML) | droid `trusted_folders`           |
 | `string[]`                             | inline array              | `sync_trusted_workspaces` — uses `normalize_trusted_workspaces` for both sides                                 | antigravity `trusted_workspaces`  |
-
-### Current Coverage
-
-| Agent       | Variable                      | Format     | Source                                     |
-| ----------- | ----------------------------- | ---------- | ------------------------------------------ |
-| codex       | `model`                       | string     | `config.toml.model`                        |
-| pi          | `default_model`               | string     | `settings.json.defaultModel`               |
-| pi          | `default_provider`            | string     | `settings.json.defaultProvider`            |
-| pi          | `last_changelog_version`      | string     | `settings.json.lastChangelogVersion`       |
-| droid       | `trusted_folders`             | `[[aot]]`  | `settings.json.trustedFolders`             |
-| opencode    | `default_model`               | string     | `opencode.jsonc.model`                     |
-| codex       | `projects`                    | `string[]` | trusted `config.toml [projects.*]` entries |
-| antigravity | `trusted_workspaces`          | `string[]` | `settings.json.trustedWorkspaces`          |
-| glab        | `default_host`                | string     | `config.yml.host`                          |
-| glab        | `hosts`                       | `[[aot]]`  | `config.yml.hosts`                         |
-| glab        | `last_update_check_timestamp` | string     | `config.yml.last_update_check_timestamp`   |
-| glab        | `last_seen_version`           | string     | `config.yml.last_seen_version`             |
-| scoop       | `lastupdate`                  | string     | `config.json.lastupdate` (Windows only)    |
 
 ## Commands
 

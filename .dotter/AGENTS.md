@@ -30,9 +30,6 @@ Scope: `.dotter/`
 
 - `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` are for deploy-time glue that should not live in static templates. Keep these entry scripts POSIX `sh` compatible because Dotter may execute the rendered cache scripts through `/bin/sh`; call Bash-only helpers explicitly with `bash ...`.
 - `.dotter/scripts/live_config_reverse_sync.py` is invoked from `.dotter/pre_deploy.sh` to reverse-sync tool-modified config values (e.g., Codex model and trusted projects, Droid trusted folders, Pi defaults) from live configs back into `local.toml`. See repo-level `AGENTS.md` for the decision framework and variable coverage.
-- `.dotter/scripts/mcp_setup.sh` is only a manual backup for setting Claude MCP entries. It is not part of the normal deploy path.
-- Keep `.dotter/scripts/mcp_setup.sh` scoped to Claude MCP only; do not add other agent setup there.
-- Do not call `.dotter/scripts/mcp_setup.sh` from deploy hooks.
 - Do not add post-deploy commands that write secrets or tool-generated runtime state back into repo-managed config files.
 - These deploy scripts are also templates. Do not write a literal `{{` inside embedded shell or Python snippets; build it at runtime instead.
 - `post_deploy.sh` identifies templates with comment-wrapped Handlebars controls by content, not filename extension, before removing residual blank `#` lines from their target and cache copies.
@@ -47,4 +44,4 @@ Scope: `.dotter/`
 
 - Treat files in `$XDG_RUNTIME_DIR/dotter/` as disposable runtime artifacts. Templates may read them with `command_output`, but they must not be committed back into repo-managed config.
 
-- Current registry flow: `nodejs.registry` supplies the shared npm/Bun registry URL; `npm/.npmrc` and `docker/config.json` compute base64 auth inline when the `registry-auth` table exists, while `bun/.bunfig.toml`, `magpie/plugins/bunfig.toml` and `netrc/.netrc` consume the raw registry credentials directly. `.dotter/pre_deploy.sh` does not depend on registry-auth variables.
+- Registry credentials are owned by the `enterprise-artifact` package (see `Package Organization` in the root `AGENTS.md`). `.dotter/pre_deploy.sh` does not depend on its variables.

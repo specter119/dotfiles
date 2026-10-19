@@ -4,5 +4,5 @@ system-certs = true
 link-mode = "clone"
 
 [[index]]
-url = "{{uv.index_url}}"
+url = "{{#if dotter.packages.enterprise-artifact}}{{enterprise-artifact.pypi_index}}{{else}}{{uv.index_url}}{{/if}}"
 default = true

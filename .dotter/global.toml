@@ -1,10 +1,11 @@
-[helpers]
-
 [wsl-guest]
-depends = ['voxtype-wsl-bridge']
+depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge']
 
 [wsl-guest.files]
 'wsl-guest' = '~/.config'
+
+[wsl-ssh-agent.files]
+'wsl-ssh-agent' = '~/.config'
 
 [container.files]
 container = '~/.config'
@@ -98,13 +99,16 @@ uv = '~/.config/uv'
 [uv.variables.uv]
 index_url = 'https://mirrors.ustc.edu.cn/pypi/simple'
 
-[registry-auth.variables.registry-auth]
+[enterprise-artifact.files]
+'enterprise-artifact' = '~'
+
+[enterprise-artifact.variables.enterprise-artifact]
 host = ''
 user_id = ''
 access_token = ''
-
-[magpie]
-depends = ['nodejs', 'registry-auth']
+npm_registry = ''
+pypi_index = ''
+docker_registry_hosts = []
 
 [magpie.files]
 magpie = '~/.config/magpie'
@@ -112,38 +116,15 @@ magpie = '~/.config/magpie'
 [magpie.variables.magpie]
 model_wires = {}
 
-[bun]
-depends = ['nodejs', 'registry-auth']
+[nodejs]
+depends = ['bun', 'npm']
 
 [bun.files]
 'bun/bunfig.toml' = '~/.bunfig.toml'
 'bun/config' = '~/.config'
 
-[nodejs]
-
-[nodejs.variables.nodejs]
-registry = ''
-
-[npm]
-depends = ['nodejs', 'registry-auth']
-
 [npm.files]
 npm = '~'
-
-[netrc]
-depends = ['registry-auth']
-
-[netrc.files]
-netrc = '~'
-
-[docker]
-depends = ['registry-auth']
-
-[docker.variables.docker]
-registry_hosts = []
-
-[docker.files]
-docker = '~/.docker'
 
 [go.files]
 go = '~/.config'
@@ -293,8 +274,6 @@ bub = '~/.config'
 'lody/lib' = '~/.local/lib/lody'
 'lody/config' = '~/.config'
 
-[multica]
-
 [multica.files]
 'multica/config' = '~/.config'
 
@@ -334,9 +313,6 @@ depends = ['vscode']
 
 [roo-code.files]
 'roo-code' = '~/.config/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings'
-
-[abaqus]
-# depends = ['weston']
 
 [abaqus.files]
 abaqus = '~/.local'
@@ -389,7 +365,7 @@ depends = ['bub', 'lody', 'raft']
 depends = ['playwright']
 
 [agent-runtime]
-depends = ['browser-use', 'skm', 'zellij', 'nmem', 'magpie', 'voxtype']
+depends = ['browser-use', 'skm', 'zellij', 'nmem', 'magpie', 'voxtype', 'llama.cpp']
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'
