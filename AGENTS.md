@@ -165,7 +165,7 @@ nested_value = { key_b = "overridden" }
 Magpie owns provider-level model configuration (`~/.config/magpie/providers.json`) and the agent-side model lists derived from it. Dotter does not manage `providers.json`: the `magpie` package deploys only `settings.json` and `plugins/`, and nothing reverse-syncs the provider list.
 
 - **Codex** uses the `magpie` provider (`codex.model_provider` defaults to `magpie` in `global.toml`; `model_providers.magpie`, key from `agent.magpie_apikey`). Its `model_catalog_json` is `magpie-models.json`, a runtime artifact that `.dotter/post_deploy.sh` fetches from the magpie gateway on every deploy; do not commit or hand-edit it.
-- **Pi** no longer has a `pi/models.json` template. `magpie pi <model>` merges a `magpie` provider into the live `~/.config/pi/models.json`, which magpie owns; `.dotter/post_deploy.sh` re-runs it on every deploy with `pi.default_model` from `local.toml` (only when `pi.default_provider` is `magpie`). The `magpie` credential in `pi/auth.json` renders from `agent.magpie_apikey`.
+- **Pi** no longer has a `pi/models.json` template. `magpie pi <model>` merges a `magpie` provider into the live `~/.config/pi/models.json`, which magpie owns; `.dotter/post_deploy.sh` re-runs it on every deploy with `pi.default_model` from `local.toml` (only when `pi.default_provider` is `magpie`). It then rewrites the `magpie` provider to `openai-responses` for every model. The `magpie` credential in `pi/auth.json` renders from `agent.magpie_apikey`.
 - **OpenCode** has no enterprise provider block.
 
 #### Approved Variable Schema

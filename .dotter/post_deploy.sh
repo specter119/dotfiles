@@ -166,6 +166,38 @@ PY
 	fi
 }
 
+# magpie labels each model with its upstream's native wire, so models.json mixes
+# openai-completions and openai-responses. The gateway accepts /v1/responses for
+# every model and converts it for chat-only upstreams (Codex relies on this), so
+# make the whole magpie provider use openai-responses. magpie rewrites the file
+# on every `magpie pi` run, hence this runs after each refresh.
+force_pi_models_responses() {
+	models="$HOME/.config/pi/models.json"
+	[ -f "$models" ] || return 0
+	if python3 - "$models" "$models.tmp" <<'PY'
+import json
+import sys
+
+src, out = sys.argv[1:3]
+with open(src, encoding="utf-8") as fh:
+    data = json.load(fh)
+provider = data.get("providers", {}).get("magpie")
+if provider is None:
+    sys.exit(1)
+provider["api"] = "openai-responses"
+for model in provider.get("models", []):
+    model.pop("api", None)
+with open(out, "w", encoding="utf-8") as fh:
+    json.dump(data, fh, ensure_ascii=False, indent=2, sort_keys=True)
+    fh.write("\n")
+PY
+	then
+		mv "$models.tmp" "$models"
+	else
+		rm -f "$models.tmp"
+		echo "[WARN] forcing pi models.json to openai-responses failed; keeping the magpie-generated file"
+	fi
+}
 # Pi reads its model list from ~/.config/pi/models.json, which only
 # `magpie pi <model>` writes. Re-apply the model Dotter just rendered into
 # settings.json: the values are identical, so settings.json stays byte-equal to
@@ -185,8 +217,11 @@ PY
 	)
 	[ -n "$model" ] || return 0
 
-	magpie pi "$model" >/dev/null 2>&1 ||
+	if magpie pi "$model" >/dev/null 2>&1; then
+		force_pi_models_responses
+	else
 		echo "[WARN] magpie pi $model failed; keeping the existing pi models.json"
+	fi
 }
 
 # Clean up rendered templates (YAML, TOML, JSON and Markdown) after deployment.
