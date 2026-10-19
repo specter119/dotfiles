@@ -10,13 +10,13 @@ glamour_style: dark
 check_update: true
 # Last update check timestamp, used for checking when the last update check was performed.
 # {{#if glab.last_update_check_timestamp}}
-last_update_check_timestamp: "{{glab.last_update_check_timestamp}}"
+last_update_check_timestamp: {{glab.last_update_check_timestamp}}
 # {{/if}}
 # Whether or not to display hyperlink escape characters when listing items like issues or merge requests. Set to TRUE to display hyperlinks in TTYs only. Force hyperlinks by setting FORCE_HYPERLINKS=1 as an environment variable.
 display_hyperlinks: false
 # Default GitLab hostname to use.
 # {{#if glab.default_host}}
-host: "{{glab.default_host}}"
+host: {{glab.default_host}}
 # {{/if}}
 # Set to true (1) to disable prompts, or false (0) to enable them.
 no_prompt: false
@@ -27,13 +27,13 @@ telemetry: true
 # Configuration specific for GitLab instances.
 hosts:
   # {{#each glab.hosts}}
-    "{{this.host}}":
+    {{this.host}}:
     # {{#each this}}
     # {{#if (not (eq @key "host"))}}
-        "{{@key}}": "{{this}}"
+        {{@key}}: {{#if (eq @key "token")}}"{{this}}"{{else}}{{this}}{{/if}}
     # {{/if}}
     # {{/each}}
   # {{/each}}
 # {{#if glab.last_seen_version}}
-last_seen_version: "{{glab.last_seen_version}}"
+last_seen_version: {{glab.last_seen_version}}
 # {{/if}}
