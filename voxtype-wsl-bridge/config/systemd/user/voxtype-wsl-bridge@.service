@@ -1,0 +1,12 @@
+[Unit]
+Description=Voxtype control connection %i
+Documentation=https://voxtype.io
+# The handler only forwards commands to the daemon, so a connection brings it up
+# if it is not running yet.
+Requires=voxtype.service
+After=voxtype.service
+
+[Service]
+ExecStart=%h/.config/voxtype/bridge-handler
+StandardInput=socket
+StandardOutput=socket

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Handles one control connection from voxtype-ctl.socket (systemd runs this per
+# Handles one control connection from voxtype-wsl-bridge.socket (systemd runs this per
 # connection with the socket on stdin/stdout). The Windows AutoHotkey script sends
 # one of the commands below; anything else is ignored, so the loopback port cannot
 # run arbitrary voxtype subcommands.

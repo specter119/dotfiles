@@ -1,8 +1,0 @@
-[Unit]
-Description=Voxtype control connection %i
-Documentation=https://voxtype.io
-
-[Service]
-ExecStart=%h/.config/voxtype/ctl-handler
-StandardInput=socket
-StandardOutput=socket
