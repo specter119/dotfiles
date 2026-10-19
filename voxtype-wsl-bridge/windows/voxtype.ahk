@@ -5,10 +5,10 @@
 ; transcribes and pastes the text into the focused Windows window. Pressing any
 ; other key while holding discards the recording and lets the combo through.
 ;
-; Talks to voxtype-ctl.socket in WSL; WSL2 forwards loopback listeners to Windows.
+; Talks to voxtype-wsl-bridge.socket in WSL; WSL2 forwards loopback listeners to Windows.
 
 HoldKey := "{{voxtype-wsl-bridge.hold_key}}"
-CtlPort := {{voxtype-wsl-bridge.port}}
+BridgePort := {{voxtype-wsl-bridge.port}}
 ; Taps shorter than this are treated as accidental and discarded.
 MinHoldMs := 250
 ClipTimeoutSec := 10
@@ -35,12 +35,12 @@ Vox(cmd) {
     }
     addr := Buffer(16, 0)
     NumPut("UShort", 2, addr, 0)
-    NumPut("UShort", DllCall("ws2_32\htons", "UShort", CtlPort, "UShort"), addr, 2)
+    NumPut("UShort", DllCall("ws2_32\htons", "UShort", BridgePort, "UShort"), addr, 2)
     NumPut("UInt", DllCall("ws2_32\inet_addr", "AStr", "127.0.0.1", "UInt"), addr, 4)
     ; 5s receive timeout so a stuck handler cannot freeze the key handler forever.
     DllCall("ws2_32\setsockopt", "Ptr", sock, "Int", 0xFFFF, "Int", 0x1006, "Int*", 5000, "Int", 4)
     if DllCall("ws2_32\connect", "Ptr", sock, "Ptr", addr, "Int", 16) != 0 {
-        Trace("connect to 127.0.0.1:" CtlPort " failed for '" cmd "'")
+        Trace("connect to 127.0.0.1:" BridgePort " failed for '" cmd "'")
     } else {
         msg := Buffer(StrPut(cmd "`n", "UTF-8") - 1)
         StrPut(cmd "`n", msg, "UTF-8")
