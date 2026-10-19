@@ -37,13 +37,20 @@ GLAB_CONFIG = XDG_CONFIG_HOME / 'glab-cli' / 'config.yml'
 SCOOP_CONFIG = XDG_CONFIG_HOME / 'scoop' / 'config.json'
 
 
-def read_json(path: Path) -> dict | None:
-    """Read JSON from path, resolving symlinks to skip repo source templates."""
+def _is_live_file(path: Path) -> bool:
+    """Check that a file exists and is not symlinked back to repo source.
+
+    A symlink into the repo holds raw template syntax, not live state.
+    """
     if not path.exists():
-        return None
+        return False
     real = path.resolve()
-    # If symlinked back to repo source, the file has raw template syntax
-    if str(DOTTER_DIR.parent) in str(real):
+    return str(DOTTER_DIR.parent) not in str(real)
+
+
+def read_json(path: Path) -> dict | None:
+    """Read JSON from a live (non-template) file."""
+    if not _is_live_file(path):
         return None
     try:
         return json.loads(path.read_text())
@@ -53,10 +60,7 @@ def read_json(path: Path) -> dict | None:
 
 def read_jsonc(path: Path) -> dict | None:
     """Read JSONC (JSON with comments) from path, stripping // comments."""
-    if not path.exists():
-        return None
-    real = path.resolve()
-    if str(DOTTER_DIR.parent) in str(real):
+    if not _is_live_file(path):
         return None
     try:
         text = path.read_text()
@@ -67,11 +71,8 @@ def read_jsonc(path: Path) -> dict | None:
 
 
 def read_toml(path: Path) -> tomlkit.TOMLDocument | None:
-    """Read TOML from path, resolving symlinks to skip repo source templates."""
-    if not path.exists():
-        return None
-    real = path.resolve()
-    if str(DOTTER_DIR.parent) in str(real):
+    """Read TOML from a live (non-template) file."""
+    if not _is_live_file(path):
         return None
     try:
         return tomlkit.parse(path.read_text())
@@ -88,22 +89,9 @@ def ensure_table(doc: tomlkit.TOMLDocument, *keys: str) -> tomlkit.items.Table:
     return current
 
 
-def sync_string(table: tomlkit.items.Table, key: str, value: object, fallback: str | None = None, remove_if_empty: bool = False) -> bool:
-    """Sync a string value into local.toml.
-
-    fallback: used when value is None or not a string (default: None = skip).
-    remove_if_empty: if True and the final value is empty, delete the key instead.
-    """
-    if not isinstance(value, str):
-        if fallback is None:
-            return False
-        value = fallback
-    if isinstance(value, str) and table.get(key) == value:
-        return False
-    if remove_if_empty and isinstance(value, str) and not value:
-        if key in table:
-            del table[key]
-            return True
+def sync_string(table: tomlkit.items.Table, key: str, value: object) -> bool:
+    """Sync a string value into local.toml; non-string values are skipped."""
+    if not isinstance(value, str) or table.get(key) == value:
         return False
     table[key] = value
     return True
@@ -256,14 +244,6 @@ def sync_hook_states(table: tomlkit.items.Table, key: str, value: object) -> boo
         return False
     table[key] = live
     return True
-
-
-def _is_live_file(path: Path) -> bool:
-    """Check that a file exists and is not symlinked back to repo source."""
-    if not path.exists():
-        return False
-    real = path.resolve()
-    return str(DOTTER_DIR.parent) not in str(real)
 
 
 def _parse_glab_hosts(filepath: Path) -> dict[str, dict[str, str]] | None:
