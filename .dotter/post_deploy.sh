@@ -56,8 +56,8 @@ open_tag = "{" + "{"
 hooks_by_suffix = {
     ".json": ("check-json", "pretty-format-json"),
     ".toml": ("check-toml", "toml-sort-fix"),
-    ".yaml": ("check-yaml", "yamlfmt"),
-    ".yml": ("check-yaml", "yamlfmt"),
+    ".yaml": ("check-yaml",),
+    ".yml": ("check-yaml",),
 }
 known_hooks = {hook for hooks in hooks_by_suffix.values() for hook in hooks}
 configured_excludes = {}
@@ -101,45 +101,6 @@ for source in templates:
             f"[WARN] prek coverage: template {source} is not excluded from "
             f"{hook}; review prek.toml."
         )
-PY
-}
-
-normalize_glab_yaml_keys() {
-	python3 - <<'PY'
-from pathlib import Path
-import re
-
-paths = [
-    Path.home() / ".config/glab-cli/config.yml",
-    Path(".dotter/cache/glab/config.yml"),
-]
-
-for path in paths:
-    if not path.exists():
-        continue
-    text = path.read_text(encoding="utf-8")
-    normalized = re.sub(r'^([ \t]*)"([^"\n]+)":', r'\1\2:', text, flags=re.MULTILINE)
-    normalized = re.sub(r'^host: "([^"\n]+)"$', r'host: \1', normalized, flags=re.MULTILINE)
-    normalized = re.sub(
-        r'^last_update_check_timestamp: "([^"\n]+)"$',
-        r'last_update_check_timestamp: \1',
-        normalized,
-        flags=re.MULTILINE,
-    )
-    normalized = re.sub(
-        r'^last_seen_version: "([^"\n]+)"$',
-        r'last_seen_version: \1',
-        normalized,
-        flags=re.MULTILINE,
-    )
-    normalized = re.sub(
-        r'^(\s+)(?!token:)([A-Za-z_]+): "([^"\n]+)"$',
-        r'\1\2: \3',
-        normalized,
-        flags=re.MULTILINE,
-    )
-    if normalized != text:
-        path.write_text(normalized, encoding="utf-8")
 PY
 }
 
@@ -233,6 +194,5 @@ cleanup_rendered_templates
 refresh_magpie_codex_catalog
 refresh_magpie_pi_models
 audit_prek_parser_coverage
-normalize_glab_yaml_keys
 fix_ssh_permissions
 fix_glab_permissions
