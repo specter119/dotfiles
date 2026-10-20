@@ -301,6 +301,10 @@ mihomo = '~/.config/mihomo'
 
 [mihomo.variables.mihomo]
 direct_suffixes = []
+subscriptions = [
+  { name = 'TAGMeta', rbw = 'tagmeta_subscription_url' },
+  { name = 'BoostNet', rbw = 'boostnet_subscription_url' },
+]
 
 [chromium.files]
 chromium = '~/.config'
