@@ -5,7 +5,7 @@
   "defaultModel": "{{pi.default_model}}",
   "defaultProvider": "{{pi.default_provider}}",
   "defaultThinkingLevel": "high",
-  "extensions": [],
+  "defaultTools": ["+codemode"],
   "hideThinkingBlock": false,
   "lastChangelogVersion": "{{pi.last_changelog_version}}",
   "npmCommand": [

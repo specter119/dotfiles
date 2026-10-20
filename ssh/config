@@ -6,6 +6,7 @@ Host *
 	ServerAliveCountMax=6
 	ForwardAgent=yes
 	Compression=yes
+  SetEnv TERM=xterm-256color
 {{#if dotter.linux}}
 	ControlMaster auto
 	ControlPath /run/user/%i/ssh-%r@%h:%p
