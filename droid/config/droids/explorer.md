@@ -3,7 +3,7 @@ name: explorer
 description: >-
   Read-only code exploration and context gathering. Use for multi-file search,
   codebase understanding, pattern discovery, and fact collection.
-model: gemini-3-flash-preview
+model: deepseek-4.1-flash
 reasoningEffort: low
 tools: read-only
 mcpServers: ["fast-context"]
