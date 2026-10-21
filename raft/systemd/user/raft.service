@@ -9,6 +9,8 @@ ExecStart=raft-computer start --foreground
 ExecStop=raft-computer stop
 {{#if enterprise_proxy.url}}
 Environment=WSS_PROXY={{enterprise_proxy.url}}
+# Use the system CA store: the corporate network TLS-inspects api.raft.build.
+Environment=NODE_OPTIONS=--use-openssl-ca
 {{/if}}
 Restart=always
 RestartSec=5
