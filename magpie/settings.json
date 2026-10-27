@@ -10,5 +10,6 @@
   "trayUsageEvery": 3,
   "plainNames": true,
   "textSize": 110,
+  "modelCompacts": {{json_to_str magpie.model_compacts}},
   "modelWires": {{json_to_str magpie.model_wires}}
 }
