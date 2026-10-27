@@ -115,6 +115,7 @@ magpie = '~/.config/magpie'
 
 [magpie.variables.magpie]
 model_wires = {}
+model_compacts = {}
 
 [nodejs]
 depends = ['bun', 'npm']

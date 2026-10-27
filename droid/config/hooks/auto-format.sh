@@ -349,6 +349,12 @@ format_file() (
       fi
       ;;
     *.md|*.markdown)
+      # Dotter templates keep unquoted double-brace variables in front matter, and
+      # mdformat's YAML round-trip rewrites them into an invalid mapping. Never put a
+      # literal double brace in this script: Dotter would parse it as a template.
+      if awk 'NR==1{if($0!="---")exit 1;next} $0=="---"{closed=1;exit} /\{\{/{found=1} END{exit !(closed&&found)}' "$file_path"; then
+        exit 0
+      fi
       local mdformat_version=""
       if command -v mdformat >/dev/null 2>&1; then
         mdformat_version="$(mdformat --version 2>/dev/null || true)"
