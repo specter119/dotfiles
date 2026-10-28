@@ -1,0 +1,15 @@
+[Unit]
+Description=DeepSeek Harness Web UI (host)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Default workspace; open other repositories from the UI.
+WorkingDirectory=%h/Documents/github.repos
+ExecStart=dsh web --no-open --port 3080
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

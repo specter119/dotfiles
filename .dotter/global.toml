@@ -152,6 +152,9 @@ stylua = '~/.config/stylua'
 [claude-code.files]
 'claude-code' = '~/.config/claude'
 
+[dsh.files]
+dsh = '~/.config'
+
 [codex.files]
 codex = '~/.config'
 
@@ -359,7 +362,7 @@ depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
 depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
 
 [agent]
-depends = ['agent-runtime', 'droid', 'pi', 'codex', 'chatgpt', 'multica']
+depends = ['agent-runtime', 'droid', 'pi', 'codex', 'chatgpt', 'multica', 'dsh']
 
 [agent.files]
 'agent/config' = '~/.config'
