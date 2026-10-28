@@ -124,8 +124,10 @@ fix_glab_permissions() {
 }
 
 # Codex wants its model catalog as a file. The magpie gateway serves it in
-# Codex's own format on the ChatGPT-style models route, so fetch it from there
-# instead of driving `magpie codex`, which rewrites config.toml and stash.json.
+# Codex's own format on /v1/codex/models, so fetch it from there instead of
+# driving `magpie codex`, which rewrites config.toml and stash.json. The older
+# /backend-api/codex/models route is now proxied to ChatGPT and rejects the
+# magpie key with 401.
 refresh_magpie_codex_catalog() {
 	config="$HOME/.config/codex/config.toml"
 	[ -f "$config" ] || return 0
@@ -139,6 +141,7 @@ refresh_magpie_codex_catalog() {
 import json
 import sys
 import tomllib
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -149,10 +152,13 @@ base = urllib.parse.urlsplit(provider.get("base_url", ""))
 token = provider.get("experimental_bearer_token", "")
 if not base.scheme or not token:
     raise SystemExit(1)
-url = f"{base.scheme}://{base.netloc}/backend-api/codex/models?client_version={version}"
+url = f"{base.scheme}://{base.netloc}/v1/codex/models?client_version={version}"
 request = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
-with urllib.request.urlopen(request, timeout=10) as response:
-    catalog = json.load(response)
+try:
+    with urllib.request.urlopen(request, timeout=10) as response:
+        catalog = json.load(response)
+except (urllib.error.URLError, OSError, ValueError):
+    raise SystemExit(1)
 if not catalog.get("models"):
     raise SystemExit(1)
 with open(out, "w", encoding="utf-8") as fh:
