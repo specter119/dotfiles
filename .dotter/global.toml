@@ -14,7 +14,7 @@ wslg-clipboard = '~/.local'
 container = '~/.config'
 
 [mako.files]
-mako = '~/.config/mako'
+mako = '~/.config'
 
 [waybar.files]
 waybar = '~/.config'
@@ -25,8 +25,14 @@ sov = '~/.config/sov'
 [avizo.files]
 avizo = '~/.config'
 
-[sway]
-depends = ['mako', 'waybar', 'avizo']
+[cliphist.files]
+cliphist = '~/.config'
+
+[nm-applet.files]
+nm-applet = '~/.config'
+
+[udiskie.files]
+udiskie = '~/.config'
 
 [sway.files]
 sway = '~/.config'
@@ -356,7 +362,7 @@ depends = ['fish', 'yazi', 'atuin', 'mihomo']
 shell = '~/.config'
 
 [wm]
-depends = ['sway', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
+depends = ['sway', 'mako', 'waybar', 'avizo', 'cliphist', 'nm-applet', 'udiskie', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
 
 [dev]
 depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']

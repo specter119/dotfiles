@@ -1,12 +1,11 @@
 [Unit]
 Description=Removable disk automounter using udisks
-PartOf=sway-session.target
-After=sway-session.target
+PartOf=graphical-session.target
+After=graphical-session.target
 
 [Service]
-ExecStartPre=bash -c 'while ! pgrep -x sway > /dev/null; do sleep 1; done'
 ExecStart=udiskie --no-menu-checkbox-workaround --appindicator --tray
 Restart=on-failure
 
 [Install]
-WantedBy=sway-session.target
+WantedBy=graphical-session.target

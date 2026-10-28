@@ -1,0 +1,5 @@
+#!/bin/sh
+# Started by sway at login. Blocks until sway reports that it is exiting, then
+# stops sway-session.target so session services do not outlive the compositor.
+swaymsg -t subscribe '["shutdown"]' >/dev/null
+systemctl --user stop sway-session.target

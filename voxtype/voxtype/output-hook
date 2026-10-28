@@ -1,0 +1,22 @@
+#!/bin/sh
+# Runs the executables in output-hook.d around voxtype typing its output.
+# voxtype calls `output-hook pre` before typing and `output-hook post` afterwards.
+# Packages drop a hook into output-hook.d/ and receive the same `pre` / `post`
+# argument; `post` runs in reverse order so hooks unwind like a stack. A failing
+# hook never blocks the others or the output.
+dir="${XDG_CONFIG_HOME:-$HOME/.config}/voxtype/output-hook.d"
+phase="$1"
+
+set --
+for hook in "$dir"/*; do
+    [ -x "$hook" ] || continue
+    case "$phase" in
+    pre) set -- "$@" "$hook" ;;
+    post) set -- "$hook" "$@" ;;
+    esac
+done
+
+for hook in "$@"; do
+    "$hook" "$phase" || :
+done
+exit 0

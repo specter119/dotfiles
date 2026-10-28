@@ -53,10 +53,22 @@ This repo uses Dotter packages as a layered grouping system rather than a flat l
   - `agent-tunnel`: agent-adjacent remote/service integrations
   - `agent-runtime`: local runtime support for agent workflows (including the `magpie` gateway)
 - `enterprise-artifact` is the single source of enterprise Artifactory credentials and registry endpoints (npm, PyPI, Docker). It deploys `~/.netrc` and `~/.docker/config.json`; `uv` authenticates against the enterprise PyPI index through `~/.netrc`. General tools such as `npm`, `bun`, `magpie` and `uv` do not depend on it; their templates test `dotter.packages.enterprise-artifact` and render the enterprise part only when the package is selected
+- `wm` is a group that composes the compositor (`sway`) with the session services that run next to it (`mako`, `waybar`, `avizo`, `cliphist`, `nm-applet`, `udiskie`) and `fcitx5`; `sway` itself has no `depends`
 - `nodejs` is a group of `bun` and `npm`; select `bun` alone on machines that do not need npm
 - `wsl-guest` is a group for WSL guests: it carries the required Windows env vars and WSLg environment itself, and composes `wsl-ssh-agent`, `voxtype-wsl-bridge` and `wslg-clipboard` (a `~/.local/bin/wl-paste` shim that serves `image/png` from the Windows clipboard, because WSLg only exposes images as `image/bmp` and droid only requests PNG/JPEG)
 
 When changing package names, dependencies, or file mappings, preserve this layered relationship unless the change is explicitly a package-architecture refactor.
+
+## User Services
+
+Graphical-session services are decoupled from the compositor through systemd targets and drop-ins instead of Dotter package conditions. Do not branch on `dotter.packages.<compositor>` in a unit.
+
+- Services use `PartOf=` and `After=graphical-session.target`. Only a service that needs sway itself (`swayidle`, which calls `swaymsg`) belongs to `sway-session.target`; `sway` pulls it in with `Wants=` in the target.
+- A service that starts by default carries no `[Install]`. Its package ships `systemd/user/<target>.d/10-<unit>.conf` containing `[Unit] Wants=<unit>`, so selecting the package enables the service and removing it disables the service. Disable it on one machine with `systemctl --user mask`.
+- A service that must stay opt-in keeps `[Install]` and ships no drop-in (currently `udiskie`); enable it per machine with `systemctl --user enable`.
+- Sway owns the session target lifecycle: `sway/sway/config.d/50-autostart.conf` imports the compositor environment, starts `sway-session.target`, and `sway/sway/session-stop` stops it when sway exits. The login wrapper (`/etc/greetd/sway-run`, outside this repo) must not start the target itself, otherwise services start before `WAYLAND_DISPLAY` is imported.
+- Extensions point from the plugin to the host through the host's drop-in directory: `sway/config.d/` for sway snippets (keybindings live with the package that owns the tool) and `voxtype/output-hook.d/` for executables that voxtype runs around typing, via `voxtype/output-hook pre|post`. The host never names its plugins.
+- `voxtype-wsl-bridge` brings the daemon up through `default.target.d/` and its socket through `sockets.target.d/`.
 
 ## Dotter Templates
 

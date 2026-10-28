@@ -1,12 +1,10 @@
 [Unit]
 Description=A Wayland notification daemon to be used for multimedia keys
-PartOf=sway-session.target
+PartOf=graphical-session.target
+After=graphical-session.target
 
 [Service]
 Type=simple
 ExecStart=avizo-service
 ExecStop=kill -2 $MAINPID
 Restart=on-failure
-
-[Install]
-WantedBy=sway-session.target
