@@ -12,7 +12,7 @@
     "workerReasoningEffort": "max"
   },
   "missionOrchestratorModel": "claude-opus-5-5",
-  "missionOrchestratorReasoningEffort": "medium",
+  "missionOrchestratorReasoningEffort": "xhigh",
   "modelFavorites": [
     "glm-5.3",
     "kimi-k3",
@@ -26,7 +26,7 @@
     "model": "claude-sonnet-5-5",
     "reasoningEffort": "high",
     "specModeModel": "claude-opus-5-5",
-    "specModeReasoningEffort": "medium"
+    "specModeReasoningEffort": "xhigh"
   },
   "showTokenUsageIndicator": true,
   "reauthBannerShownTui": true,
