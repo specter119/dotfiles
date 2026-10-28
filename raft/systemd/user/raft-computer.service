@@ -7,7 +7,11 @@ Wants=network-online.target
 Type=exec
 ExecStart=raft-computer start --foreground
 ExecStop=raft-computer stop
-{{#if enterprise_proxy.url}}
+{{#if raft.server_url}}
+Environment=RAFT_SERVER_URL={{raft.server_url}}
+# Self-hosted server: no WSS proxy. Read the system CA store so a locally trusted CA (e.g. the mkcert root) is honored.
+Environment=NODE_OPTIONS=--use-openssl-ca
+{{else if enterprise_proxy.url}}
 Environment=WSS_PROXY={{enterprise_proxy.url}}
 # Use the system CA store: the corporate network TLS-inspects api.raft.build.
 Environment=NODE_OPTIONS=--use-openssl-ca

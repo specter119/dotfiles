@@ -294,6 +294,9 @@ depends = ['enterprise-proxy']
 [raft.files]
 raft = '~/.config'
 
+[raft.variables.raft]
+server_url = ''
+
 [ipython.files]
 ipython = '~/.ipython'
 
