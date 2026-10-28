@@ -1,0 +1,12 @@
+[Unit]
+Description=aria2 Daemon
+
+[Service]
+Type=simple
+StateDirectory=aria2
+ExecStartPre=/usr/bin/touch %S/aria2/session
+ExecStart=/usr/bin/aria2c --conf-path=%h/.config/aria2/aria2.conf
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
