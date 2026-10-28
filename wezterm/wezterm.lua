@@ -27,7 +27,8 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
     args = { 'cmd.exe' },
   })
   config.keys = {
-    { key = 'v', mods = 'CTRL', action = wezterm.action.Nop },
+    -- Nop would swallow Ctrl+V; agent TUIs read the clipboard image themselves on ^V
+    { key = 'v', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
     { key = 'Enter', mods = 'SHIFT', action = wezterm.action.SendString '\x1b\r' },
   }
 elseif wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
