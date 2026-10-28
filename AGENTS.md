@@ -36,6 +36,7 @@ This repo manages configs for multiple AI coding agents. Their paths follow XDG 
 | Antigravity | `ANTIGRAVITY_CLI_HOME` | `~/.config/antigravity` |
 | Qoder       | `QODERCLI_HOME`        | `~/.config/qoder`       |
 | Magpie      | —                      | `~/.config/magpie`      |
+| DSH         | `DSH_HOME`             | `~/.config/dsh`         |
 
 When reading or writing agent configs, use these paths.
 

@@ -1,0 +1,6 @@
+# dsh mints a new access token on every start and prints it only to the log.
+[[rule]]
+unit = "dsh-web.service"
+pattern = 'dsh web: (?P<url>http://127\.0\.0\.1:3080/\?token=[A-Za-z0-9_-]+)'
+title = "DeepSeek Harness 登录链接"
+body = "{url}"
