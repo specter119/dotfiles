@@ -108,6 +108,12 @@ uv = '~/.config/uv'
 [uv.variables.uv]
 index_url = 'https://mirrors.ustc.edu.cn/pypi/simple'
 
+[aria2.files]
+aria2 = '~/.config'
+
+[aria2.variables.aria2]
+rpc_secret = ''
+
 [enterprise-artifact.files]
 'enterprise-artifact' = '~'
 
@@ -356,7 +362,7 @@ output_dir = '~/Videos'
 cliamp = '~/.config/cliamp'
 
 [shell]
-depends = ['fish', 'yazi', 'atuin', 'mihomo']
+depends = ['fish', 'yazi', 'atuin', 'mihomo', 'aria2']
 
 [shell.files]
 shell = '~/.config'
