@@ -34,9 +34,10 @@ mode = "type"
 fallback_to_clipboard = true
 type_delay_ms = 0
 pre_type_delay_ms = 0
-# Keep fcitx5 pinyin from capturing wtype keystrokes (see fcitx5-guard).
-pre_output_command = "~/.config/voxtype/fcitx5-guard pre"
-post_output_command = "~/.config/voxtype/fcitx5-guard post"
+# Packages that must adjust the desktop around typing (for example an input
+# method) drop an executable into ~/.config/voxtype/output-hook.d/.
+pre_output_command = "~/.config/voxtype/output-hook pre"
+post_output_command = "~/.config/voxtype/output-hook post"
 
 [output.notification]
 on_recording_start = false

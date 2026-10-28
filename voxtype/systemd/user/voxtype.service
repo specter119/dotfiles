@@ -1,22 +1,11 @@
 [Unit]
 Description=Voxtype push-to-talk voice-to-text daemon
 Documentation=https://voxtype.io
-# {{#if dotter.packages.sway}}
-PartOf=sway-session.target
-After=sway-session.target pipewire.service pipewire-pulse.service
-# {{else}}
-After=pipewire.service pipewire-pulse.service
-# {{/if}}
+PartOf=graphical-session.target
+After=graphical-session.target pipewire.service pipewire-pulse.service
 
 [Service]
 Type=simple
 ExecStart=voxtype -q daemon
 Restart=on-failure
 RestartSec=5
-
-[Install]
-# {{#if dotter.packages.sway}}
-WantedBy=sway-session.target
-# {{else}}
-WantedBy=default.target
-# {{/if}}

@@ -7,6 +7,3 @@ Documentation=https://voxtype.io
 # paying wsl.exe's ~1s startup cost on every key press.
 ListenStream=127.0.0.1:{{voxtype-wsl-bridge.port}}
 Accept=yes
-
-[Install]
-WantedBy=sockets.target
