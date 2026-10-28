@@ -1,8 +1,11 @@
 [wsl-guest]
-depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge']
+depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge', 'wslg-clipboard']
 
 [wsl-guest.files]
 'wsl-guest' = '~/.config'
+
+[wslg-clipboard.files]
+wslg-clipboard = '~/.local'
 
 [wsl-ssh-agent.files]
 'wsl-ssh-agent' = '~/.config'

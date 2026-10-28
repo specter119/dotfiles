@@ -53,7 +53,7 @@ This repo uses Dotter packages as a layered grouping system rather than a flat l
   - `agent-runtime`: local runtime support for agent workflows (including the `magpie` gateway)
 - `enterprise-artifact` is the single source of enterprise Artifactory credentials and registry endpoints (npm, PyPI, Docker). It deploys `~/.netrc` and `~/.docker/config.json`; `uv` authenticates against the enterprise PyPI index through `~/.netrc`. General tools such as `npm`, `bun`, `magpie` and `uv` do not depend on it; their templates test `dotter.packages.enterprise-artifact` and render the enterprise part only when the package is selected
 - `nodejs` is a group of `bun` and `npm`; select `bun` alone on machines that do not need npm
-- `wsl-guest` is a group for WSL guests: it carries the required Windows env vars and WSLg environment itself, and composes `wsl-ssh-agent` and `voxtype-wsl-bridge`
+- `wsl-guest` is a group for WSL guests: it carries the required Windows env vars and WSLg environment itself, and composes `wsl-ssh-agent`, `voxtype-wsl-bridge` and `wslg-clipboard` (a `~/.local/bin/wl-paste` shim that serves `image/png` from the Windows clipboard, because WSLg only exposes images as `image/bmp` and droid only requests PNG/JPEG)
 
 When changing package names, dependencies, or file mappings, preserve this layered relationship unless the change is explicitly a package-architecture refactor.
 

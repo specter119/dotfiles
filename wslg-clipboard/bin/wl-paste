@@ -1,0 +1,32 @@
+#!/bin/sh
+# Shadows wl-paste on WSLg. WSLg exposes a Windows clipboard image only as
+# image/bmp, but droid fetches only image/png or image/jpeg, so pasting fails.
+# Serve `--type image/png` by exporting the Windows clipboard image as a PNG;
+# every other invocation goes to the real wl-paste untouched.
+real=$(PATH=/usr/local/bin:/usr/bin:/bin command -v wl-paste) || exit 127
+
+case "$*" in
+"--type image/png" | "-t image/png") ;;
+*) exec "$real" "$@" ;;
+esac
+
+types=$("$real" --list-types 2>/dev/null)
+case "$types" in
+*image/png*) exec "$real" "$@" ;;
+*image/bmp*) ;;
+*) exec "$real" "$@" ;;
+esac
+
+tmp=$(mktemp /tmp/wl-paste-png.XXXXXX) || exit 1
+trap 'rm -f "$tmp"' EXIT HUP INT TERM
+
+# Clipboard access needs an STA thread, hence -STA.
+powershell.exe -NoProfile -NonInteractive -STA -Command "
+Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+\$img = [System.Windows.Forms.Clipboard]::GetImage()
+if (-not \$img) { exit 1 }
+\$img.Save('$(wslpath -w "$tmp")', [System.Drawing.Imaging.ImageFormat]::Png)
+" >/dev/null 2>&1 || exit 1
+
+[ -s "$tmp" ] || exit 1
+cat "$tmp"
