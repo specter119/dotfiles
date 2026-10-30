@@ -1,11 +1,8 @@
 [wsl-guest]
-depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge', 'wslg-clipboard']
+depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge']
 
 [wsl-guest.files]
 'wsl-guest' = '~/.config'
-
-[wslg-clipboard.files]
-wslg-clipboard = '~/.local'
 
 [wsl-ssh-agent.files]
 'wsl-ssh-agent' = '~/.config'
@@ -207,6 +204,7 @@ depends = ['agent-tunnel']
 [droid.files]
 'droid/config' = '~/.factory'
 'droid/systemd' = '~/.config/systemd/user'
+'droid/bin' = { target = '~/.local/bin', type = 'symbolic', if = 'dotter.packages.wsl-guest' }
 
 [droid.variables.droid]
 trusted_folders = []

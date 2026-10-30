@@ -55,7 +55,7 @@ This repo uses Dotter packages as a layered grouping system rather than a flat l
 - `enterprise-artifact` is the single source of enterprise Artifactory credentials and registry endpoints (npm, PyPI, Docker). It deploys `~/.netrc` and `~/.docker/config.json`; `uv` authenticates against the enterprise PyPI index through `~/.netrc`. General tools such as `npm`, `bun`, `magpie` and `uv` do not depend on it; their templates test `dotter.packages.enterprise-artifact` and render the enterprise part only when the package is selected
 - `wm` is a group that composes the compositor (`sway`) with the session services that run next to it (`mako`, `waybar`, `avizo`, `cliphist`, `nm-applet`, `udiskie`) and `fcitx5`; `sway` itself has no `depends`
 - `nodejs` is a group of `bun` and `npm`; select `bun` alone on machines that do not need npm
-- `wsl-guest` is a group for WSL guests: it carries the required Windows env vars and WSLg environment itself, and composes `wsl-ssh-agent`, `voxtype-wsl-bridge` and `wslg-clipboard` (a `~/.local/bin/wl-paste` shim that serves `image/png` from the Windows clipboard, because WSLg only exposes images as `image/bmp` and droid only requests PNG/JPEG)
+- `wsl-guest` is a group for WSL guests: it carries the required Windows env vars and WSLg environment itself, and composes `wsl-ssh-agent` and `voxtype-wsl-bridge`. The `droid` package also maps `droid/bin` to `~/.local/bin` (only when `wsl-guest` is selected): its `wl-paste` shim serves `image/png` by converting the WSLg `image/bmp` clipboard locally, because droid only requests PNG/JPEG
 
 When changing package names, dependencies, or file mappings, preserve this layered relationship unless the change is explicitly a package-architecture refactor.
 
