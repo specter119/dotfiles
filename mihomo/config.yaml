@@ -1,5 +1,16 @@
 ######### 锚点 start #######
-# 地区组直接负责在本地区节点中做延迟优选
+# 地区组为手动选择：节点费率差异大，选定后不随延迟测试自动切换；
+# 每个地区组内置“<地区>自动”（url-test）作为默认项，想自动优选时选它，选了具体节点则固定不变；
+# 自动组只是被地区组引用的内部组，设 hidden 避免在面板里作为独立分组出现
+rg: &rg {type: select, include-all-providers: true}
+# 地区节点过滤正则，地区组与对应的“<地区>自动”组共用
+f_hk: &f_hk "(?i)香港|🇭🇰|(?<![a-z])hk(?![a-z])|hong ?kong"
+f_tw: &f_tw "(?i)台湾|台灣|台北|🇹🇼|(?<![a-z])tw(?![a-z])|taiwan"
+f_jp: &f_jp "(?i)日本|东京|大阪|🇯🇵|(?<![a-z])jp(?![a-z])|japan"
+f_us: &f_us "(?i)美国|美國|🇺🇸|(?<![a-z])(?:us|usa)(?![a-z])|united ?states"
+f_sg: &f_sg "(?i)新加坡|🇸🇬|(?<![a-z])sg(?![a-z])|singapore"
+f_other: &f_other "(?i)^(?!.*(?:香港|🇭🇰|(?<![a-z])hk(?![a-z])|hong ?kong|台湾|台灣|台北|🇹🇼|(?<![a-z])tw(?![a-z])|taiwan|日本|东京|大阪|🇯🇵|(?<![a-z])jp(?![a-z])|japan|美国|美國|🇺🇸|(?<![a-z])(?:us|usa)(?![a-z])|united ?states|新加坡|🇸🇬|(?<![a-z])sg(?![a-z])|singapore|🇨🇳)).*"
+junk: &junk "剩余流量|距离下次重置|套餐到期|永久官网"
 rt: &rt {type: url-test, include-all-providers: true, url: "https://www.gstatic.com/generate_204", interval: 300, timeout: 5000, lazy: true, max-failed-times: 3, tolerance: 50, expected-status: 204}
 # 订阅更新和延迟测试
 p: &p {type: http, interval: 3600, health-check: {enable: true, url: "https://www.gstatic.com/generate_204", interval: 300}}
@@ -77,14 +88,20 @@ proxy-groups:
   - {name: GenAI Oversea, type: select, proxies: [日本, 新加坡, 美国, 其它地区, 直连]}
   - {name: Steam, type: select, proxies: [直连, 默认]}
   #分隔,下面是地区分组
-  - {name: 香港, !!merge <<: *rt, filter: "(?i)港|hk|hongkong|hong kong"}
-  - {name: 台湾, !!merge <<: *rt, filter: "(?i)台|tw|taiwan"}
-  - {name: 日本, !!merge <<: *rt, filter: "(?i)日|jp|japan"}
-  - {name: 美国, !!merge <<: *rt, filter: "(?i)美|us|unitedstates|united states"}
-  - {name: 新加坡, !!merge <<: *rt, filter: "(?i)(新|sg|singapore)"}
-  - {name: 其它地区, !!merge <<: *rt, filter: "(?i)^(?!.*(?:🇭🇰|🇯🇵|🇺🇸|🇸🇬|🇨🇳|港|hk|hongkong|台|tw|taiwan|日|jp|japan|新|sg|singapore|美|us|unitedstates)).*", exclude-filter: "剩余流量|距离下次重置|套餐到期|永久官网"}
-  - {name: 全部节点, type: select, include-all-providers: true, exclude-filter: "剩余流量|距离下次重置|套餐到期|永久官网"}
-  - {name: 自动选择, !!merge <<: *rt, exclude-filter: "剩余流量|距离下次重置|套餐到期|永久官网"}
+  - {name: 香港, !!merge <<: *rg, proxies: [香港自动], filter: *f_hk}
+  - {name: 台湾, !!merge <<: *rg, proxies: [台湾自动], filter: *f_tw}
+  - {name: 日本, !!merge <<: *rg, proxies: [日本自动], filter: *f_jp}
+  - {name: 美国, !!merge <<: *rg, proxies: [美国自动], filter: *f_us}
+  - {name: 新加坡, !!merge <<: *rg, proxies: [新加坡自动], filter: *f_sg}
+  - {name: 其它地区, !!merge <<: *rg, proxies: [其它地区自动], filter: *f_other, exclude-filter: *junk}
+  - {name: 全部节点, type: select, include-all-providers: true, exclude-filter: *junk}
+  - {name: 自动选择, !!merge <<: *rt, exclude-filter: *junk}
+  - {name: 香港自动, !!merge <<: *rt, hidden: true, filter: *f_hk}
+  - {name: 台湾自动, !!merge <<: *rt, hidden: true, filter: *f_tw}
+  - {name: 日本自动, !!merge <<: *rt, hidden: true, filter: *f_jp}
+  - {name: 美国自动, !!merge <<: *rt, hidden: true, filter: *f_us}
+  - {name: 新加坡自动, !!merge <<: *rt, hidden: true, filter: *f_sg}
+  - {name: 其它地区自动, !!merge <<: *rt, hidden: true, filter: *f_other, exclude-filter: *junk}
 rules:
   - GEOIP,lan,直连,no-resolve
   # {{#each mihomo.direct_suffixes}}
