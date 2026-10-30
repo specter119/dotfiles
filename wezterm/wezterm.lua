@@ -30,6 +30,16 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
     -- Nop would swallow Ctrl+V; agent TUIs read the clipboard image themselves on ^V
     { key = 'v', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
     { key = 'Enter', mods = 'SHIFT', action = wezterm.action.SendString '\x1b\r' },
+    -- zellij owns the mouse, so a bare Ctrl+Shift+C has no selection and would put an empty entry in clipboard managers
+    {
+      key = 'C',
+      mods = 'CTRL|SHIFT',
+      action = wezterm.action_callback(function(window, pane)
+        if window:get_selection_text_for_pane(pane):find '%S' then
+          window:perform_action(wezterm.action.CopyTo 'Clipboard', pane)
+        end
+      end),
+    },
   }
 elseif wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
   config.default_prog = { 'zellij' }
