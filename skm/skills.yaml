@@ -23,9 +23,10 @@ packages:
   - repo: https://github.com/run-llama/llamaparse-agent-skills
     skills:
       - liteparse
-  ## codespace visulization
+  ## codespace understanding & visulization
   - repo: https://github.com/yizhiyanhua-ai/fireworks-tech-graph
   - repo: https://github.com/tt-a1i/archify
+  - repo: https://github.com/Graphify-Labs/graphify
   - repo: https://github.com/markdown-viewer/skills
   ## design
   - repo: https://github.com/tw93/Kami

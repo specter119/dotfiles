@@ -16,7 +16,8 @@
   "modelFavorites": [
     "glm-5.3",
     "kimi-k3",
-    "gpt-6-astra"
+    "gpt-6-astra",
+    "gemini-4-argon"
   ],
   "nerdFont": true,
   "sessionDefaultSettings": {
