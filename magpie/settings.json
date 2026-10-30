@@ -3,13 +3,30 @@
   "lang": "system",
   "tray": "panel",
   "currency": "usd",
+  "dockNever": true,
+  "dockSettled": true,
+# {{#if enterprise_proxy.url}}
+  "proxy": "{{enterprise_proxy.url}}",
+  "proxyCustom": "{{enterprise_proxy.url}}",
+# {{/if}}
   "otel": {},
   "redactPersonal": true,
   "gatewayConversations": true,
+  "sessionReads": {
+    "asked": false
+  },
   "updateEvery": 360,
   "trayUsageEvery": 3,
   "plainNames": true,
   "textSize": 110,
-  "modelCompacts": {{json_to_str magpie.model_compacts}},
-  "modelWires": {{json_to_str magpie.model_wires}}
+  "modelCompacts": {
+# {{#each magpie.model_compacts}}
+    "{{@key}}": {{this}}{{#unless @last}},{{/unless}}
+# {{/each}}
+  },
+  "modelWires": {
+# {{#each magpie.model_wires}}
+    "{{@key}}": "{{this}}"{{#unless @last}},{{/unless}}
+# {{/each}}
+  }
 }
