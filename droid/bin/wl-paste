@@ -1,0 +1,92 @@
+#!/bin/sh
+# Shadows wl-paste on WSLg. WSLg exposes a Windows clipboard image only as
+# image/bmp, but droid fetches only image/png or image/jpeg, so pasting fails.
+# Serve `--type image/png` by converting that BMP locally (~10ms); fall back to
+# a PowerShell export (~700ms) if the BMP is not a layout we understand.
+# Every other invocation goes to the real wl-paste untouched.
+real=$(PATH=/usr/local/bin:/usr/bin:/bin command -v wl-paste) || exit 127
+
+case "$*" in
+"--type image/png" | "-t image/png") ;;
+*) exec "$real" "$@" ;;
+esac
+
+types=$("$real" --list-types 2>/dev/null)
+case "$types" in
+*image/png*) exec "$real" "$@" ;;
+*image/bmp*) ;;
+*) exec "$real" "$@" ;;
+esac
+
+tmp=$(mktemp /tmp/wl-paste-png.XXXXXX) || exit 1
+trap 'rm -f "$tmp"' EXIT HUP INT TERM
+
+BMP2PNG=$(
+	cat <<'PY'
+import struct, sys, zlib
+
+data = sys.stdin.buffer.read()
+if len(data) < 54 or data[:2] != b"BM":
+    sys.exit(1)
+off = struct.unpack_from("<I", data, 10)[0]
+hsize, w, h, planes, bpp, comp = struct.unpack_from("<IiiHHI", data, 14)
+if hsize not in (40, 108, 124) or planes != 1 or bpp not in (24, 32):
+    sys.exit(1)
+if comp == 3:
+    if bpp != 32 or off < 66 or struct.unpack_from("<III", data, 54) != (0xFF0000, 0xFF00, 0xFF):
+        sys.exit(1)
+elif comp != 0:
+    sys.exit(1)
+top_down = h < 0
+h = abs(h)
+if not (0 < w <= 32768 and 0 < h <= 32768) or off < 14 + hsize:
+    sys.exit(1)
+bytes_pp = bpp // 8
+stride = (w * bytes_pp + 3) & ~3
+if off + stride * h > len(data):
+    sys.exit(1)
+
+rows = []
+for y in range(h):
+    s = off + stride * (y if top_down else h - 1 - y)
+    src = data[s : s + w * bytes_pp]
+    row = bytearray(1 + w * 3)
+    row[1::3] = src[2::bytes_pp]
+    row[2::3] = src[1::bytes_pp]
+    row[3::3] = src[0::bytes_pp]
+    rows.append(bytes(row))
+
+
+def chunk(tag, body):
+    crc = zlib.crc32(tag + body) & 0xFFFFFFFF
+    return struct.pack(">I", len(body)) + tag + body + struct.pack(">I", crc)
+
+
+png = (
+    b"\x89PNG\r\n\x1a\n"
+    + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
+    + chunk(b"IDAT", zlib.compress(b"".join(rows), 1))
+    + chunk(b"IEND", b"")
+)
+sys.stdout.buffer.write(png)
+PY
+)
+
+if command -v python3 >/dev/null 2>&1 &&
+	"$real" --type image/bmp 2>/dev/null | python3 -I -S -c "$BMP2PNG" >"$tmp" 2>/dev/null &&
+	[ -s "$tmp" ]; then
+	cat "$tmp"
+	exit 0
+fi
+
+# Clipboard access needs an STA thread, hence -STA.
+: >"$tmp"
+powershell.exe -NoProfile -NonInteractive -STA -Command "
+Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+\$img = [System.Windows.Forms.Clipboard]::GetImage()
+if (-not \$img) { exit 1 }
+\$img.Save('$(wslpath -w "$tmp")', [System.Drawing.Imaging.ImageFormat]::Png)
+" >/dev/null 2>&1 || exit 1
+
+[ -s "$tmp" ] || exit 1
+cat "$tmp"
