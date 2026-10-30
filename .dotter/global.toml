@@ -301,9 +301,6 @@ server_url = 'http://localhost:8080'
 [enterprise-proxy.variables.enterprise_proxy]
 url = ''
 
-[raft]
-depends = ['enterprise-proxy']
-
 [raft.files]
 raft = '~/.config'
 
@@ -346,9 +343,6 @@ steam = '~/.config'
 
 [alma.files]
 alma = '~/.config'
-
-[yt-dlp]
-depends = ['enterprise-proxy']
 
 [yt-dlp.files]
 yt-dlp = '~/.config/yt-dlp'
