@@ -57,6 +57,13 @@ This repo uses Dotter packages as a layered grouping system rather than a flat l
 - `nodejs` is a group of `bun` and `npm`; select `bun` alone on machines that do not need npm
 - `wsl-guest` is a group for WSL guests: it carries the required Windows env vars and WSLg environment itself, and composes `wsl-ssh-agent` and `voxtype-wsl-bridge`. The `droid` package also maps `droid/bin` to `~/.local/bin` (only when `wsl-guest` is selected): its `wl-paste` shim serves `image/png` by converting the WSLg `image/bmp` clipboard locally, because droid only requests PNG/JPEG
 
+`depends` expresses a deployment relationship between packages, never a reference between variables. Use it for only two reasons:
+
+- **Grouping**: a package that layers base packages so one selection deploys a whole environment with fewer decisions.
+- **Functional coupling**: the dependent software cannot work without the dependency's deployed payload.
+
+Reading another package's variable, or testing `dotter.packages.<name>`, is not a dependency. A template that guards such a value with `#if` has two valid renderings (set and unset) and deploys either way, so it must not declare `depends`. For example, `raft`, `yt-dlp` and `magpie` test `enterprise_proxy.url` without depending on `enterprise-proxy`, and `npm`, `bun` and `uv` test `dotter.packages.enterprise-artifact` without depending on `enterprise-artifact`. Add `depends` for a variable only when the deployment itself stops making sense without it, that is, the dependent has no working form once the variable is removed.
+
 When changing package names, dependencies, or file mappings, preserve this layered relationship unless the change is explicitly a package-architecture refactor.
 
 ## User Services
@@ -186,7 +193,7 @@ Magpie owns provider-level model configuration (`~/.config/magpie/providers.json
 | Variable                                    | Shape            | Source           | Notes                                                                                                                                                                                                         |
 | ------------------------------------------- | ---------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `codex.model`                               | string           | `global + local` | Reverse-synced from `config.toml.model`; omitted when empty                                                                                                                                                   |
-| `enterprise_proxy.url`                      | string           | `global + local` | Optional; provided by the `enterprise-proxy` variable-only package, used by raft via `WSS_PROXY` (only when `raft.server_url` is empty) and by yt-dlp when set                                                |
+| `enterprise_proxy.url`                      | string           | `global + local` | Optional; tested with `#if` by raft (`WSS_PROXY`, only when `raft.server_url` is empty), yt-dlp and magpie (`proxy`/`proxyCustom`); none depends on the `enterprise-proxy` placeholder package                |
 | `raft.server_url`                           | string           | `global + local` | Optional; API base URL of a self-hosted Raft server. When set, `raft-computer.service` exports `RAFT_SERVER_URL` and `NODE_OPTIONS=--use-openssl-ca` and omits `WSS_PROXY`; empty targets the hosted service  |
 | `yt-dlp.output_dir`                         | string           | `global + local` | yt-dlp output root; defaults to `~/Videos` and can be overridden per machine                                                                                                                                  |
 | `codex.model_provider`                      | string           | `global`         | Codex model provider; defaults to `magpie` in `global.toml`, not reverse-synced                                                                                                                               |
