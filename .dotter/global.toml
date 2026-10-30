@@ -34,6 +34,10 @@ nm-applet = '~/.config'
 [udiskie.files]
 udiskie = '~/.config'
 
+[x11-lowdpi.files]
+x11-lowdpi = '~/.local'
+'x11-lowdpi/weston-x11-lowdpi.ini' = '~/.config/weston/x11-lowdpi.ini'
+
 [sway.files]
 sway = '~/.config'
 
@@ -363,7 +367,7 @@ depends = ['fish', 'yazi', 'atuin', 'mihomo', 'aria2']
 shell = '~/.config'
 
 [wm]
-depends = ['sway', 'mako', 'waybar', 'avizo', 'cliphist', 'nm-applet', 'udiskie', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
+depends = ['sway', 'mako', 'waybar', 'avizo', 'cliphist', 'nm-applet', 'udiskie', 'x11-lowdpi', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
 
 [dev]
 depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']

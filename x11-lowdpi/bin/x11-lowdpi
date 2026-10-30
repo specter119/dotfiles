@@ -1,0 +1,20 @@
+#!/bin/sh
+# Run an X11 app that cannot scale itself inside its own nested weston: weston
+# brings a 1x Xwayland and sets DISPLAY for the app, and sway upscales the
+# weston window. weston exits with the app. --fullscreen is not usable here:
+# sway answers its initial fullscreen request with a 0x0 configure, so weston
+# aborts; the windowed mode keeps weston's thin client-side title bar instead.
+# Usage: x11-lowdpi <command> [args...]
+
+[ $# -gt 0 ] || { echo "usage: x11-lowdpi <command> [args...]" >&2; exit 2; }
+
+# weston needs an initial size; start from the focused output's logical size so
+# the window is already right before sway tiles it.
+width=1280 height=800
+size=$(swaymsg -t get_outputs 2>/dev/null |
+    jq -r '.[] | select(.focused) | "\(.rect.width) \(.rect.height)"' 2>/dev/null)
+[ -n "$size" ] && { width=${size% *}; height=${size#* }; }
+
+exec weston --width="$width" --height="$height" \
+    --config="${XDG_CONFIG_HOME:-$HOME/.config}/weston/x11-lowdpi.ini" \
+    --socket="x11-lowdpi-$$" -- "$@"
