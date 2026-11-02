@@ -5,8 +5,8 @@ description: >-
   third-party library usage, and OSS examples.
 model: gemini-3.8-flash
 reasoningEffort: low
-tools: ["Read", "WebSearch", "FetchUrl"]
-mcpServers: ["context7"]
+tools: [Read, WebSearch, FetchUrl]
+mcpServers: [context7]
 ---
 
 # Librarian
