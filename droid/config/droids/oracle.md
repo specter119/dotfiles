@@ -4,9 +4,9 @@ description: >-
   Read-only second-opinion reviewer for architecture tradeoffs, complex bugs,
   and design review. Use when the main agent needs an independent perspective
   from a different model family.
-model: gpt-astra-6
+model: gpt-6-astra
 reasoningEffort: high
-tools: ["Read", "LS", "Grep", "Glob", "WebSearch"]
+tools: [Read, LS, Grep, Glob, WebSearch]
 mcpServers: []
 ---
 
