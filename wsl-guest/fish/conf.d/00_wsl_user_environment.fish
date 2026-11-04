@@ -1,6 +1,6 @@
-# WSL login shells bypass pam_systemd, so import the session environment once for
-# login shells and the first zellij layer. Child shells inherit the result;
-# rerunning would prepend environment.d entries to PATH again on every layer.
+# wsl.exe login shells skip pam_systemd, so import /etc/profile and environment.d
+# once for login fish and the first zellij layer. Child shells inherit the result;
+# rerunning the generator would prepend environment.d entries to PATH on every layer.
 if status is-login; or set -q ZELLIJ
     if not set -q __login_env_imported
         set -gx __login_env_imported 1
