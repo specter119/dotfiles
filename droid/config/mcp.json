@@ -10,8 +10,8 @@
     },
     "fast-context": {
       "type": "stdio",
-      "command": "bunx",
-      "args": ["fast-context-mcp"],
+      "command": "bun",
+      "args": ["x", "fast-context-mcp"],
       "env": {
         "WINDSURF_API_KEY": "{{replace (command_output "rbw get windsurf-api-key") "\n" ""}}"
       },
