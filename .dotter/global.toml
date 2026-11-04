@@ -1,5 +1,5 @@
 [wsl-guest]
-depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge']
+depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge', 'fcitx5-wslg', 'wsl-keyring-unlock']
 
 [wsl-guest.files]
 'wsl-guest' = '~/.config'
@@ -60,6 +60,16 @@ fontconfig = '~/.config/fontconfig'
 
 [fcitx5.files]
 fcitx5 = '~/.config'
+
+[fcitx5-wslg]
+depends = ['fcitx5']
+
+[fcitx5-wslg.files]
+'fcitx5-wslg' = '~/.config'
+
+[wsl-keyring-unlock.files]
+'wsl-keyring-unlock/bin' = '~/.local/bin'
+'wsl-keyring-unlock/config' = '~/.config'
 
 [fish.files]
 fish = '~/.config/fish'

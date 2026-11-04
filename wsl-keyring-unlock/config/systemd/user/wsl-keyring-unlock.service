@@ -1,0 +1,8 @@
+[Unit]
+Description=Unlock the default GNOME keyring with its DPAPI-protected password
+# WSL logs in with `login -f`, so pam_gnome_keyring never receives a password.
+
+[Service]
+Type=oneshot
+TimeoutStartSec=90s
+ExecStart=%h/.local/bin/wsl-keyring-unlock
