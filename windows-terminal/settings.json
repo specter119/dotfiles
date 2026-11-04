@@ -1,60 +1,56 @@
 {
-    "$help": "https://aka.ms/terminal-documentation",
-    "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions": [],
-    "copyFormatting": "none",
-    "copyOnSelect": false,
-    "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
-    "keybindings": [],
-    "newTabMenu":
-    [
-        {
-            "type": "remainingProfiles"
-        }
-    ],
-    "profiles":
+  "$help": "https://aka.ms/terminal-documentation",
+  "$schema": "https://aka.ms/terminal-profiles-schema",
+  "actions": [],
+  "copyFormatting": "none",
+  "copyOnSelect": false,
+  "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+  "keybindings": [],
+  "newTabMenu": [
     {
-        "defaults": {},
-        "list":
-        [
-            {
-                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
-                "hidden": false,
-                "name": "Windows PowerShell"
-            },
-            {
-                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
-                "hidden": false,
-                "name": "Command Prompt"
-            },
-            {
-                "colorScheme": "Campbell",
-                "commandline": "%scoop%\\apps\\pwsh\\current\\pwsh.exe -NoLogo",
-                "guid": "{4dbeb086-c965-4d91-b0b3-e5328ec6fb30}",
-                "hidden": false,
-                "icon": "ms-appx:///ProfileIcons/pwsh.png",
-                "name": "PowerShell",
-                "startingDirectory": "%USERPROFILE%"
-            },
-            {
-                "closeOnExit": "always",
-                "commandline": "C:\\Windows\\system32\\wsl.exe --distribution-id {c00c0227-7edf-47e0-92fa-6178941e7073}",
-                "font":
-                {
-                    "face": "Sarasa Term SC Nerd",
-                    "size": 12,
-                    "weight": "medium"
-                },
-                "guid": "{fd543547-5e39-4eb3-ae2b-21a4bb0d9767}",
-                "hidden": false,
-                "icon": "C:\\Users\\liuky3\\AppData\\Local\\wsl\\{c00c0227-7edf-47e0-92fa-6178941e7073}\\shortcut.ico",
-                "name": "DebianWSL",
-                "pathTranslationStyle": "wsl",
-                "startingDirectory": "~"
-            }
-        ]
-    },
-    "schemes": [],
-    "themes": [],
-    "useAcrylicInTabRow": true
+      "type": "remainingProfiles"
+    }
+  ],
+  "profiles": {
+    "defaults": {},
+    "list": [
+      {
+        "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+        "hidden": false,
+        "name": "Windows PowerShell"
+      },
+      {
+        "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+        "hidden": false,
+        "name": "Command Prompt"
+      },
+      {
+        "colorScheme": "Campbell",
+        "commandline": "%scoop%\\apps\\pwsh\\current\\pwsh.exe -NoLogo",
+        "guid": "{4dbeb086-c965-4d91-b0b3-e5328ec6fb30}",
+        "hidden": false,
+        "icon": "ms-appx:///ProfileIcons/pwsh.png",
+        "name": "PowerShell",
+        "startingDirectory": "%USERPROFILE%"
+      },
+      {
+        "closeOnExit": "always",
+        "commandline": "C:\\Windows\\system32\\wsl.exe --distribution-id {c00c0227-7edf-47e0-92fa-6178941e7073}",
+        "font": {
+          "face": "Sarasa Term SC Nerd",
+          "size": 12,
+          "weight": "medium"
+        },
+        "guid": "{fd543547-5e39-4eb3-ae2b-21a4bb0d9767}",
+        "hidden": false,
+        "icon": "C:\\Users\\liuky3\\AppData\\Local\\wsl\\{c00c0227-7edf-47e0-92fa-6178941e7073}\\shortcut.ico",
+        "name": "DebianWSL",
+        "pathTranslationStyle": "wsl",
+        "startingDirectory": "~"
+      }
+    ]
+  },
+  "schemes": [],
+  "themes": [],
+  "useAcrylicInTabRow": true
 }
