@@ -1,5 +1,5 @@
 {
   "lastupdate": "{{scoop.lastupdate}}",
-  "scoop_repo": "https://github.com/specter119/Shovel-Core",
-  "scoop_branch": "main"
+  "scoop_branch": "main",
+  "scoop_repo": "https://github.com/specter119/Shovel-Core"
 }

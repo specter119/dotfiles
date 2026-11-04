@@ -1,4 +1,7 @@
 {
   "$schema": "https://pi.dev/schemas/keybindings.schema.json",
-  "app.clipboard.pasteImage": ["ctrl+v", "alt+v"]
+  "app.clipboard.pasteImage": [
+    "ctrl+v",
+    "alt+v"
+  ]
 }
