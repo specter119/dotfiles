@@ -1,0 +1,141 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["jeepney>=0.8"]
+# ///
+"""Unlock the default GNOME keyring with a password protected by Windows DPAPI.
+
+WSL logs in with `login -f`, so pam_gnome_keyring never sees a password and the
+keyring stays locked until a prompt is answered. This helper reads the password
+from a DPAPI blob (CurrentUser scope) through powershell.exe and hands it to the
+running gnome-keyring daemon over D-Bus. The password never appears in argv, the
+environment or a file on the Linux side.
+
+One-time Windows setup (PowerShell, type the keyring password when asked):
+
+    $d = Join-Path $env:LOCALAPPDATA 'wsl-keyring-unlock'
+    New-Item -ItemType Directory -Force $d | Out-Null
+    Read-Host -AsSecureString 'keyring password' | ConvertFrom-SecureString |
+        Set-Content (Join-Path $d 'default.dpapi')
+
+`gnome-keyring-daemon --unlock` is not used: it only targets a keyring named
+"login", starts a second daemon and exits 0 on a wrong password. The internal
+UnlockWithMasterPassword method unlocks any collection on the running daemon.
+There is no stability promise for it; a failure only leaves the gcr prompt as
+the fallback.
+
+Exit codes: 0 unlocked, already unlocked or not configured; 1 failure.
+"""
+
+import base64
+import subprocess
+import sys
+
+from jeepney import DBusAddress, new_method_call
+from jeepney.io.blocking import open_dbus_connection
+from jeepney.wrappers import DBusErrorResponse, unwrap_msg
+
+POWERSHELL = "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+NOT_CONFIGURED = 3
+
+PS_SCRIPT = r"""
+$ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
+$p = Join-Path $env:LOCALAPPDATA 'wsl-keyring-unlock\default.dpapi'
+if (-not (Test-Path -LiteralPath $p)) { exit 3 }
+$secure = ConvertTo-SecureString ((Get-Content -Raw -LiteralPath $p).Trim())
+$bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
+try {
+    $plain = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr)
+    [Console]::Out.Write([Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($plain)))
+} finally {
+    [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
+}
+"""
+
+SECRETS = "org.freedesktop.secrets"
+SERVICE = DBusAddress("/org/freedesktop/secrets", SECRETS, "org.freedesktop.Secret.Service")
+INTERNAL = DBusAddress(
+    "/org/freedesktop/secrets",
+    SECRETS,
+    "org.gnome.keyring.InternalUnsupportedGuiltRiddenInterface",
+)
+
+
+def call(conn, address, method, signature="", body=()):
+    reply = conn.send_and_get_reply(new_method_call(address, method, signature, body), timeout=30)
+    return unwrap_msg(reply)
+
+
+def is_locked(conn, path):
+    address = DBusAddress(path, SECRETS, "org.freedesktop.DBus.Properties")
+    (variant,) = call(conn, address, "Get", "ss", ("org.freedesktop.Secret.Collection", "Locked"))
+    return bool(variant[1])
+
+
+def read_password():
+    encoded = base64.b64encode(PS_SCRIPT.encode("utf-16-le")).decode()
+    result = subprocess.run(
+        [POWERSHELL, "-NoProfile", "-NonInteractive", "-EncodedCommand", encoded],
+        capture_output=True,
+        stdin=subprocess.DEVNULL,
+        timeout=30,
+        cwd="/mnt/c",
+    )
+    if result.returncode == NOT_CONFIGURED:
+        return None
+    if result.returncode != 0:
+        # Windows writes error text in the OEM code page, not UTF-8.
+        print(f"powershell failed: {result.stderr.decode('utf-8', 'replace').strip()}", file=sys.stderr)
+        sys.exit(1)
+    password = base64.b64decode(result.stdout.strip())
+    if not password:
+        print("DPAPI password is empty", file=sys.stderr)
+        sys.exit(1)
+    return password
+
+
+def main():
+    conn = open_dbus_connection(bus="SESSION")
+    try:
+        (path,) = call(conn, SERVICE, "ReadAlias", "s", ("default",))
+        if path == "/":
+            print("no default keyring")
+            return
+        if not is_locked(conn, path):
+            print("already unlocked")
+            return
+
+        password = read_password()
+        if password is None:
+            print("not configured")
+            return
+
+        # The secret must reference a session opened on this same connection.
+        (_, session) = call(conn, SERVICE, "OpenSession", "sv", ("plain", ("s", "")))
+        call(
+            conn,
+            INTERNAL,
+            "UnlockWithMasterPassword",
+            "o(oayays)",
+            (path, (session, b"", password, "text/plain")),
+        )
+        session_address = DBusAddress(session, SECRETS, "org.freedesktop.Secret.Session")
+        call(conn, session_address, "Close")
+
+        if is_locked(conn, path):
+            print("unlock failed, the password prompt remains the fallback", file=sys.stderr)
+            sys.exit(1)
+        print("unlocked")
+    except DBusErrorResponse as error:
+        print(f"D-Bus error: {error.name}", file=sys.stderr)
+        sys.exit(1)
+    except subprocess.TimeoutExpired:
+        print("powershell timed out", file=sys.stderr)
+        sys.exit(1)
+    finally:
+        conn.close()
+
+
+if __name__ == "__main__":
+    main()
