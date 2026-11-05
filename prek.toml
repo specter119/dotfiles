@@ -10,13 +10,13 @@ hooks = [
   {id = "check-symlinks"},
   {id = "check-toml", exclude = '^(alacritty/alacritty\.toml|bun/bunfig\.toml|codex/codex/config\.toml|jj/config\.toml|magpie/plugins/bunfig\.toml|uv/uv\.toml|voxtype/voxtype/config\.toml|yazi/yazi\.toml)$'},
   {id = "check-yaml", exclude = '^(glab/config\.yml|mihomo/config\.yaml|skm/skills\.yaml)$'},
-  {id = "check-json", exclude = '^(amp/settings\.json|antigravity/antigravity/(mcp_config|settings)\.json|copilot/mcp-config\.json|enterprise-artifact/\.docker/config\.json|droid/config/(mcp|settings)\.json|magpie/settings\.json|opencode/(config/tui|share/auth)\.json|pi/(auth|models|settings)\.json)$'},
+  {id = "check-json", exclude = '^(amp/settings\.json|antigravity/antigravity/(mcp_config|settings)\.json|copilot/mcp-config\.json|enterprise-artifact/\.docker/config\.json|droid/config/(mcp|settings)\.json|magpie/settings\.json|opencode/(config/tui|share/auth)\.json|pi/(auth|mcp|models|settings)\.json)$'},
   {id = "detect-private-key"},
   {id = "end-of-file-fixer", exclude = '^fcitx5/fcitx5'},
   {id = "forbid-new-submodules"},
   {id = "mixed-line-ending"},
   {id = "trailing-whitespace"},
-  {id = "pretty-format-json", args = ["--autofix"], exclude = '^(enterprise-artifact/\.docker/config\.json|amp/settings\.json|antigravity/antigravity/(mcp_config|settings)\.json|copilot/mcp-config\.json|droid/config/(mcp|settings)\.json|magpie/settings\.json|opencode/(config/tui|share/auth)\.json|pi/(auth|models|settings)\.json)$'},
+  {id = "pretty-format-json", args = ["--autofix"], exclude = '^(enterprise-artifact/\.docker/config\.json|amp/settings\.json|antigravity/antigravity/(mcp_config|settings)\.json|copilot/mcp-config\.json|droid/config/(mcp|settings)\.json|magpie/settings\.json|opencode/(config/tui|share/auth)\.json|pi/(auth|mcp|models|settings)\.json)$'},
 ]
 
 [[repos]]

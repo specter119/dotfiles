@@ -21,3 +21,6 @@
 - 使用 `lit` 提取二进制文档文本，使用 `waza` 管理或评估 skill。
 - 仅在历史 agent 对话与当前请求相关时使用 `xurl`；不要把密钥或敏感内容写入 memory。
 - 存在 `.jj/` 时使用 `jj`。独立 Python 脚本使用 `uv run` 和 PEP 723 metadata。
+- `mcp.json` 是 Dotter 模板。会话内 `/mcp` 改动的启用状态与 exposure 会写回已部署的 `~/.config/pi/mcp.json`，下次 `dotter deploy` 会与模板冲突；要长期保留的改动改模板，只想临时生效的改动写在项目级 `.pi/mcp.json`。
+- `mcp.json` 的条目不设 `timeout`：跟随服务端；只有 Pi 的默认值（60 s）不够用时才加。
+- OneNote 由 `deskhand` 提供（Python 实现，`uv tool install git+https://github.com/specter119/deskhand` 后得到 `deskhand` 命令；旧的 TypeScript 实现冻结在该仓库的 `ts` 分支）；写操作的确认弹窗由 `extensions/deskhand/index.ts` 负责。
