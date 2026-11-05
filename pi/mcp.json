@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+# {{#if dotter.packages.wsl-guest}}
+    "onenote": {
+      "command": "deskhand",
+      "args": ["onenote"],
+      "description": "Reads and edits the Windows OneNote desktop client from WSL. Writes are two steps: a dry run issues an applyToken, then the same call with dryRun=false applies it."
+    }
+# {{/if}}
+  }
+}
