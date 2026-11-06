@@ -11,6 +11,7 @@ service_tier = "default"
 # {{#if codex.model}}
 model = "{{codex.model}}"
 # {{/if}}
+openai_base_url = "http://127.0.0.1:3425/backend-api/codex"
 
 [model_providers]
 [model_providers.magpie]
@@ -101,3 +102,6 @@ disable_on_external_context = true
 
 [notice]
 hide_rate_limit_model_nudge = true
+
+[desktop]
+enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "persistent", "none", "minimal", "max"]
