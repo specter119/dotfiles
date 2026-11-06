@@ -178,6 +178,69 @@ def sync_trusted_workspaces(table: tomlkit.items.Table, key: str, value: object)
     return True
 
 
+def normalize_extension_changelog_versions(value: object) -> list[dict[str, str]]:
+    """Normalize pi's extensionChangelogVersions map to a sorted list.
+
+    Live keys are JSON strings such as '{"source":"npm:pi-goal","scope":"user"}'.
+    """
+    if not isinstance(value, dict):
+        return []
+    result: list[dict[str, str]] = []
+    for key, version in value.items():
+        if not isinstance(key, str) or not isinstance(version, str):
+            continue
+        try:
+            info = json.loads(key)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(info, dict):
+            continue
+        source = info.get('source')
+        scope = info.get('scope')
+        if isinstance(source, str) and isinstance(scope, str):
+            result.append({'source': source, 'scope': scope, 'version': version})
+    return sorted(result, key=lambda entry: (entry['source'], entry['scope']))
+
+
+def normalize_existing_extension_changelog_versions(
+    value: object,
+) -> list[dict[str, str]]:
+    """Normalize TOML array-of-tables while preserving field order."""
+    if not isinstance(value, list):
+        return []
+    result: list[dict[str, str]] = []
+    for item in value:
+        if isinstance(item, dict):
+            result.append({
+                'source': str(item.get('source', '')),
+                'scope': str(item.get('scope', '')),
+                'version': str(item.get('version', '')),
+            })
+    return sorted(result, key=lambda entry: (entry['source'], entry['scope']))
+
+
+def sync_extension_changelog_versions(
+    table: tomlkit.items.Table,
+    key: str,
+    value: object,
+) -> bool:
+    """Sync pi per-extension changelog read receipts into local.toml."""
+    live = normalize_extension_changelog_versions(value)
+    existing = normalize_existing_extension_changelog_versions(table.get(key, []))
+    if existing == live:
+        return False
+
+    aot = tomlkit.aot()
+    for entry in live:
+        t = tomlkit.table()
+        t.add('source', entry['source'])
+        t.add('scope', entry['scope'])
+        t.add('version', entry['version'])
+        aot.append(t)
+    table[key] = aot
+    return True
+
+
 def normalize_projects(value: object) -> list[str]:
     """Normalize Codex projects table to sorted trusted project paths."""
     if not isinstance(value, dict):
@@ -390,6 +453,11 @@ def main() -> None:
             pi_table,
             'last_changelog_version',
             pi_data.get('lastChangelogVersion'),
+        )
+        changed |= sync_extension_changelog_versions(
+            pi_table,
+            'extension_changelog_versions',
+            pi_data.get('extensionChangelogVersions', {}),
         )
 
     # droid: tool-managed trusted folders only

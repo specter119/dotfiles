@@ -212,6 +212,7 @@ pi = '~/.config/pi'
 default_model = ''
 default_provider = ''
 enterprise_packages = []
+extension_changelog_versions = []
 last_changelog_version = ''
 subagent_model = {}
 
