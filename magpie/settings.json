@@ -6,8 +6,8 @@
   "dockNever": true,
   "dockSettled": true,
 # {{#if enterprise_proxy.url}}
-  "proxy": "{{enterprise_proxy.url}}",
-  "proxyCustom": "{{enterprise_proxy.url}}",
+  "proxy": "{{url_userinfo_escape enterprise_proxy.url}}",
+  "proxyCustom": "{{url_userinfo_escape enterprise_proxy.url}}",
 # {{/if}}
   "otel": {},
   "redactPersonal": true,

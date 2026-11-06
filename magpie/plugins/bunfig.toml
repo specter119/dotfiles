@@ -1,8 +1,0 @@
-# magpie installs its plugins with Bun and needs its own registry credentials.
-# Both values come from the enterprise-artifact package, exactly as in
-# ~/.bunfig.toml.
-# {{#if dotter.packages.enterprise-artifact}}
-[install.registry]
-url = "https://{{enterprise-artifact.npm_registry}}/"
-token = "{{enterprise-artifact.access_token}}"
-# {{/if}}
