@@ -5,7 +5,9 @@
   "defaultModel": "{{pi.default_model}}",
   "defaultProvider": "{{pi.default_provider}}",
   "defaultThinkingLevel": "high",
-  "defaultTools": ["+codemode"],
+  "defaultTools": [
+    "+codemode"
+  ],
   "hideThinkingBlock": false,
   "lastChangelogVersion": "{{pi.last_changelog_version}}",
   "npmCommand": [
@@ -16,16 +18,21 @@
     "enabled": true,
     "endpoint": "{{agent.otel_url}}",
     "protocol": "http/protobuf",
-    "headers": { "x-project-name": "harness-pi" },
+    "headers": {
+      "x-project-name": "harness-pi"
+    },
     "serviceName": "pi",
     "captureContent": "metadata_only",
-    "sampleRatio": 1.0,
-    "signals": { "traces": true, "metrics": false, "logs": false }
+    "sampleRatio": 1,
+    "signals": {
+      "traces": true,
+      "metrics": false,
+      "logs": false
+    }
   },
 # {{/if}}
   "packages": [
     "https://github.com/aliou/pi-guardrails",
-    "npm:@tintinweb/pi-subagents",
     "npm:@narumitw/pi-goal",
     "npm:pi-web-access",
     "npm:@ff-labs/pi-fff",
@@ -34,5 +41,12 @@
     "{{this}}"{{/each}},
     "https://github.com/specter119/bole.git"
   ],
-  "theme": "dark"
+  "theme": "dark",
+  "extensionChangelogVersions": {
+    "{\"source\":\"https://github.com/aliou/pi-guardrails\",\"scope\":\"user\"}": "0.22.0",
+    "{\"source\":\"npm:@tintinweb/pi-subagents\",\"scope\":\"user\"}": "0.23.1",
+    "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.47.0",
+    "{\"source\":\"https://github.com/davebcn87/pi-autoresearch\",\"scope\":\"user\"}": "1.9.0",
+    "{\"source\":\"npm:@narumitw/pi-goal\",\"scope\":\"user\"}": "0.54.15"
+  }
 }
