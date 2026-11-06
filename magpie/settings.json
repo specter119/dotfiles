@@ -13,7 +13,11 @@
   "redactPersonal": true,
   "gatewayConversations": true,
   "sessionReads": {
-    "asked": false
+    "asked": true,
+    "all": true,
+    "agents": {
+      "grok": true
+    }
   },
   "updateEvery": 360,
   "trayUsageEvery": 3,
