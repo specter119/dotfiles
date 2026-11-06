@@ -41,12 +41,10 @@
     "{{this}}"{{/each}},
     "https://github.com/specter119/bole.git"
   ],
-  "theme": "dark",
+  "theme": "dark"{{#if pi.extension_changelog_versions}},
   "extensionChangelogVersions": {
-    "{\"source\":\"https://github.com/aliou/pi-guardrails\",\"scope\":\"user\"}": "0.22.0",
-    "{\"source\":\"npm:@tintinweb/pi-subagents\",\"scope\":\"user\"}": "0.23.1",
-    "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.47.0",
-    "{\"source\":\"https://github.com/davebcn87/pi-autoresearch\",\"scope\":\"user\"}": "1.9.0",
-    "{\"source\":\"npm:@narumitw/pi-goal\",\"scope\":\"user\"}": "0.54.15"
-  }
+# {{#each pi.extension_changelog_versions}}
+    "{\"source\":\"{{source}}\",\"scope\":\"{{scope}}\"}": "{{version}}"{{#unless @last}},{{/unless}}
+# {{/each}}
+  }{{/if}}
 }
