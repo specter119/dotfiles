@@ -1,3 +1,6 @@
+[helpers]
+url_userinfo_escape = '.dotter/helpers/url_userinfo_escape.rhai'
+
 [wsl-guest]
 depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge', 'fcitx5-wslg', 'wsl-keyring-unlock']
 

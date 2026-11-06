@@ -20,6 +20,10 @@ Scope: `.dotter/`
   1. Only use `--force` as a last resort after the user has explicitly chosen the repo-managed value.
 - Follow the repo-level reverse-sync decision framework before adding a variable. Apply this workflow to every Dotter-managed target, including reverse-synced values.
 
+## Rhai Helpers
+
+- Custom helpers are registered under `[helpers]` in `global.toml` and live in `.dotter/helpers/*.rhai`. `url_userinfo_escape` percent-encodes the userinfo of a URL; use it for any consumer that parses the URL with Go's `net/url` (magpie `proxy`), which rejects characters such as `^` in a password.
+
 ## Deployment Cache
 
 - `.dotter/cache.toml` and `.dotter/cache/` are Dotter-owned state. Never edit or remove their entries manually.
