@@ -1,0 +1,3 @@
+# Disables TLS verification for conda channels; deployed only with enterprise-artifact.
+# Needs conda >= 4.11 or micromamba >= 2.0 to read ~/.config/conda/condarc.d/.
+ssl_verify: false

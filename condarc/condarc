@@ -25,7 +25,6 @@ envs_dirs:
   - ~/.local/share/mamba/envs
 pkgs_dirs:
   - ~/.local/share/mamba/pkgs
-ssl_verify: false
 use_uv: true
 report_errors: false
 anaconda_upload: false

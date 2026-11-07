@@ -6,6 +6,7 @@ depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge', 'fcitx5-wslg', 'wsl-keyring-un
 
 [wsl-guest.files]
 'wsl-guest' = '~/.config'
+'wsl-guest-enterprise' = { target = '~/.config', type = 'symbolic', if = 'dotter.packages.enterprise-artifact' }
 
 [wsl-ssh-agent.files]
 'wsl-ssh-agent' = '~/.config'
@@ -112,6 +113,7 @@ pip = '~/.config/pip'
 
 [condarc.files]
 condarc = '~/.config/conda'
+'condarc-enterprise' = { target = '~/.config/conda', type = 'symbolic', if = 'dotter.packages.enterprise-artifact' }
 
 [mamba]
 depends = ['condarc']

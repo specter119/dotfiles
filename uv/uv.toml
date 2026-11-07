@@ -1,4 +1,6 @@
+# {{#if dotter.packages.enterprise-artifact}}
 system-certs = true
+# {{/if}}
 
 [pip]
 link-mode = "clone"
