@@ -39,7 +39,7 @@
     "https://github.com/davebcn87/pi-autoresearch",
     "npm:pi-otel"{{#each pi.enterprise_packages}},
     "{{this}}"{{/each}},
-    "https://github.com/specter119/bole.git"
+    "git:git@github.com:specter119/bole.git"
   ],
   "theme": "dark"{{#if pi.extension_changelog_versions}},
   "extensionChangelogVersions": {
