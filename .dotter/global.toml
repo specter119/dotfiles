@@ -381,6 +381,9 @@ yt-dlp = '~/.config/yt-dlp'
 [yt-dlp.variables.yt-dlp]
 output_dir = '~/Videos'
 
+[pdf2zh.files]
+pdf2zh = '~/.config/pdf2zh'
+
 [cliamp.files]
 cliamp = '~/.config/cliamp'
 

@@ -175,14 +175,19 @@ PY
 # magpie labels each model with its upstream's native wire, so models.json mixes
 # openai-completions and openai-responses. The gateway accepts /v1/responses for
 # every model and converts it for chat-only upstreams (Codex relies on this), so
-# make the whole magpie provider use openai-responses. magpie rewrites the file
-# on every `magpie pi` run, hence this runs after each refresh.
+# make the whole magpie provider use openai-responses. Host `magpie pi` also
+# discovers editor Copilot logins the container gateway does not serve; keep
+# only ids from the live /v1/models list. magpie rewrites the file on every
+# `magpie pi` run, hence this runs after each refresh.
 force_pi_models_responses() {
 	models="$HOME/.config/pi/models.json"
 	[ -f "$models" ] || return 0
 	if python3 - "$models" "$models.tmp" <<'PY'
 import json
 import sys
+import urllib.error
+import urllib.request
+from pathlib import Path
 
 src, out = sys.argv[1:3]
 with open(src, encoding="utf-8") as fh:
@@ -190,9 +195,40 @@ with open(src, encoding="utf-8") as fh:
 provider = data.get("providers", {}).get("magpie")
 if provider is None:
     sys.exit(1)
+
+def gateway_ids():
+    auth_path = Path.home() / ".config/pi/auth.json"
+    token = ""
+    if auth_path.is_file():
+        mag = json.loads(auth_path.read_text(encoding="utf-8")).get("magpie") or {}
+        token = mag.get("key") or mag.get("apiKey") or ""
+    base = provider.get("baseUrl") or "http://127.0.0.1:3425/v1"
+    if not token:
+        raise RuntimeError("no magpie key")
+    url = base.rstrip("/") + "/models"
+    request = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
+    with urllib.request.urlopen(request, timeout=10) as response:
+        catalog = json.load(response)
+    ids = [item.get("id") for item in catalog.get("data") or [] if isinstance(item, dict) and item.get("id")]
+    if not ids:
+        raise RuntimeError("empty catalog")
+    return ids
+
+try:
+    served = set(gateway_ids())
+except (RuntimeError, OSError, ValueError, urllib.error.URLError):
+    served = None
+
 provider["api"] = "openai-responses"
+kept = []
 for model in provider.get("models", []):
     model.pop("api", None)
+    if served is not None and model.get("id") not in served:
+        continue
+    kept.append(model)
+if served is not None:
+    provider["models"] = kept
+
 with open(out, "w", encoding="utf-8") as fh:
     json.dump(data, fh, ensure_ascii=False, indent=2, sort_keys=True)
     fh.write("\n")

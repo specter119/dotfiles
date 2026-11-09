@@ -1,0 +1,22 @@
+openaicompatible = true
+term_openaicompatible = true
+
+[gui_settings]
+# Keep the GUI from rewriting this Dotter-managed file.
+disable_config_auto_save = true
+
+[openaicompatible_detail]
+translate_engine_type = "OpenAICompatible"
+support_llm = "yes"
+openai_compatible_model = "grok/grok-4.7"
+openai_compatible_base_url = "http://127.0.0.1:3425/v1"
+openai_compatible_api_key = "{{agent.magpie_apikey}}"
+openai_compatible_timeout = "600"
+
+[term_openaicompatible_detail]
+translate_engine_type = "OpenAICompatible"
+support_llm = "yes"
+term_openai_compatible_model = "grok/grok-4.7"
+term_openai_compatible_base_url = "http://127.0.0.1:3425/v1"
+term_openai_compatible_api_key = "{{agent.magpie_apikey}}"
+term_openai_compatible_timeout = "600"
