@@ -72,7 +72,6 @@ fcitx5 = '~/.config'
 
 [fcitx5.variables.fcitx5]
 theme = 'Material-Color-Teal'
-dark_theme = 'Material-Color-Teal'
 
 [fcitx5-wslg]
 depends = ['fcitx5']
