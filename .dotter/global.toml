@@ -2,7 +2,12 @@
 url_userinfo_escape = '.dotter/helpers/url_userinfo_escape.rhai'
 
 [wsl-guest]
-depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge', 'fcitx5-wslg', 'wsl-keyring-unlock']
+depends = [
+  'wsl-ssh-agent',
+  'voxtype-wsl-bridge',
+  'fcitx5-wslg',
+  'wsl-keyring-unlock',
+]
 
 [wsl-guest.files]
 'wsl-guest' = '~/.config'
@@ -387,7 +392,21 @@ depends = ['fish', 'yazi', 'atuin', 'mihomo', 'aria2']
 shell = '~/.config'
 
 [wm]
-depends = ['sway', 'mako', 'waybar', 'avizo', 'cliphist', 'nm-applet', 'udiskie', 'x11-lowdpi', 'fontconfig', 'fcitx5', 'chromium', 'zathura', 'kitty']
+depends = [
+  'sway',
+  'mako',
+  'waybar',
+  'avizo',
+  'cliphist',
+  'nm-applet',
+  'udiskie',
+  'x11-lowdpi',
+  'fontconfig',
+  'fcitx5',
+  'chromium',
+  'zathura',
+  'kitty',
+]
 
 [dev]
 depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
@@ -410,7 +429,15 @@ depends = ['bub', 'lody', 'raft']
 depends = ['playwright']
 
 [agent-runtime]
-depends = ['browser-use', 'skm', 'zellij', 'nmem', 'magpie', 'voxtype', 'llama.cpp']
+depends = [
+  'browser-use',
+  'skm',
+  'zellij',
+  'nmem',
+  'magpie',
+  'voxtype',
+  'llama.cpp',
+]
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'
