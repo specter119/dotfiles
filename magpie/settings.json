@@ -4,11 +4,9 @@
   "tray": "panel",
   "currency": "usd",
   "dockNever": true,
-  "dockSettled": true,
-# {{#if enterprise_proxy.url}}
+  "dockSettled": true,{{#if enterprise_proxy.url}}
   "proxy": "{{url_userinfo_escape enterprise_proxy.url}}",
-  "proxyCustom": "{{url_userinfo_escape enterprise_proxy.url}}",
-# {{/if}}
+  "proxyCustom": "{{url_userinfo_escape enterprise_proxy.url}}",{{/if}}
   "otel": {},
   "redactPersonal": true,
   "gatewayConversations": true,
@@ -23,14 +21,6 @@
   "trayUsageEvery": 3,
   "plainNames": true,
   "textSize": 110,
-  "modelCompacts": {
-# {{#each magpie.model_compacts}}
-    "{{@key}}": {{this}}{{#unless @last}},{{/unless}}
-# {{/each}}
-  },
-  "modelWires": {
-# {{#each magpie.model_wires}}
-    "{{@key}}": "{{this}}"{{#unless @last}},{{/unless}}
-# {{/each}}
-  }
+  "modelCompacts": { {{#each magpie.model_compacts}}"{{@key}}": {{this}}{{#unless @last}}, {{/unless}}{{/each}} },
+  "modelWires": { {{#each magpie.model_wires}}"{{@key}}": "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }
 }
