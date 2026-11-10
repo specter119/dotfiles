@@ -1,36 +1,45 @@
 [Unit]
-Description=llama-server — Qwen3.8-27B IQ4_XS on 2x RTX 2080 Ti (22GB)
+Description=llama-server — Qwen3.8-27B UD-Q4_K_XL on RTX PRO 4500 Blackwell (32 GB)
 # model auto-download runs in ExecStartPre, needs network
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-# Ensure the GGUF is present (downloads via hfd if missing/incomplete)
+# Ensure the GGUF is present (downloads via aria2c if missing/incomplete)
 ExecStartPre=%h/.local/lib/qwen38-model-sync.sh ensure
 # llama.cpp is installed in the user Nix profile; WSL provides libcuda.so.1.
+# Single GPU: no --split-mode / --tensor-split (they only apply to multi-GPU).
 ExecStart=llama-server \
-    --model %h/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/Qwen3.8-27B-IQ4_XS.gguf \
+    --model %h/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/Qwen3.8-27B-UD-Q4_K_XL.gguf \
     --host 0.0.0.0 \
     --port 8080 \
-    --n-gpu-layers auto \
-    --split-mode layer \
-    --tensor-split 1,1 \
+    --n-gpu-layers all \
+    --ctx-size 262144 \
     --parallel 2 \
-    --ctx-size 32768 \
+    --kv-unified \
+    --flash-attn on \
     --cache-type-k q8_0 \
     --cache-type-v q8_0 \
+    --batch-size 2048 \
+    --ubatch-size 1024 \
+    --fit on \
+    --fit-target 2048 \
     --spec-type draft-mtp \
     --spec-draft-n-max 4 \
-    --spec-draft-p-min 0.75 \
+    --spec-draft-p-min 0 \
+    --cache-ram -1 \
+    --ctx-checkpoints 16 \
+    --metrics \
+    --jinja \
     --reasoning-preserve \
     --reasoning-budget 2000 \
     --chat-template-kwargs '{"reasoning_effort": "low"}' \
-    --image-max-tokens 4000 \
-    --jinja
+    --image-max-tokens 4000
 Restart=on-failure
 RestartSec=10
-# generous: first start may download the 15.7 GB model
+# generous: first start may download the 17.6 GB model, and a cold load of
+# 17.6 GB of weights plus a 262K KV pool is not fast either
 TimeoutStartSec=1800
 Environment=HF_ENDPOINT=https://hf-mirror.com
 
