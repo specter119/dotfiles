@@ -20,7 +20,5 @@
   "updateEvery": 360,
   "trayUsageEvery": 3,
   "plainNames": true,
-  "textSize": 110,
-  "modelCompacts": { {{#each magpie.model_compacts}}"{{@key}}": {{this}}{{#unless @last}}, {{/unless}}{{/each}} },
-  "modelWires": { {{#each magpie.model_wires}}"{{@key}}": "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} }
+  "guideHidden": true
 }

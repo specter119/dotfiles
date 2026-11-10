@@ -8,9 +8,8 @@ plan_mode_reasoning_effort = "high"
 suppress_unstable_features_warning = true
 default_permissions = "workspace-ext"
 service_tier = "default"
-# {{#if codex.model}}
-model = "{{codex.model}}"
-# {{/if}}
+# model, when magpie sets one{{#if codex.model}}
+model = "{{codex.model}}"{{/if}}
 openai_base_url = "http://127.0.0.1:3425/backend-api/codex"
 
 [model_providers]
@@ -54,11 +53,10 @@ status_line = ["model-with-reasoning", "context-remaining", "current-dir"]
 gpt-6-astra = 3
 
 [projects]
-# {{#each codex.projects}}
+# trusted project roots{{#each codex.projects}}
 
 [projects."{{this}}"]
-trust_level = "trusted"
-# {{/each}}
+trust_level = "trusted"{{/each}}
 
 [mcp_servers]
 
@@ -89,11 +87,10 @@ approval_mode = "approve"
 [hooks]
 
 [hooks.state]
-# {{#each codex.hook_states}}
+# trusted hook hashes{{#each codex.hook_states}}
 
 [hooks.state."{{key}}"]
-trusted_hash = "{{trusted_hash}}"
-# {{/each}}
+trusted_hash = "{{trusted_hash}}"{{/each}}
 
 [memories]
 generate_memories = true
