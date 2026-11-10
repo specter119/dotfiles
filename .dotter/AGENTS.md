@@ -4,11 +4,11 @@ Scope: `.dotter/`
 
 ## Files Mapping Rules
 
-- For files sharing the same prefix, write a single directory-level mapping instead of splitting into multiple exact file mappings.
-  - ✅ `package = '~/.config/package'` (directory mapping — Dotter creates symlinks per file, including subdirectories)
-  - ❌ Splitting into `package/config.toml` + `package/subdir/file.toml`
-- Principle: write one line when possible; use multiple lines only when prefixes differ.
-- Prefer directory mappings and minimize entries in the global mapping table. Add another mapping only when the target root or mapping semantics differ; do not use exact-file mappings when one directory mapping can express the same relationship.
+- A mapping pairs a source root with a target root; Dotter links every file under it individually, so a mapping never owns a directory as a unit.
+- Give each target root one mapping and minimize entries in the global mapping table. Do not split a shared prefix into exact-file mappings, and add another mapping only when the target root or the mapping semantics differ.
+  - ✅ `package = '~/.config/package'` (one mapping; Dotter creates a symlink per file, including subdirectories)
+  - ❌ `package/config.toml` + `package/subdir/file.toml`
+- Because links are per file, retiring one file means deleting the source file and deploying once; until Dotter drops the stale symlink, the tool writes through it back into the repository.
 
 ## Deploy Workflow
 
@@ -22,30 +22,28 @@ Scope: `.dotter/`
 
 ## Rhai Helpers
 
-- Custom helpers are registered under `[helpers]` in `global.toml` and live in `.dotter/helpers/*.rhai`. `url_userinfo_escape` percent-encodes the userinfo of a URL; use it for any consumer that parses the URL with Go's `net/url` (magpie `proxy`), which rejects characters such as `^` in a password.
+- Custom helpers are registered under `[helpers]` in `global.toml` and live in `.dotter/helpers/*.rhai`.
+- Use `url_userinfo_escape` for any URL a Go `net/url` consumer parses (magpie `proxy`); the helper's header explains why.
 
 ## Deployment Cache
 
-- `.dotter/cache.toml` and `.dotter/cache/` are Dotter-owned state. Never edit or remove their entries manually.
-- Add, modify, or remove source templates, then let a normal `dotter deploy` update cache state and clean obsolete targets.
+- `.dotter/cache.toml` and `.dotter/cache/` are Dotter-owned state: never edit their entries manually, and let a normal `dotter deploy` update them and drop obsolete targets after you add, modify, or remove source templates.
 - Use `dotter deploy --dry-run --verbose` to inspect the resulting target and cache operations before deploying.
 
 ## Deploy Scripts
 
 - `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` are for deploy-time glue that should not live in static templates. Keep these entry scripts POSIX `sh` compatible because Dotter may execute the rendered cache scripts through `/bin/sh`; call Bash-only helpers explicitly with `bash ...`.
-- `.dotter/scripts/live_config_reverse_sync.py` is invoked from `.dotter/pre_deploy.sh` to reverse-sync tool-modified config values (e.g., Codex model and trusted projects, Droid trusted folders, Pi defaults) from live configs back into `local.toml`. See repo-level `AGENTS.md` for the decision framework and variable coverage.
+- `.dotter/scripts/live_config_reverse_sync.py` runs from `pre_deploy.sh` and writes tool-modified live values back into `local.toml` before templates render.
 - Do not add post-deploy commands that write secrets or tool-generated runtime state back into repo-managed config files.
 - These deploy scripts are also templates. Do not write a literal `{{` inside embedded shell or Python snippets; build it at runtime instead.
-- `post_deploy.sh` identifies templates with comment-wrapped Handlebars controls by content, not filename extension, before removing residual blank `#` lines from their target and cache copies.
+- Registry credentials are owned by the `enterprise-artifact` package (see `Package Organization` in the root `AGENTS.md`); `pre_deploy.sh` does not depend on its variables.
 
 ## Runtime Artifacts
 
-- `post_deploy.sh` `refresh_magpie_codex_catalog` regenerates `~/.config/codex/magpie-models.json` by fetching `/v1/codex/models?client_version=<codex version>` from the magpie gateway, using the base URL and bearer token of `model_providers.magpie` in the deployed `config.toml`. This route returns the catalog in Codex's own format. Do not run `magpie codex <model>` for this: it rewrites `config.toml` (which Dotter owns, so the next deploy refuses it) and records state in `stash.json`. The step is skipped unless `config.toml` references `magpie-models.json`, and a failed fetch keeps the previous file.
+- `refresh_magpie_codex_catalog` writes `~/.config/codex/magpie-models.json` from the gateway, not from `magpie codex`: that command rewrites the Dotter-owned `config.toml`.
 
-- `post_deploy.sh` `refresh_magpie_pi_models` runs `magpie pi <pi.default_model>` with the value from `.dotter/local.toml`, only when `pi.default_provider` is `magpie`, to refresh the live `~/.config/pi/models.json`. The argument equals what Dotter just rendered into `pi/settings.json`, so magpie leaves `settings.json` content unchanged and the next deploy sees no target change. If the model differs from the rendered one, magpie would rewrite `settings.json` and trigger a "target contents were changed" error. A failure only warns. After a successful run, `force_pi_models_responses` sets `providers.magpie.api` to `openai-responses`, drops every per-model `api`, and keeps only model ids the live magpie gateway lists on `/v1/models`. Host `magpie pi` otherwise labels each model with its upstream-native wire (the gateway converts `/v1/responses` for chat-only upstreams, as Codex relies on) and can also discover editor Copilot logins the container gateway does not serve. magpie rewrites the file on every `magpie pi` run, so the patch must follow each refresh; a failed patch only warns and keeps the magpie-generated file. A failed gateway fetch still applies the responses rewrite and leaves the magpie-generated model list.
+- `refresh_magpie_pi_models` runs `magpie pi` with the model Dotter just rendered, so magpie leaves `pi/settings.json` byte-equal; any other model makes it rewrite the file and the next deploy refuses it. The responses normalization must follow every `magpie pi` run, because magpie rewrites `models.json` each time.
 
-- Runtime artifacts are deploy-time files. When multiple templates need the same derived value, prefer writing a machine-local artifact under `$XDG_RUNTIME_DIR/dotter/` from `.dotter/pre_deploy.sh` instead of duplicating generation logic in each template.
+- Both refresh steps warn and keep the previous artifact when they fail. Route, format and normalization details live in the script comments, not here.
 
-- Treat files in `$XDG_RUNTIME_DIR/dotter/` as disposable runtime artifacts. Templates may read them with `command_output`, but they must not be committed back into repo-managed config.
-
-- Registry credentials are owned by the `enterprise-artifact` package (see `Package Organization` in the root `AGENTS.md`). `.dotter/pre_deploy.sh` does not depend on its variables.
+- Runtime artifacts are deploy-time files under `$XDG_RUNTIME_DIR/dotter/`: prefer writing one there from `.dotter/pre_deploy.sh` when several templates need the same derived value, and treat it as disposable. Templates may read it with `command_output`, but it must not be committed back into repo-managed config.
