@@ -535,8 +535,8 @@ def main() -> None:
     if magpie_data:
         magpie_table = ensure_table(doc, 'variables', 'magpie')
         changed |= sync_string(magpie_table, 'plugin_proxy', magpie_data.get('pluginProxy'))
-        # The template no longer renders modelWires, so only record what magpie has;
-        # an absent key must not wipe the value kept in local.toml.
+        # The template renders modelWires only when it is non-empty, so an
+        # absent key must not wipe the value kept in local.toml.
         if 'modelWires' in magpie_data:
             changed |= sync_string_map(magpie_table, 'model_wires', magpie_data['modelWires'])
         changed |= sync_string(magpie_table, 'checkin_at', magpie_data.get('checkinAt'))

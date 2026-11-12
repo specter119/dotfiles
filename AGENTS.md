@@ -207,6 +207,18 @@ When an agent tool modifies its own config file at runtime (e.g., adding trusted
 
 See `.dotter/AGENTS.md` for constraints on deploy scripts (POSIX sh, no literal `{{` in embedded code, runtime artifact conventions).
 
+### Match the Tool's Serialization
+
+A template and a tool that rewrites the same file are two writers of one file, so they drift as soon as their bytes differ: Dotter sees a changed target and refuses to deploy. The goal is a render that is byte-identical to what the tool writes, with reverse sync carrying the values.
+
+- Reproduce the tool's own serializer, not a tidier layout: key order, indentation, and whether the key exists at all. An `omitempty` field means an empty collection renders as no key, not as `{}`.
+- Render collections in the shape the tool writes them. Go's `encoding/json` sorts map keys and writes a non-empty map multi-line, so a one-line `{ ... }` never matches.
+- Gate a collection key with `{{#if}}` so the empty and non-empty renders both match, and keep the control inline (`{ {{~#each ...}}`; `{{{` would parse as a triple-stash) so no `# ` residue line is emitted.
+- Reverse-sync the values the tool writes back into `local.toml`, so the template renders what the tool last saved instead of a repo default.
+- Keys the tool derives belong in neither the template nor `local.toml`; rendering a copy makes every deploy skip.
+
+Example: `magpie/settings.json` pins `guideHidden` and `textSize` because magpie always writes them, renders `modelWires` only when non-empty because magpie omits an empty map, and leaves `modelCompacts` out entirely because magpie derives it.
+
 ### Local Schema Differences
 
 When a variable is renamed or removed, update the tracked placeholder, template, and documentation to the new schema, but do not silently migrate, copy, or delete a legacy key in `local.toml`.
