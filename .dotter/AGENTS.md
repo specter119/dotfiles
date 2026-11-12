@@ -34,6 +34,7 @@ Scope: `.dotter/`
 
 - `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` are for deploy-time glue that should not live in static templates. Keep these entry scripts POSIX `sh` compatible because Dotter may execute the rendered cache scripts through `/bin/sh`; call Bash-only helpers explicitly with `bash ...`.
 - `.dotter/scripts/live_config_reverse_sync.py` runs from `pre_deploy.sh` and writes tool-modified live values back into `local.toml` before templates render.
+- `republish_magpie_settings` renames the rendered `magpie/settings.json` into place: magpie reads that file while it runs and must never see a truncated one.
 - Do not add post-deploy commands that write secrets or tool-generated runtime state back into repo-managed config files.
 - These deploy scripts are also templates. Do not write a literal `{{` inside embedded shell or Python snippets; build it at runtime instead.
 - Registry credentials are owned by the `enterprise-artifact` package (see `Package Organization` in the root `AGENTS.md`); `pre_deploy.sh` does not depend on its variables.
@@ -44,6 +45,8 @@ Scope: `.dotter/`
 
 - `refresh_magpie_pi_models` runs `magpie pi` with the model Dotter just rendered, so magpie leaves `pi/settings.json` byte-equal; any other model makes it rewrite the file and the next deploy refuses it. The responses normalization must follow every `magpie pi` run, because magpie rewrites `models.json` each time.
 
-- Both refresh steps warn and keep the previous artifact when they fail. Route, format and normalization details live in the script comments, not here.
+- `refresh_magpie_dsh_models` runs `magpie dsh` with `dsh.default_model`, then puts the provider back on the Anthropic wire: magpie owns the model list, the wire is ours.
+
+- The refresh steps warn and keep the previous artifact when they fail. Route, format and normalization details live in the script comments, not here.
 
 - Runtime artifacts are deploy-time files under `$XDG_RUNTIME_DIR/dotter/`: prefer writing one there from `.dotter/pre_deploy.sh` when several templates need the same derived value, and treat it as disposable. Templates may read it with `command_output`, but it must not be committed back into repo-managed config.

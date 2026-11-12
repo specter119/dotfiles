@@ -4,6 +4,15 @@
   "model": "{{opencode.default_model}}",
 // {{/if}}
   "mcp": {
+# {{#if agent.magpie_apikey}}
+    "magpie": {
+      "type": "remote",
+      "url": "http://127.0.0.1:3425/mcp/magpie/hub",
+      "headers": {
+        "Authorization": "Bearer {{agent.magpie_apikey}}"
+      }
+    },
+# {{/if}}
     "fast-context": {
       "type": "local",
       "command": [
@@ -12,13 +21,6 @@
       ],
       "environment": {
         "WINDSURF_API_KEY": "{{replace (command_output 'rbw get windsurf-api-key') '\n' ''}}"
-      }
-    },
-    "context7": {
-      "type": "remote",
-      "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "CONTEXT7_API_KEY": "{{replace (command_output 'rbw get context7-api-key') '\n' ''}}"
       }
     }
   },

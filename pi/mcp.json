@@ -1,11 +1,24 @@
 {
   "mcpServers": {
-# {{#if dotter.packages.wsl-guest}}
+    "magpie": {
+      "url": "http://127.0.0.1:3425/mcp/magpie/hub",
+      "headers": {
+        "Authorization": "Bearer {{agent.magpie_apikey}}"
+      },
+      "description": "Magpie's MCP hub: the servers its library keeps (context7 library docs, image vision) behind one endpoint."
+    },
+    "fast-context": {
+      "command": "bun",
+      "args": ["x", "fast-context-mcp"],
+      "env": {
+        "WINDSURF_API_KEY": "{{replace (command_output 'rbw get windsurf-api-key') '\n' ''}}"
+      },
+      "description": "Semantic code search across the current repository."
+    }{{#if dotter.packages.wsl-guest}},
     "onenote": {
       "command": "deskhand",
       "args": ["onenote"],
       "description": "Reads and edits the Windows OneNote desktop client from WSL. Writes are two steps: a dry run issues an applyToken, then the same call with dryRun=false applies it."
-    }
-# {{/if}}
+    }{{/if}}
   }
 }

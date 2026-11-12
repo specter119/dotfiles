@@ -266,10 +266,75 @@ PY
 	fi
 }
 
+# Magpie reads its settings.json while it runs, and Dotter writes templates in place
+# (truncate, then write). Re-publish the file with a rename afterwards, so the next read
+# sees a complete file instead of falling back to settings.json.bak.
+republish_magpie_settings() {
+	dir="${XDG_CONFIG_HOME:-$HOME/.config}/magpie"
+	[ -f "$dir/settings.json" ] || return 0
+	cp "$dir/settings.json" "$dir/.settings.json.tmp" &&
+		mv "$dir/.settings.json.tmp" "$dir/settings.json"
+}
+
+# dsh's model list lives in its profile patch, which only `magpie dsh <model>` writes.
+# Re-apply the model from local.toml, then put the provider back on magpie's Anthropic
+# wire: magpie owns the models, the wire is ours.
+refresh_magpie_dsh_models() {
+	command -v magpie >/dev/null 2>&1 || return 0
+	[ -f .dotter/local.toml ] || return 0
+
+	model=$(python3 - <<'PY'
+import tomllib
+
+with open(".dotter/local.toml", "rb") as fh:
+    dsh = tomllib.load(fh).get("variables", {}).get("dsh", {})
+print(dsh.get("default_model", ""))
+PY
+	)
+	[ -n "$model" ] || return 0
+
+	if ! magpie dsh "$model" >/dev/null 2>&1; then
+		echo "[WARN] magpie dsh $model failed; keeping the existing dsh profile patch"
+		return 0
+	fi
+
+	python3 - "${DSH_HOME:-$HOME/.dsh}/profiles/web/cordis.patch.yml" <<'PATCH'
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+if not path.is_file():
+    raise SystemExit(0)
+
+original = path.read_text(encoding="utf-8")
+out = []
+in_entry = False
+provider = ""
+for line in original.splitlines():
+    stripped = line.strip()
+    if stripped.startswith("- id:"):
+        in_entry = stripped.split(":", 1)[1].strip() == "llm-pi-ai"
+        provider = ""
+    elif in_entry and line.startswith("      ") and not line.startswith("       ") and stripped.endswith(":"):
+        provider = stripped[:-1]
+    elif in_entry and provider == "magpie" and line.startswith("        api: "):
+        line = "        api: anthropic-messages"
+    elif in_entry and provider == "magpie" and line.startswith("        baseURL: "):
+        line = "        baseURL: http://127.0.0.1:3425"
+    out.append(line)
+
+text = "\n".join(out) + "\n"
+if text != original:
+    path.write_text(text, encoding="utf-8")
+PATCH
+}
+
 # Clean up rendered templates (YAML, TOML, JSON and Markdown) after deployment.
 cleanup_rendered_templates
 refresh_magpie_codex_catalog
 refresh_magpie_pi_models
+refresh_magpie_dsh_models
+republish_magpie_settings
 audit_prek_parser_coverage
 fix_ssh_permissions
 fix_glab_permissions

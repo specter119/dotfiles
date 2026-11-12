@@ -18,7 +18,10 @@
     }
   },
   "updateEvery": 360,
-  "trayUsageEvery": 3,
-  "plainNames": true,
-  "guideHidden": true
+  "trayUsageEvery": 3,{{#if magpie.plugin_proxy}}
+  "pluginProxy": "{{magpie.plugin_proxy}}",{{/if}}{{#if magpie.checkin_at}}
+  "checkinAt": "{{magpie.checkin_at}}",{{/if}}{{#if magpie.checkin_plugins}}
+  "pluginCheckins": { {{#each magpie.checkin_plugins}}"{{this}}": true{{#unless @last}}, {{/unless}}{{/each}} },{{/if}}
+  "modelWires": { {{#each magpie.model_wires}}"{{@key}}": "{{this}}"{{#unless @last}}, {{/unless}}{{/each}} },
+  "plainNames": true
 }

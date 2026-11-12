@@ -35,6 +35,8 @@ CODEX_CONFIG = agent_path('CODEX_HOME', Path.home() / '.codex', 'config.toml')
 ANTIGRAVITY_SETTINGS = agent_path('ANTIGRAVITY_CLI_HOME', Path.home() / '.config/antigravity', 'settings.json')
 GLAB_CONFIG = XDG_CONFIG_HOME / 'glab-cli' / 'config.yml'
 SCOOP_CONFIG = XDG_CONFIG_HOME / 'scoop' / 'config.json'
+DSH_PATCH = agent_path('DSH_HOME', Path.home() / '.dsh', 'profiles', 'web', 'cordis.patch.yml')
+MAGPIE_SETTINGS = XDG_CONFIG_HOME / 'magpie' / 'settings.json'
 
 
 def _is_live_file(path: Path) -> bool:
@@ -171,6 +173,59 @@ def normalize_trusted_workspaces(value: object) -> list[str]:
 def sync_trusted_workspaces(table: tomlkit.items.Table, key: str, value: object) -> bool:
     """Sync trustedWorkspaces (array of strings) into local.toml."""
     live = normalize_trusted_workspaces(value)
+    existing = normalize_trusted_workspaces(table.get(key, []))
+    if existing == live:
+        return False
+    table[key] = live
+    return True
+
+
+def read_dsh_default_model(path: Path) -> str | None:
+    """Read the model dsh's profile patch sets in its agent-default-model entry."""
+    if not path.is_file():
+        return None
+    in_entry = False
+    for line in path.read_text(encoding='utf-8').splitlines():
+        stripped = line.strip()
+        if stripped.startswith('- id:'):
+            in_entry = stripped.split(':', 1)[1].strip() == 'agent-default-model'
+            continue
+        if in_entry and stripped.startswith('model:'):
+            return stripped.split(':', 1)[1].strip().strip('"\'')
+    return None
+
+
+def normalize_string_map(value: object) -> dict[str, str]:
+    """Normalize a string-to-string map, dropping empty keys."""
+    if not isinstance(value, dict):
+        return {}
+    return {str(key): str(val) for key, val in value.items() if isinstance(key, str) and key}
+
+
+def sync_string_map(table: tomlkit.items.Table, key: str, value: object) -> bool:
+    """Sync a string-to-string map into local.toml."""
+    live = normalize_string_map(value)
+    existing = normalize_string_map(table.get(key, {}))
+    if existing == live:
+        return False
+    table[key] = live
+    return True
+
+
+def normalize_enabled_names(value: object) -> list[str]:
+    """Normalize a name-to-true map to a sorted list of the names that are on."""
+    if not isinstance(value, dict):
+        return []
+    return sorted(
+        key
+        for key, enabled in value.items()
+        if isinstance(key, str) and key and enabled is True
+    )
+
+
+def sync_enabled_names(table: tomlkit.items.Table, key: str, value: object) -> bool:
+    """Sync a name-to-true map as a sorted array of names in local.toml."""
+    live = normalize_enabled_names(value)
     existing = normalize_trusted_workspaces(table.get(key, []))
     if existing == live:
         return False
@@ -469,6 +524,33 @@ def main() -> None:
             'trusted_folders',
             droid_data.get('trustedFolders', {}),
         )
+        changed |= sync_enabled_names(
+            droid_table,
+            'enabled_plugins',
+            droid_data.get('enabledPlugins', {}),
+        )
+
+    # magpie: settings the app writes that the template renders
+    magpie_data = read_json(MAGPIE_SETTINGS)
+    if magpie_data:
+        magpie_table = ensure_table(doc, 'variables', 'magpie')
+        changed |= sync_string(magpie_table, 'plugin_proxy', magpie_data.get('pluginProxy'))
+        # The template no longer renders modelWires, so only record what magpie has;
+        # an absent key must not wipe the value kept in local.toml.
+        if 'modelWires' in magpie_data:
+            changed |= sync_string_map(magpie_table, 'model_wires', magpie_data['modelWires'])
+        changed |= sync_string(magpie_table, 'checkin_at', magpie_data.get('checkinAt'))
+        changed |= sync_enabled_names(
+            magpie_table,
+            'checkin_plugins',
+            magpie_data.get('pluginCheckins', {}),
+        )
+
+    # dsh: model magpie wrote into the profile patch
+    dsh_model = read_dsh_default_model(DSH_PATCH)
+    if dsh_model:
+        dsh_table = ensure_table(doc, 'variables', 'dsh')
+        changed |= sync_string(dsh_table, 'default_model', dsh_model)
 
     # opencode: model
     opencode_data = read_jsonc(OPENCODE_CONFIG)
@@ -481,6 +563,11 @@ def main() -> None:
     if codex_data:
         codex_table = ensure_table(doc, 'variables', 'codex')
         changed |= sync_string(codex_table, 'model', codex_data.get('model'))
+        changed |= sync_string(
+            codex_table,
+            'model_reasoning_effort',
+            codex_data.get('model_reasoning_effort'),
+        )
         changed |= sync_projects(
             codex_table,
             'projects',

@@ -49,7 +49,7 @@
     }{{#unless @last}},{{/unless}}
 # {{/each}}
   },
-  "enabledPlugins": {},
+  "enabledPlugins": { {{#each droid.enabled_plugins}}"{{this}}": true{{#unless @last}}, {{/unless}}{{/each}} },
   "subagentModelSettings": {
     "lightModel": "deepseek-v4.1-flash",
     "lightReasoningEffort": "max",

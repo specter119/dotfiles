@@ -155,6 +155,12 @@ docker_registry_hosts = []
 [magpie.files]
 magpie = '~/.config/magpie'
 
+[magpie.variables.magpie]
+model_wires = {}
+plugin_proxy = ''
+checkin_at = ''
+checkin_plugins = []
+
 [nodejs]
 depends = ['bun', 'npm']
 
@@ -190,11 +196,15 @@ stylua = '~/.config/stylua'
 [dsh.files]
 dsh = '~/.config'
 
+[dsh.variables.dsh]
+default_model = ''
+
 [codex.files]
 codex = '~/.config'
 
 [codex.variables.codex]
 model = ''
+model_reasoning_effort = 'max'
 model_provider = 'magpie'
 projects = []
 hook_states = []
@@ -235,6 +245,7 @@ depends = ['agent-tunnel']
 
 [droid.variables.droid]
 trusted_folders = []
+enabled_plugins = []
 
 [rio.files]
 rio = '~/.config/rio'

@@ -39,8 +39,3 @@ Models under-delegate by default. Vague "use as needed" language is not a qualit
 ### Why not a skill
 
 This contract is standing authoring guidance for maintaining agent configs. A skill would itself be pull ("consider this when editing agents"), which is the wrong delivery for a placement rule that should stay next to the agent package layer. Keep the theory here; tool-specific AGENTS.md only carry the local obligation bullets.
-
-### Current applications
-
-- **Droid** `droid/config/AGENTS.md` → `## Spec Mode`: push gate before `ExitSpecMode`; oracle droid description stays pull.
-- **Pi** `pi/AGENTS.md` → `## Delegation`: heuristic push trigger for high-uncertainty / irreversible plans; oracle agent description stays pull.

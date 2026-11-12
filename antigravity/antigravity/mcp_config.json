@@ -1,5 +1,13 @@
 {
   "mcpServers": {
+# {{#if agent.magpie_apikey}}
+    "magpie": {
+      "serverUrl": "http://127.0.0.1:3425/mcp/magpie/hub",
+      "headers": {
+        "Authorization": "Bearer {{agent.magpie_apikey}}"
+      }
+    },
+# {{/if}}
     "fast-context": {
       "command": "bunx",
       "args": [
@@ -10,17 +18,6 @@
       ],
       "env": {
         "WINDSURF_API_KEY": "{{replace (command_output 'rbw get windsurf-api-key') '\n' ''}}"
-      }
-    },
-    "context7": {
-      "command": "bunx",
-      "args": [
-        "@upstash/context7-mcp",
-        "--api-key",
-        "{{replace (command_output 'rbw get context7-api-key') '\n' ''}}"
-      ],
-      "env": {
-        "CONTEXT7_KEY": "{{replace (command_output 'rbw get context7-api-key') '\n' ''}}"
       }
     }
   }

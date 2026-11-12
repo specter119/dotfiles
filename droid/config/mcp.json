@@ -1,20 +1,18 @@
 {
   "mcpServers": {
-# {{#if dotter.packages.wsl-guest}}
+    "magpie": {
+      "type": "http",
+      "url": "http://127.0.0.1:3425/mcp/magpie/hub",
+      "headers": {
+        "Authorization": "Bearer {{agent.magpie_apikey}}"
+      },
+      "oauth": false
+    },{{#if dotter.packages.wsl-guest}}
     "onenote": {
       "type": "stdio",
       "command": "deskhand",
       "args": ["onenote"]
-    },
-# {{/if}}
-    "context7": {
-      "type": "http",
-      "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "CONTEXT7_API_KEY": "{{replace (command_output "rbw get context7-api-key") "\n" ""}}"
-      },
-      "tools": ["*"]
-    },
+    },{{/if}}
     "fast-context": {
       "type": "stdio",
       "command": "bun",

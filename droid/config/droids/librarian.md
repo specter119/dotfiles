@@ -6,7 +6,7 @@ description: >-
 model: gemini-3.8-flash
 reasoningEffort: low
 tools: [Read, WebSearch, FetchUrl]
-mcpServers: [context7]
+mcpServers: [magpie]
 ---
 
 # Librarian

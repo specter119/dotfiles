@@ -1,13 +1,14 @@
 {
   "mcpServers": {
-    "context7": {
-      "alwaysAllow": [
-        "resolve-library-id",
-        "get-library-docs"
-      ],
+# {{#if agent.magpie_apikey}}
+    "magpie": {
       "type": "streamable-http",
-      "url": "https://mcp.context7.com/mcp"
+      "url": "http://127.0.0.1:3425/mcp/magpie/hub",
+      "headers": {
+        "Authorization": "Bearer {{agent.magpie_apikey}}"
+      }
     },
+# {{/if}}
     "sequentialthinking": {
       "alwaysAllow": [
         "sequentialthinking"

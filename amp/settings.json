@@ -1,11 +1,13 @@
 {
   "amp.mcpServers": {
-    "context7": {
+# {{#if agent.magpie_apikey}}
+    "magpie": {
       "headers": {
-        "CONTEXT7_API_KEY": "{{replace (command_output 'rbw get context7-api-key') '\n' ''}}"
+        "Authorization": "Bearer {{agent.magpie_apikey}}"
       },
-      "url": "https://mcp.context7.com/mcp"
+      "url": "http://127.0.0.1:3425/mcp/magpie/hub"
     },
+# {{/if}}
     "fast-context": {
       "args": [
         "fast-context-mcp"

@@ -25,20 +25,7 @@ Use `README.md` for the repository's purpose, user-facing configuration patterns
 **Read this section before modifying any agent configs.**
 **Do not assume default upstream paths like `~/.codex` or `~/.claude`.**
 
-This repo manages configs for multiple AI coding agents. Their paths follow XDG spec (`~/.config/<name>`) instead of defaults (`~/.<name>`):
-
-| Agent       | Env Var                | Path                    |
-| ----------- | ---------------------- | ----------------------- |
-| Codex       | `CODEX_HOME`           | `~/.config/codex`       |
-| Claude      | `CLAUDE_CONFIG_DIR`    | `~/.config/claude`      |
-| Pi          | `PI_CODING_AGENT_DIR`  | `~/.config/pi`          |
-| Copilot     | `COPILOT_HOME`         | `~/.config/copilot`     |
-| Antigravity | `ANTIGRAVITY_CLI_HOME` | `~/.config/antigravity` |
-| Qoder       | `QODERCLI_HOME`        | `~/.config/qoder`       |
-| Magpie      | —                      | `~/.config/magpie`      |
-| DSH         | `DSH_HOME`             | `~/.config/dsh`         |
-
-When reading or writing agent configs, use these paths.
+Agent configs are deployed under the XDG spec (`~/.config/<name>`), not the upstream defaults (`~/.<name>`). Resolve deployed paths from `.dotter/global.toml` (`[*.files]`) and the environment overrides from `agent/config/environment.d/agentic-xdg.conf`; machine-specific includes such as `.dotter/wsl.toml` may remap a path.
 
 Skill/subagent routing and delegation placement contracts live in [`agent/AGENTS.md`](./agent/AGENTS.md), not here.
 
@@ -48,21 +35,16 @@ This repo uses Dotter packages as a layered grouping system rather than a flat l
 
 - Base packages hold concrete config payloads for one tool or concern
 - Higher-level packages compose those base packages into reusable environments
-- Current agent-related grouping is intentionally nested:
-  - `agent`: shared entry package for agent-facing configs and common glue
-  - `agent-tunnel`: agent-adjacent remote/service integrations
-  - `agent-runtime`: local runtime support for agent workflows (including the `magpie` gateway)
-- `enterprise-artifact` is the single source of enterprise Artifactory credentials and registry endpoints (npm, PyPI, Docker). It deploys `~/.netrc` and `~/.docker/config.json`; `uv` authenticates against the enterprise PyPI index through `~/.netrc`. General tools such as `npm`, `bun`, `magpie` and `uv` do not depend on it; their templates test `dotter.packages.enterprise-artifact` and render the enterprise part only when the package is selected
-- `wm` is a group that composes the compositor (`sway`) with the session services that run next to it (`mako`, `waybar`, `avizo`, `cliphist`, `nm-applet`, `udiskie`), `x11-lowdpi` (`x11-lowdpi <cmd>` runs an X11 app that cannot scale itself inside its own nested `weston`, which brings a 1x Xwayland that sway upscales (config `weston/x11-lowdpi.ini`, no panel); sway's own Xwayland `:0` runs in HiDPI mode and is the default) and `fcitx5`; `sway` itself has no `depends`
-- `nodejs` is a group of `bun` and `npm`; select `bun` alone on machines that do not need npm
-- `wsl-guest` is a group for WSL guests: it carries the required Windows env vars, the WSLg environment, a fish snippet that imports the systemd user environment (`wsl.exe` login shells bypass pam_systemd) and fish `scoop` and `shovel` wrapper functions (fish 4 does not search the `wsl.exe`-appended Windows `$PATH` for Linux executables, and `fish_user_paths` would put the Windows directory ahead of Linux commands), and composes `wsl-ssh-agent` and `voxtype-wsl-bridge`. Its `wsl-guest-enterprise` source directory (`NODE_USE_SYSTEM_CA=1`, so Electron's Node trusts the system store that carries the corporate TLS-inspection root) is mapped only when `enterprise-artifact` is selected. The `droid` package also maps `droid/bin` to `~/.local/bin` (only when `wsl-guest` is selected): its `wl-paste` shim serves `image/png` by converting the WSLg `image/bmp` clipboard locally, because droid only requests PNG/JPEG
+- Agent-related grouping is intentionally nested: `agent` is the shared entry package for agent-facing configs and common glue, `agent-tunnel` holds agent-adjacent remote/service integrations, and `agent-runtime` holds local runtime support for agent workflows
+
+`enterprise-artifact` is the single source of enterprise Artifactory credentials and registry endpoints. A deployment without it must stay valid, so consumers test `dotter.packages.enterprise-artifact` instead of depending on it. Current package composition and file mappings are defined in `.dotter/global.toml`. Workaround rationale lives next to the workaround (`wsl-guest/`, `droid/bin/wl-paste`, `x11-lowdpi/bin/x11-lowdpi`); do not replace the Scoop wrappers with `fish_user_paths`, which would put the Windows directory ahead of Linux commands.
 
 `depends` expresses a deployment relationship between packages, never a reference between variables. Use it for only two reasons:
 
 - **Grouping**: a package that layers base packages so one selection deploys a whole environment with fewer decisions.
 - **Functional coupling**: the dependent software cannot work without the dependency's deployed payload.
 
-Reading another package's variable, or testing `dotter.packages.<name>`, is not a dependency. A template that guards such a value with `#if` has two valid renderings (set and unset) and deploys either way, so it must not declare `depends`. For example, `raft`, `yt-dlp` and `magpie` test `enterprise_proxy.url` without depending on `enterprise-proxy`, and `npm`, `bun` and `uv` test `dotter.packages.enterprise-artifact` without depending on `enterprise-artifact`. Add `depends` for a variable only when the deployment itself stops making sense without it, that is, the dependent has no working form once the variable is removed.
+Reading another package's variable, or testing `dotter.packages.<name>`, is not a dependency. A template that guards such a value with `#if` has two valid renderings (set and unset) and deploys either way, so it must not declare `depends`. Add `depends` for a variable only when the deployment itself stops making sense without it, that is, the dependent has no working form once the variable is removed.
 
 When changing package names, dependencies, or file mappings, preserve this layered relationship unless the change is explicitly a package-architecture refactor.
 
@@ -72,10 +54,10 @@ Graphical-session services are decoupled from the compositor through systemd tar
 
 - Services use `PartOf=` and `After=graphical-session.target`. Only a service that needs sway itself (`swayidle`, which calls `swaymsg`) belongs to `sway-session.target`; `sway` pulls it in with `Wants=` in the target.
 - A service that starts by default carries no `[Install]`. Its package ships `systemd/user/<target>.d/10-<unit>.conf` containing `[Unit] Wants=<unit>`, so selecting the package enables the service and removing it disables the service. Disable it on one machine with `systemctl --user mask`.
-- A service that must stay opt-in keeps `[Install]` and ships no drop-in (currently `udiskie`); enable it per machine with `systemctl --user enable`.
+- A service that must stay opt-in keeps `[Install]` and ships no drop-in; enable it per machine with `systemctl --user enable`.
 - Sway owns the session target lifecycle: `sway/sway/config.d/50-autostart.conf` imports the compositor environment, starts `sway-session.target`, and `sway/sway/session-stop` stops it when sway exits. The login wrapper (`/etc/greetd/sway-run`, outside this repo) must not start the target itself, otherwise services start before `WAYLAND_DISPLAY` is imported.
 - Extensions point from the plugin to the host through the host's drop-in directory: `sway/config.d/` for sway snippets (keybindings live with the package that owns the tool) and `voxtype/output-hook.d/` for executables that voxtype runs around typing, via `voxtype/output-hook pre|post`. The host never names its plugins.
-- `voxtype-wsl-bridge` brings the daemon up through `default.target.d/` and its socket through `sockets.target.d/`.
+- A socket-activated service brings its daemon up through `default.target.d/` and its socket through `sockets.target.d/`.
 
 ## Dotter Templates
 
@@ -101,37 +83,7 @@ Configuration that must exist only when a package is selected or a variable is s
 
 ### Template Basics
 
-#### Built-in Variables
-
-```handlebars
-{{dotter.linux}}
-# true on Linux
-{{dotter.windows}}
-# true on Windows
-{{dotter.macos}}
-# true on macOS
-{{dotter.hostname}}
-# machine hostname
-```
-
-#### Built-in Helpers
-
-```handlebars
-{{env_var "VAR_NAME"}}
-# read environment variable
-{{command_output "cmd"}}
-# execute command, return stdout
-{{command_success "cmd"}}
-# true if command exits 0
-{{trim "  hello  "}}
-# trim whitespace -> "hello"
-{{to_lower_case "HELLO"}}
-# lowercase -> "hello"
-{{to_upper_case "hello"}}
-# uppercase -> "HELLO"
-{{replace "old" "o" "0"}}
-# string replace -> "0ld"
-```
+Built-in variables, helpers and expression syntax: [upstream Dotter documentation](https://github.com/SuperCuber/dotter).
 
 #### WSL Detection
 
@@ -147,14 +99,6 @@ Use `command_success` to detect WSL:
 {{/if}}
 ```
 
-#### Conditional Logic
-
-```handlebars
-{{#if (and cond1 cond2)}}...{{/if}}
-{{#if (or cond1 cond2)}}...{{/if}}
-{{#if (not cond)}}...{{/if}}
-```
-
 ### Variable Contract
 
 Dotter variables in this repo fall into two categories: `global.toml` / `local.toml` override variables, and shared secrets injected inline with `rbw get` inside templates.
@@ -163,19 +107,19 @@ Dotter variables in this repo fall into two categories: `global.toml` / `local.t
 
 ```toml
 # .dotter/global.toml
-[package_name.variables]
+[package_name.variables.package_name]
 scalar_value = ""
 nested_value = { key_a = "", key_b = "" }
 ```
 
 ```toml
 # .dotter/local.toml
-[variables]
+[variables.package_name]
 scalar_value = "local"
 nested_value = { key_b = "overridden" }
 ```
 
-- `[package.variables]` in `global.toml` defines package-level placeholders and schema.
+- `[package.variables.package]` in `global.toml` defines namespaced placeholders and schema.
 - `local.toml` does not use `[package.variables]`; it only uses top-level `[variables]`.
 - Dotter first merges variables from the selected packages, then recursively overrides them with top-level `[variables]` from `local.toml` by variable name.
 - Scalar values with the same name are replaced; tables with the same name are recursively merged by key.
@@ -186,85 +130,26 @@ nested_value = { key_b = "overridden" }
 - **Per-machine / not synced across machines**: define a placeholder in `global.toml`, then override it from top-level `[variables]` in `.dotter/local.toml`.
 - **Tool-private variables**: must use namespaced tables, e.g. `[magpie.variables.magpie]` and `[variables.magpie]`.
 - **Variables must be namespaced**: in `global.toml`, variables must be defined under `[pkg.variables.pkg]` (e.g. `[opencode.variables.opencode]`), not flat under `[pkg.variables]`. Dotter strict mode requires that the template access path `pkg.var_name` matches the variable definition path; un-namespaced variables trigger `Failed to access variable in strict mode` when used in `#each` (`#if` silently skips so it does not error, but the variable is not actually registered correctly).
-- **Cross-package shared variables**: use the owning tool's namespace, e.g. `git.repo_identities` is defined by `git` / `jj` and consumed by both Git and Jujutsu templates.
+- **Cross-package shared variables**: use the owning tool's namespace; consuming a variable does not transfer ownership.
 - **Shareable secrets**: keep using inline `rbw get` in templates or scripts instead of storing them in `local.toml`.
 - **Public client credentials**: non-personal, shared credentials that are identical across all machines and published upstream may stay hardcoded in tracked templates. `chromium/chromium-flags.conf` carries the Chromium open-source project's public OAuth2 client id/secret (used for Google account sign-in); these are not personal secrets and are the same on every machine, so they are exempt from the `rbw get` rule.
 - Detailed constraints for `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` live in `.dotter/AGENTS.md`.
 
 #### Enterprise Gateway Provider Data
 
-Magpie owns provider-level model configuration (`~/.config/magpie/providers.json`) and the agent-side model lists derived from it. Dotter does not manage `providers.json`: the `magpie` package deploys only `settings.json` and `plugins/`, and nothing reverse-syncs the provider list.
+Magpie owns `~/.config/magpie/providers.json` and the agent-side model data derived from it; do not turn them into Dotter templates or reverse-sync the provider list. Artifact ownership and refresh hazards are documented in [`.dotter/AGENTS.md`, Runtime Artifacts](.dotter/AGENTS.md#runtime-artifacts).
 
-- **Codex** uses the `magpie` provider (`codex.model_provider` defaults to `magpie` in `global.toml`; `model_providers.magpie`, key from `agent.magpie_apikey`). Its `model_catalog_json` is `magpie-models.json`, a runtime artifact that `.dotter/post_deploy.sh` fetches from the magpie gateway on every deploy; do not commit or hand-edit it.
-- **Pi** no longer has a `pi/models.json` template. `magpie pi <model>` merges a `magpie` provider into the live `~/.config/pi/models.json`, which magpie owns; `.dotter/post_deploy.sh` re-runs it on every deploy with `pi.default_model` from `local.toml` (only when `pi.default_provider` is `magpie`). It then rewrites the `magpie` provider to `openai-responses` and keeps only models the live magpie gateway lists. The `magpie` credential in `pi/auth.json` renders from `agent.magpie_apikey`.
-- **pdf2zh** talks to the magpie gateway as OpenAICompatible (`http://127.0.0.1:3425/v1`, model `grok/grok-4.7`). The API key in `config.v3.toml` renders from `agent.magpie_apikey`.
-- **OpenCode** has no enterprise provider block.
+#### Variable Declarations
 
-#### Approved Variable Schema
+Variable declarations and defaults: `.dotter/global.toml`. Live/local conversions and reverse-sync coverage: `.dotter/scripts/live_config_reverse_sync.py`. Find template references with `rg --hidden -n -g '!AGENTS.md' -g '!.git/**' -g '!.jj/**' -F '<namespace.variable>'`.
 
-| Variable                                    | Shape            | Source           | Notes                                                                                                                                                                                                                                                                                                  |
-| ------------------------------------------- | ---------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `codex.model`                               | string           | `global + local` | Reverse-synced from `config.toml.model`; omitted when empty                                                                                                                                                                                                                                            |
-| `enterprise_proxy.url`                      | string           | `global + local` | Optional; tested with `#if` by raft (`WSS_PROXY`, only when `raft.server_url` is empty), yt-dlp and magpie (`proxy`/`proxyCustom`, userinfo percent-encoded by the `url_userinfo_escape` helper because Go rejects characters such as `^`); none depends on the `enterprise-proxy` placeholder package |
-| `raft.server_url`                           | string           | `global + local` | Optional; API base URL of a self-hosted Raft server. When set, `raft-computer.service` exports `RAFT_SERVER_URL` and `NODE_OPTIONS=--use-openssl-ca` and omits `WSS_PROXY`; empty targets the hosted service                                                                                           |
-| `yt-dlp.output_dir`                         | string           | `global + local` | yt-dlp output root; defaults to `~/Videos` and can be overridden per machine                                                                                                                                                                                                                           |
-| `codex.model_provider`                      | string           | `global`         | Codex model provider; defaults to `magpie` in `global.toml`, not reverse-synced                                                                                                                                                                                                                        |
-| `codex.projects`                            | array of strings | `global + local` | Reverse-synced from trusted live Codex `[projects]` entries and renders that trust list                                                                                                                                                                                                                |
-| `codex.hook_states`                         | array of tables  | `global + local` | Each item has `key` and `trusted_hash`; reverse-synced from `config.toml` `hooks.state`, renders Codex hook trust state                                                                                                                                                                                |
-| `antigravity.trusted_workspaces`            | array of strings | `global + local` | Optional; reverse-synced from `settings.json.trustedWorkspaces`                                                                                                                                                                                                                                        |
-| `git.repo_identities`                       | table            | `global + local` | Keyed by identity name; values contain `repo_dir`, `name`, `email`                                                                                                                                                                                                                                     |
-| `skm.local_packages`                        | array of tables  | `global + local` | Each item has `repo`, optional `skills`                                                                                                                                                                                                                                                                |
-| `mihomo.direct_suffixes`                    | array of strings | `global + local` | Optional; extra direct rules are omitted when unset                                                                                                                                                                                                                                                    |
-| `mihomo.subscriptions`                      | array of tables  | `global + local` | Proxy subscriptions; each item has `name` and either `url` or `rbw` (Bitwarden item holding the URL). Overriding in `local.toml` replaces the whole list                                                                                                                                               |
-| `agent.magpie_apikey`                       | string           | `global + local` | Magpie gateway key rendered into the Codex `model_providers.magpie` bearer token, the Pi `auth.json` `magpie` credential, and the pdf2zh `config.v3.toml` OpenAICompatible key; user-maintained, not reverse-synced                                                                                    |
-| `agent.otel_url`                            | string           | `global + local` | Optional; when set, renders the pi `otel` settings block pointing at this OTLP endpoint                                                                                                                                                                                                                |
-| `pi.default_model`                          | string           | `global + local` | Pi default model ID; reverse-synced from `settings.json.defaultModel`                                                                                                                                                                                                                                  |
-| `pi.default_provider`                       | string           | `global + local` | Pi default provider name; reverse-synced from `settings.json.defaultProvider`                                                                                                                                                                                                                          |
-| `pi.enterprise_packages`                    | array of strings | `global + local` | Optional; extra packages appended to Pi packages list                                                                                                                                                                                                                                                  |
-| `pi.extension_changelog_versions`           | array of tables  | `global + local` | Each item has `source`, `scope` and `version`; reverse-synced from `settings.json.extensionChangelogVersions`, whose live keys are JSON strings of `source`/`scope`, so deploy keeps per-machine extension read receipts                                                                               |
-| `pi.last_changelog_version`                 | string           | `global + local` | Pi read changelog version; reverse-synced from `settings.json.lastChangelogVersion` to avoid deploy overwriting local value                                                                                                                                                                            |
-| `pi.subagent_model`                         | table            | `global + local` | Keyed by subagent name → model id; injected into `pi/agents/<name>.md` frontmatter. An absent entry inherits the main agent `defaultModel`, so leaving a subagent unset is intentional inheritance, not a gap                                                                                          |
-| `opencode.default_model`                    | string           | `global + local` | opencode default model, format `provider/model`; reverse-synced from `opencode.jsonc.model`                                                                                                                                                                                                            |
-| `opencode.enterprise_tui_plugins`           | array of strings | `global + local` | Optional; TUI plugin entries are omitted when empty                                                                                                                                                                                                                                                    |
-| `droid.trusted_folders`                     | array of tables  | `global + local` | Optional; each item has `dir` (folder path) and `trustedAt` (timestamp); reverse-synced from `settings.json.trustedFolders`                                                                                                                                                                            |
-| `glab.default_host`                         | string           | `global + local` | Optional; glab default GitLab hostname; reverse-synced from `config.yml.host`; omitted when empty                                                                                                                                                                                                      |
-| `glab.hosts`                                | array of tables  | `global + local` | Each item has `host`, `token`, `user`, optional `container_registry_domains`; reverse-synced from `config.yml.hosts`                                                                                                                                                                                   |
-| `glab.last_update_check_timestamp`          | string           | `global + local` | Reverse-synced from `config.yml.last_update_check_timestamp`; avoids deploy overwriting update check state                                                                                                                                                                                             |
-| `glab.last_seen_version`                    | string           | `global + local` | Reverse-synced from `config.yml.last_seen_version`; avoids deploy overwriting version marker                                                                                                                                                                                                           |
-| `multica.server_url`                        | string           | `global + local` | Multica backend API URL; global default `http://localhost:8080` matches the CLI default, overridden per machine                                                                                                                                                                                        |
-| `multica.app_url`                           | string           | `global + local` | Multica web app URL; global default `http://localhost:3000` matches the CLI default, overridden per machine                                                                                                                                                                                            |
-| `scoop.lastupdate`                          | string           | `global + local` | Reverse-synced from `config.json.lastupdate` on Windows; avoids deploy overwriting scoop lastupdate timestamp                                                                                                                                                                                          |
-| `aria2.rpc_secret`                          | string           | `global + local` | aria2 RPC secret token; empty in `global.toml` omits `rpc-secret`; user-maintained in `local.toml`, not reverse-synced                                                                                                                                                                                 |
-| `container.enterprise_mirrors`              | table            | `global + local` | Registry prefix → enterprise mirror host; renders a drop-in `[[registry]]` that replaces the same-prefix table in `registries.conf`; not reverse-synced                                                                                                                                                |
-| `uv.index_url`                              | string           | `global + local` | uv pip index URL used when `enterprise-artifact` is not selected; defaults to USTC mirror, overridable per machine                                                                                                                                                                                     |
-| `enterprise-artifact.host`                  | string           | `global + local` | Artifactory host; consumed directly by `.netrc`                                                                                                                                                                                                                                                        |
-| `enterprise-artifact.user_id`               | string           | `global + local` | Artifactory user id; consumed directly by `.netrc` and combined inline with access_token by npm/Docker templates                                                                                                                                                                                       |
-| `enterprise-artifact.access_token`          | string           | `global + local` | Artifactory access token; consumed directly by Bun/netrc and the magpie plugin `.npmrc` (`_authToken`), and combined inline with user_id by npm/Docker templates                                                                                                                                       |
-| `enterprise-artifact.npm_registry`          | string           | `global + local` | Shared npm/Bun registry URL without scheme; used by `~/.npmrc`, `~/.bunfig.toml` and the magpie plugin `.npmrc`                                                                                                                                                                                        |
-| `enterprise-artifact.pypi_index`            | string           | `global + local` | Enterprise PyPI index URL; replaces `uv.index_url` in `uv.toml` when the package is selected                                                                                                                                                                                                           |
-| `enterprise-artifact.docker_registry_hosts` | array of strings | `global + local` | Docker registry hosts; each renders an `auths` entry with inline base64 auth                                                                                                                                                                                                                           |
-| `voxtype-wsl-bridge.hold_key`               | string           | `global + local` | AutoHotkey key name held to dictate on Windows (default `RAlt`); must be a key the keyboard actually reports, and is rendered into `voxtype-wsl-bridge/windows/voxtype.ahk`                                                                                                                            |
-| `voxtype-wsl-bridge.port`                   | integer          | `global + local` | Loopback TCP port shared by the WSL `voxtype-wsl-bridge.socket` and the Windows AutoHotkey client; default `47821`                                                                                                                                                                                     |
-| `voxtype.device`                            | string           | `global + local` | Optional; ALSA capture device for voxtype; the `device` key is omitted when empty, so voxtype follows the system default                                                                                                                                                                               |
-| `fcitx5.theme`                              | string           | `global + local` | fcitx5 classicui `Theme`; global default `Material-Color-Teal` must match an installed theme directory name, override per machine when its case differs; user-maintained, not reverse-synced                                                                                                           |
+Keep `agent.magpie_apikey`, `aria2.rpc_secret`, `container.enterprise_mirrors` and `fcitx5.theme` user-maintained, not reverse-synced. `codex.model_provider` is also not reverse-synced.
+
+An absent `pi.subagent_model` entry intentionally inherits the main agent model. `enterprise-artifact.npm_registry` excludes the URL scheme. `voxtype-wsl-bridge.hold_key` must name a key the keyboard actually reports. `fcitx5.theme` must match an installed theme directory, including case.
 
 #### Git Repo Identities
 
-Repo-scoped Git identities are defined in `.dotter/local.toml` under `variables.git.repo_identities`:
-
-```toml
-[variables.git.repo_identities.company_a]
-repo_dir = "~/Documents/company-a.repos/"
-name = "your-work-name"
-email = "your-work-email@company-a.example"
-
-[variables.git.repo_identities.company_b]
-repo_dir = "~/Documents/company-b.repos/"
-name = "your-other-work-name"
-email = "your-other-work-email@company-b.example"
-```
-
-Each entry renders a matching Git conditional include and Jujutsu repository scope. The matching Git leaf config is deployed from `git/generated/<key>.conf` to `~/.config/git/generated/<key>.conf`.
+Configure `variables.git.repo_identities` in `.dotter/local.toml`; `git/config` and `jj/config.toml` render it. Each entry's leaf config is deployed from `git/generated/<key>.conf` to `~/.config/git/generated/<key>.conf`; apply the root-and-leaf ownership rules below.
 
 #### Root-and-Leaf Subconfiguration Pattern
 
@@ -291,76 +176,29 @@ Inject secrets from Bitwarden using `rbw get`:
 
 The `replace ... '\n' ''` removes trailing newline from rbw output.
 
-**Workflow:**
-
-1. `rbw add my-api-key` - store secret in Bitwarden
-1. Use `{{replace (command_output 'rbw get my-api-key') '\n' ''}}` in template
-1. `dotter deploy` - deploy with secrets injected
-
 #### TOML Template Tips
 
-Put control blocks in `# ` comments to keep the raw template parseable by TOML-aware editors.
+Put standalone control blocks in `# ` comments so TOML-aware editors still parse the raw template. Use `# ---` for a comment separator that must survive rendering.
 
-**Reduce redundant `#if` guards**: when `global.toml` provides an empty list/table default, use `#each` directly in the template without an outer `#if` wrapper. `#each` produces zero items for an empty collection and does not error. Only use `#if` when the variable may be completely undefined (no global default).
-
-```toml
-# global.toml gives projects = [], loop directly
-[projects]
-# {{#each codex.projects}}
-
-[projects."{{this}}"]
-trust_level = "trusted"
-# {{/each}}
-
-# combine control lines to reduce residual comment lines
-# {{#if some_undefined_var}}{{#each some_undefined_var}}...
-# {{/each}}{{/if}}
-```
-
+- **Reduce redundant `#if` guards**: when `global.toml` provides an empty list/table default, use `#each` directly without an outer `#if` wrapper; `#each` produces zero items for an empty collection and does not error. Only use `#if` when the variable may be completely undefined (no global default).
 - Combining `#if`+`#each` (and `/each`+`/if`) onto a single `# ` line reduces residual empty comment lines after rendering.
-- `post_deploy.sh` identifies templates containing comment-wrapped `#if` or `#each` controls by content, then removes residual `# ` lines from both the rendered target and the Dotter cache regardless of filename extension. Use `# ---` for a comment separator that must remain.
 - Dotter treats any file containing `{{` as a template; `.tmpl` is not a required or special suffix.
+
+Example: `codex/codex/config.toml`. Cleanup behavior is owned by [`.dotter/AGENTS.md`, Deploy Scripts](.dotter/AGENTS.md#deploy-scripts).
 
 #### YAML Template Tips
 
-Keep these rules for YAML Dotter templates:
-
-```yaml
-# local_packages has global default [], loop directly; skills is per-item optional, keep #if
-# {{#each skm.local_packages}}
-- repo: "{{repo}}"
-  # {{#if skills}}
-  skills:
-    # {{#each skills}}
-    - "{{this}}"
-    # {{/each}}
-  # {{/if}}
-# {{/each}}
-```
-
-- Put control blocks like `#each` and `#if` in YAML comments so YAML formatters and editors can still parse the file.
-- Quote inline Handlebars values in YAML scalars, for example `repo: "{{repo}}"` and `- "{{this}}"`, unless the target tool writes that value unquoted and Dotter must reproduce its exact bytes (see `glab/config.yml`).
+Comment standalone Handlebars controls and quote inline scalar values, for example `repo: "{{repo}}"` and `- "{{this}}"`. Exception: preserve the target tool's unquoted form when reverse sync requires identical bytes, as in `glab/config.yml`. Example: `skm/skills.yaml`.
 
 #### JSON Template Tips
 
 JSON has no comments, so Handlebars control blocks split into two forms:
 
-- **Standalone control blocks** (`{{#each}}`, `{{/each}}`, `{{#if}}`, `{{/if}}`) go on `# `-prefixed lines. After rendering, leftover `# ` blank lines are removed by `post_deploy.sh` cleanup. Use `enterprise-artifact/.docker/config.json` as the reference.
+- **Standalone control blocks** (`{{#each}}`, `{{/each}}`, `{{#if}}`, `{{/if}}`) go on `# `-prefixed lines. Example: `enterprise-artifact/.docker/config.json`.
 - **Inline control blocks** (e.g. `{{#unless @last}},{{/unless}}` for comma separation) stay bare, because they must emit literal characters and cannot be commented out.
 
-```json
-{
-  "auths": {
-# {{#each enterprise-artifact.docker_registry_hosts}}
-    "{{this}}": {
-      "auth": "{{replace (command_output (replace (replace "printf '%s:%s' '__USER_ID__' '__ACCESS_TOKEN__' | base64" "__USER_ID__" @root.enterprise-artifact.user_id) "__ACCESS_TOKEN__" @root.enterprise-artifact.access_token)) "\n" ""}}"
-    }{{#unless @last}},{{/unless}}
-# {{/each}}
-  }
-}
-```
+Cleanup contract: [`.dotter/AGENTS.md`, Deploy Scripts](.dotter/AGENTS.md#deploy-scripts).
 
-- `post_deploy.sh` identifies templates with `# `-prefixed `#if`/`#each` controls by content and strips residual blank `# ` lines from both the rendered target and the Dotter cache.
 - **Use `@root.` for package-level variables inside `{{#each}}`**: `#each` makes each item the current context, so relative paths in helper arguments (e.g. `enterprise-artifact.user_id`) fail to resolve inside the loop and the whole expression **silently renders empty** (deploy does not error). Conditions on package-level variables fail the same way. Write `@root.enterprise-artifact.user_id` instead. Templates with only `#if` and no `#each` (e.g. `npm/.npmrc`) are unaffected because the root context is preserved. The same rule applies to `#each` loops in TOML and YAML templates (e.g. `{{#each skm.local_packages}}` referencing package-level variables).
 
 ## Live Config Reverse Sync Pattern
@@ -375,20 +213,6 @@ When a variable is renamed or removed, update the tracked placeholder, template,
 
 If a local schema still contains a legacy key, surface the difference and ask the user whether to keep, migrate, or remove it. Deploy and reverse-sync scripts must never make that choice automatically.
 
-### Flow
-
-```
-live config changes (tool modifies at runtime)
-      ↓
-pre_deploy.sh → live_config_reverse_sync.py
-      ↓
-local.toml variables updated
-      ↓
-Dotter template rendering (reads from local.toml)
-      ↓
-deployed config preserves changes
-```
-
 ### Decision Framework: When to Add a Local Variable + Reverse Sync
 
 Two sequential decisions: **should it be a local variable**, then **should it be reverse-synced**.
@@ -398,8 +222,8 @@ Two sequential decisions: **should it be a local variable**, then **should it be
 Make a value a Dotter variable in `local.toml` (rather than hardcoding in the template or `global.toml`) when:
 
 - **Differs across machines** — the same template must produce different results on different machines (e.g., enterprise model at work, public model at home)
-- **Should not be in the repo** — secrets, credentials, personal tokens must not be committed
 - **Tool modifies at runtime** — the agent tool will change this value locally; the template must reflect the live value, not a repo default
+- **Secrets and credentials** — never commit them; place them per Source Rules
 
 If the value is the same on all machines and never changes, hardcode it in the template — no local variable needed.
 
@@ -421,24 +245,13 @@ Once a value is a local variable, decide whether it should be reverse-synced fro
 
 ### Implementation Steps
 
-1. **Declare the variable** — add an empty placeholder in `global.toml`, register in the Approved Variable Schema in this file
+1. **Declare the variable** — add its namespaced declaration and default in `.dotter/global.toml`.
 1. **Reference in template** — render with `{{#each}}` / `{{#if}}` in the corresponding template
 1. **Add sync function** — write a normalize-compare-write function in `live_config_reverse_sync.py`
 1. **Register in main()** — call the sync function in the corresponding agent block
 
-### Variable Types and Sync Functions
-
-| live config format                     | local.toml format         | recommended approach                                                                                           | reference function                |
-| -------------------------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| string                                 | string                    | `sync_string(table, 'key', data.get('field'))`                                                                 | pi `default_model`, codex `model` |
-| `dict[path, {trust_level: "trusted"}]` | `string[]`                | `sync_projects` — uses `normalize_projects`                                                                    | codex `projects`                  |
-| `dict[str, {trustedAt: str}]`          | `[[aot]]` array of tables | `sync_trusted_folders` — uses `normalize_trusted_folders` (live) + `normalize_existing_trusted_folders` (TOML) | droid `trusted_folders`           |
-| `string[]`                             | inline array              | `sync_trusted_workspaces` — uses `normalize_trusted_workspaces` for both sides                                 | antigravity `trusted_workspaces`  |
+Normalization and synchronization patterns: `.dotter/scripts/live_config_reverse_sync.py` (`normalize_*`, `sync_*`, `main`).
 
 ## Commands
 
-```bash
-dotter deploy           # deploy dotfiles
-dotter deploy --force   # overwrite existing files
-dotter deploy --dry-run # preview changes
-```
+Deployment and conflict handling: [`.dotter/AGENTS.md`, Deploy Workflow](.dotter/AGENTS.md#deploy-workflow).

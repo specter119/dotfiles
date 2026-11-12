@@ -16,6 +16,7 @@ packages:
     skills:
       - statechart
   - repo: https://github.com/PsiACE/skills
+  - repo: https://github.com/specter119/hydra-crux
   # - repo: https://github.com/Xuanwo/xurl
   - repo: https://github.com/tommy0103/obelisk-skill # replace xurl
   # - repo: https://github.com/onevcat/skills # jj replace by my personal
