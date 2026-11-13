@@ -1,9 +1,9 @@
 ---
 description: 承接明确范围的实现任务，完成改动、验证结果并汇报交付状态
 tools: read, bash, edit, write, grep, find, ls
-# {{#if pi.subagent_model.worker}}
+{{#if pi.subagent_model.worker}}
 model: {{pi.subagent_model.worker}}
-# {{/if}}
+{{/if}}
 thinking: high
 max_turns: 50
 prompt_mode: replace

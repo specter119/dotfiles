@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-# {{#if agent.magpie_apikey}}
+{{#if agent.magpie_apikey}}
     "magpie": {
       "type": "streamable-http",
       "url": "http://127.0.0.1:3425/mcp/magpie/hub",
@@ -8,7 +8,7 @@
         "Authorization": "Bearer {{agent.magpie_apikey}}"
       }
     },
-# {{/if}}
+{{/if}}
     "sequentialthinking": {
       "alwaysAllow": [
         "sequentialthinking"

@@ -179,26 +179,23 @@ The `replace ... '\n' ''` removes trailing newline from rbw output.
 
 #### TOML Template Tips
 
-Put standalone control blocks in `# ` comments so TOML-aware editors still parse the raw template. Use `# ---` for a comment separator that must survive rendering.
+Put standalone control blocks on bare lines: Dotter drops a line that holds nothing but a block statement, so the render carries no trace of it. Never prefix one with the format's comment marker (`# {{#if}}` renders as a `# ` line): that residue makes the target differ from the render on every deploy. The trade-off is that the raw template is not parseable TOML, which `prek.toml` excludes accept. Use `# ---` for a comment separator that must survive rendering.
 
 - **Reduce redundant `#if` guards**: when `global.toml` provides an empty list/table default, use `#each` directly without an outer `#if` wrapper; `#each` produces zero items for an empty collection and does not error. Only use `#if` when the variable may be completely undefined (no global default).
-- Combining `#if`+`#each` (and `/each`+`/if`) onto a single `# ` line reduces residual empty comment lines after rendering.
 - Dotter treats any file containing `{{` as a template; `.tmpl` is not a required or special suffix.
 
-Example: `codex/codex/config.toml`. Cleanup behavior is owned by [`.dotter/AGENTS.md`, Deploy Scripts](.dotter/AGENTS.md#deploy-scripts).
+Example: `codex/codex/config.toml`.
 
 #### YAML Template Tips
 
-Comment standalone Handlebars controls and quote inline scalar values, for example `repo: "{{repo}}"` and `- "{{this}}"`. Exception: preserve the target tool's unquoted form when reverse sync requires identical bytes, as in `glab/config.yml`. Example: `skm/skills.yaml`.
+Put standalone Handlebars controls on bare lines and quote inline scalar values, for example `repo: "{{repo}}"` and `- "{{this}}"`. Exception: preserve the target tool's unquoted form when reverse sync requires identical bytes, as in `glab/config.yml`. Example: `skm/skills.yaml`.
 
 #### JSON Template Tips
 
 JSON has no comments, so Handlebars control blocks split into two forms:
 
-- **Standalone control blocks** (`{{#each}}`, `{{/each}}`, `{{#if}}`, `{{/if}}`) go on `# `-prefixed lines. Example: `enterprise-artifact/.docker/config.json`.
-- **Inline control blocks** (e.g. `{{#unless @last}},{{/unless}}` for comma separation) stay bare, because they must emit literal characters and cannot be commented out.
-
-Cleanup contract: [`.dotter/AGENTS.md`, Deploy Scripts](.dotter/AGENTS.md#deploy-scripts).
+- **Standalone control blocks** (`{{#each}}`, `{{/each}}`, `{{#if}}`, `{{/if}}`) go on bare lines, which Dotter drops entirely. Example: `enterprise-artifact/.docker/config.json`.
+- **Inline control blocks** (e.g. `{{#unless @last}},{{/unless}}` for comma separation) stay inline with the value they terminate, because they must emit literal characters.
 
 - **Use `@root.` for package-level variables inside `{{#each}}`**: `#each` makes each item the current context, so relative paths in helper arguments (e.g. `enterprise-artifact.user_id`) fail to resolve inside the loop and the whole expression **silently renders empty** (deploy does not error). Conditions on package-level variables fail the same way. Write `@root.enterprise-artifact.user_id` instead. Templates with only `#if` and no `#each` (e.g. `npm/.npmrc`) are unaffected because the root context is preserved. The same rule applies to `#each` loops in TOML and YAML templates (e.g. `{{#each skm.local_packages}}` referencing package-level variables).
 
@@ -214,7 +211,7 @@ A template and a tool that rewrites the same file are two writers of one file, s
 
 - Reproduce the tool's own serializer, not a tidier layout: key order, indentation, and whether the key exists at all. An `omitempty` field means an empty collection renders as no key, not as `{}`.
 - Render collections in the shape the tool writes them. Go's `encoding/json` sorts map keys and writes a non-empty map multi-line, so a one-line `{ ... }` never matches.
-- Gate a collection key with `{{#if}}` so the empty and non-empty renders both match, and keep the control inline (`{ {{~#each ...}}`; `{{{` would parse as a triple-stash) so no `# ` residue line is emitted.
+- Gate a collection key with `{{#if}}` so the empty and non-empty renders both match, and keep the control inline (`{ {{~#each ...}}`; `{{{` would parse as a triple-stash) so the render matches the tool's bytes exactly.
 - Reverse-sync the values the tool writes back into `local.toml`, so the template renders what the tool last saved instead of a repo default.
 - Keys the tool derives belong in neither the template nor `local.toml`; rendering a copy makes every deploy skip.
 

@@ -13,7 +13,7 @@
   "npmCommand": [
     "{{env_var "PI_CODING_AGENT_DIR"}}/bin/pi-npm-bun"
   ],
-# {{#if agent.otel_url}}
+{{#if agent.otel_url}}
   "otel": {
     "enabled": true,
     "endpoint": "{{agent.otel_url}}",
@@ -30,7 +30,7 @@
       "logs": false
     }
   },
-# {{/if}}
+{{/if}}
   "packages": [
     "https://github.com/aliou/pi-guardrails",
     "npm:@narumitw/pi-goal",
@@ -43,8 +43,8 @@
   ],
   "theme": "dark"{{#if pi.extension_changelog_versions}},
   "extensionChangelogVersions": {
-# {{#each pi.extension_changelog_versions}}
+{{#each pi.extension_changelog_versions}}
     "{\"source\":\"{{source}}\",\"scope\":\"{{scope}}\"}": "{{version}}"{{#unless @last}},{{/unless}}
-# {{/each}}
+{{/each}}
   }{{/if}}
 }

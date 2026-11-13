@@ -43,11 +43,11 @@
     "vscode": 1782694674288
   },
   "trustedFolders": {
-# {{#each droid.trusted_folders}}
+{{#each droid.trusted_folders}}
     "{{this.dir}}": {
       "trustedAt": "{{this.trustedAt}}"
     }{{#unless @last}},{{/unless}}
-# {{/each}}
+{{/each}}
   },
   "enabledPlugins": { {{#each droid.enabled_plugins}}"{{this}}": true{{#unless @last}}, {{/unless}}{{/each}} },
   "subagentModelSettings": {

@@ -6,11 +6,11 @@
 [install]
 globalDir = '{{env_var "HOME"}}/.local/share/bun'
 globalBinDir = '{{env_var "HOME"}}/.local/bin'
-# {{#if dotter.packages.enterprise-artifact}}
+{{#if dotter.packages.enterprise-artifact}}
 [install.registry]
 url = "https://{{enterprise-artifact.npm_registry}}/"
 token = "{{enterprise-artifact.access_token}}"
-# {{/if}}
+{{/if}}
 
 [install.cache]
 dir = '{{env_var "HOME"}}/.cache/bun'

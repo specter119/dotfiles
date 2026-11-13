@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-# {{#if agent.magpie_apikey}}
+{{#if agent.magpie_apikey}}
     "magpie": {
       "type": "http",
       "url": "http://127.0.0.1:3425/mcp/magpie/hub",
@@ -11,7 +11,7 @@
         "*"
       ]
     },
-# {{/if}}
+{{/if}}
     "fast-context": {
       "type": "local",
       "command": "bunx",

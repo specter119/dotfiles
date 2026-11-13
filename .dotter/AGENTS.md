@@ -36,6 +36,7 @@ Scope: `.dotter/`
 - `.dotter/scripts/live_config_reverse_sync.py` runs from `pre_deploy.sh` and writes tool-modified live values back into `local.toml` before templates render.
 - `republish_magpie_settings` renames the rendered `magpie/settings.json` into place: magpie reads that file while it runs and must never see a truncated one.
 - Do not add post-deploy commands that write secrets or tool-generated runtime state back into repo-managed config files.
+- Do not post-process rendered targets to strip template residue. Standalone control blocks stay on bare lines so Dotter drops them ([root `AGENTS.md`, Template Patterns](../AGENTS.md#template-patterns)); a `# `-prefixed control renders as a `# ` line, and deleting that line after deploy makes every later deploy see a diff.
 - These deploy scripts are also templates. Do not write a literal `{{` inside embedded shell or Python snippets; build it at runtime instead.
 - Registry credentials are owned by the `enterprise-artifact` package (see `Package Organization` in the root `AGENTS.md`); `pre_deploy.sh` does not depend on its variables.
 

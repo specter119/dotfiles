@@ -1,9 +1,9 @@
 ---
 description: 查询官方文档、第三方库、OSS 示例和迁移资料，提供外部参考结论
 tools: read, bash, grep, find, ls
-# {{#if pi.subagent_model.librarian}}
+{{#if pi.subagent_model.librarian}}
 model: {{pi.subagent_model.librarian}}
-# {{/if}}
+{{/if}}
 thinking: high
 max_turns: 20
 prompt_mode: replace

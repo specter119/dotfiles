@@ -1,6 +1,6 @@
-# {{#if dotter.packages.enterprise-artifact}}
+{{#if dotter.packages.enterprise-artifact}}
 system-certs = true
-# {{/if}}
+{{/if}}
 
 [pip]
 link-mode = "clone"

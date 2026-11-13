@@ -1,10 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
-// {{#if opencode.default_model}}
+{{#if opencode.default_model}}
   "model": "{{opencode.default_model}}",
-// {{/if}}
+{{/if}}
   "mcp": {
-# {{#if agent.magpie_apikey}}
+{{#if agent.magpie_apikey}}
     "magpie": {
       "type": "remote",
       "url": "http://127.0.0.1:3425/mcp/magpie/hub",
@@ -12,7 +12,7 @@
         "Authorization": "Bearer {{agent.magpie_apikey}}"
       }
     },
-# {{/if}}
+{{/if}}
     "fast-context": {
       "type": "local",
       "command": [

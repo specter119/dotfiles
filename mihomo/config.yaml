@@ -18,11 +18,11 @@ p: &p {type: http, interval: 3600, health-check: {enable: true, url: "https://ww
 
 # 订阅列表见 mihomo.subscriptions：每项 name 必填，url 或 rbw（Bitwarden 条目名）二选一
 proxy-providers:
-  # {{#each mihomo.subscriptions}}
+  {{#each mihomo.subscriptions}}
   "{{name}}":
     !!merge <<: *p
     url: "{{#if url}}{{url}}{{else}}{{replace (command_output (replace "rbw get '__ITEM__'" "__ITEM__" rbw)) '\n' ''}}{{/if}}"
-  # {{/each}}
+  {{/each}}
 ipv6: true
 allow-lan: true
 mixed-port: 7890
@@ -66,9 +66,9 @@ dns:
     - "*"
     - +.lan
     - +.local
-    # {{#each mihomo.direct_suffixes}}
+    {{#each mihomo.direct_suffixes}}
     - +.{{this}}
-    # {{/each}}
+    {{/each}}
     - +.tailscale.com
     - +.tailscale.io
   default-nameserver:
@@ -104,9 +104,9 @@ proxy-groups:
   - {name: 其它地区自动, !!merge <<: *rt, hidden: true, filter: *f_other, exclude-filter: *junk}
 rules:
   - GEOIP,lan,直连,no-resolve
-  # {{#each mihomo.direct_suffixes}}
+  {{#each mihomo.direct_suffixes}}
   - DOMAIN-SUFFIX,{{this}},直连,no-resolve
-  # {{/each}}
+  {{/each}}
   - DOMAIN-SUFFIX,tailscale.com,直连,no-resolve
   - DOMAIN-SUFFIX,tailscale.io,直连,no-resolve
   - RULE-SET,openai_domain,GenAI Oversea

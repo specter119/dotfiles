@@ -34,7 +34,7 @@ prepend_preloaders = [
 ]
 
 [opener]
-# {{#if (command_success "uname -r | grep -qi wsl")}}
+{{#if (command_success "uname -r | grep -qi wsl")}}
 edit = [
   {run = '$EDITOR %s', block = true, for = "unix"}
 ]
@@ -43,7 +43,7 @@ open = [
   # (fixes WSL explorer.exe returning non-zero)
   {run = 'xdg-open %s1', orphan = true, desc = "Open", for = "unix"}
 ]
-# {{/if}}
+{{/if}}
 extract = [
   {run = 'ya pub extract --list "$@"', desc = "Extract here", for = "unix"}
 ]

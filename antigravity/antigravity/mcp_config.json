@@ -1,13 +1,13 @@
 {
   "mcpServers": {
-# {{#if agent.magpie_apikey}}
+{{#if agent.magpie_apikey}}
     "magpie": {
       "serverUrl": "http://127.0.0.1:3425/mcp/magpie/hub",
       "headers": {
         "Authorization": "Bearer {{agent.magpie_apikey}}"
       }
     },
-# {{/if}}
+{{/if}}
     "fast-context": {
       "command": "bunx",
       "args": [

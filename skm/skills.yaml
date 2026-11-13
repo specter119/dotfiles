@@ -36,12 +36,12 @@ packages:
   - repo: https://github.com/tw93/Kami
   ## slide
   - repo: https://github.com/nyblnet/bento
-  # {{#each skm.local_packages}}
+  {{#each skm.local_packages}}
   - repo: "{{repo}}"
-    # {{#if skills}}
+    {{#if skills}}
     skills:
-      # {{#each skills}}
+      {{#each skills}}
       - "{{this}}"
-      # {{/each}}
-    # {{/if}}
-# {{/each}}
+      {{/each}}
+    {{/if}}
+{{/each}}
