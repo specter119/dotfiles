@@ -227,7 +227,7 @@ pi = '~/.config/pi'
 [pi.variables.pi]
 default_model = ''
 default_provider = ''
-enterprise_packages = []
+local_packages = []
 extension_changelog_versions = []
 last_changelog_version = ''
 subagent_model = {}

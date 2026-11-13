@@ -23,4 +23,4 @@
 - 存在 `.jj/` 时使用 `jj`。独立 Python 脚本使用 `uv run` 和 PEP 723 metadata。
 - `mcp.json` 是 Dotter 模板。会话内 `/mcp` 改动的启用状态与 exposure 会写回已部署的 `~/.config/pi/mcp.json`，下次 `dotter deploy` 会与模板冲突；要长期保留的改动改模板，只想临时生效的改动写在项目级 `.pi/mcp.json`。
 - `mcp.json` 的条目不设 `timeout`：跟随服务端；只有 Pi 的默认值（60 s）不够用时才加。
-- OneNote 由 `deskhand` 提供（`uv tool install git+https://github.com/specter119/deskhand`）；写操作的确认弹窗由 `extensions/deskhand/index.ts` 负责。
+- OneNote 由 `deskhand` 提供（`uv tool install git+https://github.com/specter119/deskhand`）；作为 pi package 安装时，写操作的确认弹窗由该包自带的 pi extension（`integrations/pi/index.ts`）负责。
