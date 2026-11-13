@@ -161,6 +161,28 @@ except (urllib.error.URLError, OSError, ValueError):
     raise SystemExit(1)
 if not catalog.get("models"):
     raise SystemExit(1)
+# Codex only turns on Code Mode for models whose catalog entry declares
+# `tool_mode`; the gateway does not emit it, so declare it here. These families
+# passed a code-mode-only probe, where every tool call goes through the exec
+# surface; the rest keep direct tools available alongside Code Mode.
+code_mode_only_families = ("deepseek", "glm", "zai-glm", "kimi", "gemini", "qwen3.8-max")
+
+
+def code_mode_only(slug):
+    name = slug.split("/", 1)[-1]
+    if name.startswith(code_mode_only_families):
+        return True
+    if name.startswith("gpt-"):
+        try:
+            return int(name.split("-")[1].split(".")[0]) >= 5
+        except ValueError:
+            return False
+    return False
+
+
+for model in catalog["models"]:
+    mode = "code_mode_only" if code_mode_only(model["slug"]) else "code_mode"
+    model.setdefault("tool_mode", mode)
 with open(out, "w", encoding="utf-8") as fh:
     json.dump(catalog, fh, ensure_ascii=False)
 PY

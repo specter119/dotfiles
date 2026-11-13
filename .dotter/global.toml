@@ -208,6 +208,7 @@ model_reasoning_effort = 'max'
 model_provider = 'magpie'
 projects = []
 hook_states = []
+local_mcp_servers = []
 
 [chatgpt.files]
 chatgpt = '~/.config'

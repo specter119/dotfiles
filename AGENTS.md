@@ -144,6 +144,7 @@ Magpie owns `~/.config/magpie/providers.json` and the agent-side model data deri
 Variable declarations and defaults: `.dotter/global.toml`. Live/local conversions and reverse-sync coverage: `.dotter/scripts/live_config_reverse_sync.py`. Find template references with `rg --hidden -n -g '!AGENTS.md' -g '!.git/**' -g '!.jj/**' -F '<namespace.variable>'`.
 
 Keep `agent.magpie_apikey`, `aria2.rpc_secret`, `container.enterprise_mirrors` and `fcitx5.theme` user-maintained, not reverse-synced. `codex.model_provider` is also not reverse-synced.
+`codex.local_mcp_servers` is user-maintained and not reverse-synced: each entry needs a `name` plus either `url` or `command` + `args`, and renders one machine-local `[mcp_servers.<name>]` table. Servers added with `codex mcp add` belong there, not in the tracked template.
 
 An absent `pi.subagent_model` entry intentionally inherits the main agent model. `enterprise-artifact.npm_registry` excludes the URL scheme. `voxtype-wsl-bridge.hold_key` must name a key the keyboard actually reports. `fcitx5.theme` must match an installed theme directory, including case.
 
