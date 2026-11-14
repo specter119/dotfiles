@@ -2,6 +2,9 @@
 Version=1.0
 Type=Application
 Name=Abaqus CAE 2022
-Exec=%h/.local/bin/abq2022 cae -mesa -noStartupDialog
-Icon=/opt/DassaultSystemes/SIMULIA/EstProducts/2022/linux_a64/CAEresources/graphic/icons/icoR_application.png
+Exec={{env_var "HOME"}}/.local/bin/x11-lowdpi {{env_var "HOME"}}/.local/bin/abq2022 cae -mesa -noStartupDialog
+TryExec={{env_var "HOME"}}/.local/bin/abq2022
+Icon=abaqus
+Terminal=false
 StartupWMClass=Abaqus
+Categories=Science;Engineering;

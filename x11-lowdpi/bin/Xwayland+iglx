@@ -1,0 +1,3 @@
+#!/bin/sh
+# Abaqus/CAE 2022 requests an indirect GLX feedback context for printing.
+exec /usr/bin/Xwayland +iglx "$@"

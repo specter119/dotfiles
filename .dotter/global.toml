@@ -2,12 +2,7 @@
 url_userinfo_escape = '.dotter/helpers/url_userinfo_escape.rhai'
 
 [wsl-guest]
-depends = [
-  'wsl-ssh-agent',
-  'voxtype-wsl-bridge',
-  'fcitx5-wslg',
-  'wsl-keyring-unlock',
-]
+depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge', 'fcitx5-wslg', 'wsl-keyring-unlock']
 
 [wsl-guest.files]
 'wsl-guest' = '~/.config'
@@ -381,6 +376,9 @@ depends = ['vscode']
 [roo-code.files]
 'roo-code' = '~/.config/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings'
 
+[abaqus]
+depends = ['x11-lowdpi']
+
 [abaqus.files]
 abaqus = '~/.local'
 
@@ -418,7 +416,6 @@ depends = [
   'cliphist',
   'nm-applet',
   'udiskie',
-  'x11-lowdpi',
   'fontconfig',
   'fcitx5',
   'chromium',
@@ -447,15 +444,7 @@ depends = ['bub', 'lody', 'raft']
 depends = ['playwright']
 
 [agent-runtime]
-depends = [
-  'browser-use',
-  'skm',
-  'zellij',
-  'nmem',
-  'magpie',
-  'voxtype',
-  'llama.cpp',
-]
+depends = ['browser-use', 'skm', 'zellij', 'nmem', 'magpie', 'voxtype', 'llama.cpp']
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'

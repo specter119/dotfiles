@@ -9,20 +9,39 @@ ABAQUS_CMD=$2
 shift 2
 
 ABAQUS_HOME="$HOME/.local/share/abaqus/$ABAQUS_VERSION"
-XLIB_SKIP_ARGB_VISUALS=1
 
-set +e
-source /opt/intel/oneapi/setvars.sh
+# Resolve the real command without picking up this wrapper's own directory,
+# so a deployed ~/.local/bin/abq2022 does not call itself.
+resolve_abaqus_bin() {
+  local cmd=$1
+  if [ -x "$HOME/.nix-profile/bin/$cmd" ]; then
+    readlink -f "$HOME/.nix-profile/bin/$cmd"
+    return 0
+  fi
+  local self_dir
+  self_dir=$(cd "$(dirname "$0")" && pwd -P)
+  local search_path
+  search_path=$(printf '%s' "$PATH" | tr ':' '\n' | grep -F -vx "$self_dir" | paste -sd:)
+  local candidate
+  candidate=$(PATH="$search_path" command -v "$cmd" 2>/dev/null || true)
+  [ -n "$candidate" ] || return 1
+  candidate=$(readlink -f "$candidate")
+  [ "$candidate" != "$(readlink -f "$0")" ] || return 1
+  printf '%s\n' "$candidate"
+}
 
-if ! screen -S weston_scale_abaqus -Q select .; then
-  screen -dmS weston_scale_abaqus weston --xwayland --socket=abqscale --scale=1
+# A nix-installed Abaqus is an FHS env wrapper. The unwrapped binary in its
+# closure cannot run on its own (it links against the FHS rootfs libraries, not
+# the host ones), so keep the wrapper and let it set up its own bubblewrap
+# inside this sandbox.
+
+if [ -z "${ABAQUS_BIN:-}" ]; then
+  ABAQUS_BIN=$(resolve_abaqus_bin "$ABAQUS_CMD") ||
+    ABAQUS_BIN="/opt/DassaultSystemes/SIMULIA/Commands/$ABAQUS_CMD"
 fi
 
-set -e
-DISPLAY=:1
-WAYLAND_DISPLAY=abqscale
-set +e
-
+# The display comes from the caller (x11-lowdpi owns the nested weston and
+# sets DISPLAY for its 1x Xwayland); this wrapper only sandboxes the app.
 mkdir -p "$ABAQUS_HOME"
 rm -rf "$ABAQUS_HOME/abaqus_$ABAQUS_VERSION.gpr"
 
@@ -35,6 +54,7 @@ exec bwrap \
   --ro-bind /usr/lib64 /usr/lib64 \
   --ro-bind /usr/bin /usr/bin \
   --ro-bind /opt /opt \
+  --ro-bind-try /nix /nix \
   --ro-bind /etc /etc \
   --ro-bind /usr/share /usr/share \
   --symlink /usr/lib /lib \
@@ -46,7 +66,9 @@ exec bwrap \
   --dir "$HOME" \
   --bind "$HOME/Downloads" "$HOME/Downloads" \
   --setenv LANG en_US.UTF-8 \
+  --setenv XLIB_SKIP_ARGB_VISUALS 1 \
   --unshare-all \
   --share-net \
+  --ro-bind-try /tmp/.X11-unix /tmp/.X11-unix \
   --setenv DISPLAY "$DISPLAY" \
-  "/opt/DassaultSystemes/SIMULIA/Commands/$ABAQUS_CMD" "$@"
+  "$ABAQUS_BIN" "$@"
