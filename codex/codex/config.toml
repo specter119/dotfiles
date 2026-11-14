@@ -12,6 +12,11 @@ service_tier = "default"
 model = "{{codex.model}}"{{/if}}
 openai_base_url = "http://127.0.0.1:3425/backend-api/codex"
 
+[shell_environment_policy]
+# ssh rejects the system config when /etc/ssh/ssh_config.d is not root-owned
+# (seen as nobody inside the sandbox); point git at the user config explicitly.
+set = { GIT_SSH_COMMAND = "ssh -F ~/.ssh/config" }
+
 [model_providers]
 [model_providers.magpie]
 name = "Magpie"
