@@ -50,6 +50,9 @@ x11-lowdpi = '~/.local'
 [sway.files]
 sway = '~/.config'
 
+[niri.files]
+niri = '~/.config'
+
 [voxtype.files]
 voxtype = '~/.config'
 
@@ -100,9 +103,13 @@ yazi = '~/.config/yazi'
 
 [git.files]
 git = '~/.config/git'
+'git/enterprise.conf' = { target = '~/.config/git/enterprise.conf', type = 'template', if = 'git.enterprise' }
+'git/wsl.conf' = { target = '~/.config/git/platform.conf', type = 'template', if = '(command_success "uname -r | grep -qi wsl")' }
+'git/windows.conf' = { target = '~/.config/git/platform.conf', type = 'template', if = 'dotter.windows' }
 
 [git.variables.git]
 repo_identities = {}
+enterprise = {}
 
 [jj]
 depends = ['git']
@@ -395,15 +402,16 @@ pdf2zh = '~/.config/pdf2zh'
 [cliamp.files]
 cliamp = '~/.config/cliamp'
 
-[shell]
+[cli]
 depends = ['fish', 'yazi', 'atuin', 'mihomo', 'aria2']
 
-[shell.files]
-shell = '~/.config'
+[cli.files]
+cli = '~/.config'
 
 [wm]
 depends = [
   'sway',
+  'niri',
   'mako',
   'waybar',
   'avizo',

@@ -12,7 +12,7 @@ hooks = [
   {id = "check-yaml", exclude = '^(glab/config\.yml|mihomo/config\.yaml|skm/skills\.yaml)$'},
   {id = "check-json", exclude = '^(amp/settings\.json|antigravity/antigravity/(mcp_config|settings)\.json|copilot/mcp-config\.json|enterprise-artifact/\.docker/config\.json|droid/config/(mcp|settings)\.json|magpie/settings\.json|opencode/(config/tui|share/auth)\.json|pi/(auth|mcp|models|settings)\.json|roo-code/mcp_settings\.json)$'},
   {id = "detect-private-key"},
-  {id = "end-of-file-fixer", exclude = '^fcitx5/fcitx5'},
+  {id = "end-of-file-fixer", exclude = '^(fcitx5/fcitx5|pi/settings\.json)$'},
   {id = "forbid-new-submodules"},
   {id = "mixed-line-ending"},
   {id = "trailing-whitespace"},

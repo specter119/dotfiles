@@ -34,8 +34,8 @@ rio = '~/AppData/Local/rio'
 [python-windows]
 depends = ['pip']
 
-[shell-windows]
+[cli-windows]
 depends = ['powershell', 'windows-terminal', 'wezterm']
 
 [dev-windows]
-depends = ['wsl', 'scoop', 'shell-windows', 'git', 'ssh', 'roo-code']
+depends = ['wsl', 'scoop', 'cli-windows', 'git', 'ssh', 'roo-code']

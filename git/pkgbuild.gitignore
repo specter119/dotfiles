@@ -1,3 +1,4 @@
+# vim: set ft=gitignore:
 # PKGBUILD
 *.pkg.tar.*
 /src

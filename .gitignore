@@ -1,5 +1,4 @@
 /.dotter/local.toml
 /.dotter/cache.toml
 /.dotter/cache/*
-/git/generated/
 !/claude-code/CLAUDE.md

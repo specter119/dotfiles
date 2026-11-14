@@ -7,10 +7,24 @@ Cross-platform dotfiles managed by [dotter](https://github.com/SuperCuber/dotter
 - `AGENTS.md`: repo-level architecture, package organization, template conventions, variable strategy
 - `.dotter/AGENTS.md`: Dotter internals, `pre_deploy` / `post_deploy` scripts, post-deploy patching, and other implementation exceptions
 - `agent/AGENTS.md`: cross-tool agent config contracts (skill/subagent routing, delegation placement). Read before editing agent packages.
+- `<package>/README.md`: package-local explanation, only for packages that qualify under Package Documentation below
 - `README.md`: concise, user-facing introduction to the repository and its high-level maintenance patterns
 
 If you touch `.dotter/`, read `.dotter/AGENTS.md` first.
 If you touch agent packages (`agent`, `droid`, `pi`, and peers), read `agent/AGENTS.md`.
+
+### Package Documentation
+
+A complex package may carry its own `README.md` explaining its layout, conditional deployment, and precedence rules. Two constraints apply.
+
+First, add one only when the layout is not self-evident from the templates — several conditional files, an include or precedence order, or generated leaves. A package that maps one directory to one target needs none.
+
+Second, the file must not pollute a shared target. Check the package's `[<pkg>.files]` mappings first:
+
+- **Own target directory**: one mapping deploys the package directory into a target that only that package writes to, such as `git = '~/.config/git'` or `magpie = '~/.config/magpie'`. The `README.md` then deploys beside the config it explains.
+- **Not deployed at all**: the mappings target subdirectories or individual files, so nothing maps the package root, such as `agent` (`agent/config` → `~/.config`, `agent/share` → `~/.local/share`). The `README.md` stays repository documentation.
+
+Otherwise — most often a package-root mapping into a shared target such as `sway = '~/.config'` — a package `README.md` would land in that shared directory. Document those packages in this file instead.
 
 ## README Scope
 
@@ -150,7 +164,7 @@ An absent `pi.subagent_model` entry intentionally inherits the main agent model.
 
 #### Git Repo Identities
 
-Configure `variables.git.repo_identities` in `.dotter/local.toml`; `git/config` and `jj/config.toml` render it. Each entry's leaf config is deployed from `git/generated/<key>.conf` to `~/.config/git/generated/<key>.conf`; apply the root-and-leaf ownership rules below.
+The git default identity lives inline in `git/config`. The enterprise identity is one fixed leaf, `git/enterprise.conf` → `~/.config/git/enterprise.conf`, rendered from `variables.git.enterprise.name` / `email` and deployed only while that table is non-empty (`if = 'git.enterprise'`); `git/wsl.conf` and `git/windows.conf` emit one `includeIf` per entry in `enterprise.dirs_wsl` / `enterprise.dirs_windows`, because the same directory has a different path form on each platform. `jj/config.toml` renders `variables.git.repo_identities` inline and does not use the leaf.
 
 #### Root-and-Leaf Subconfiguration Pattern
 
