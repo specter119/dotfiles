@@ -18,6 +18,7 @@
     }
   },
   "updateEvery": 360,
+  "groupSink": true,
   "trayUsageEvery": 3,{{#if magpie.plugin_proxy}}
   "pluginProxy": "{{magpie.plugin_proxy}}",{{/if}}{{#if magpie.checkin_at}}
   "checkinAt": "{{magpie.checkin_at}}",{{/if}}{{#if magpie.checkin_plugins}}

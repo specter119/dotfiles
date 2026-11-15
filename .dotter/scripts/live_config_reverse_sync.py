@@ -297,25 +297,42 @@ def sync_extension_changelog_versions(
 
 
 def normalize_projects(value: object) -> list[str]:
-    """Normalize Codex projects table to sorted trusted project paths."""
+    """Normalize Codex projects table to trusted project paths in file order.
+
+    Codex appends a newly trusted project to the end of the table, so the
+    render must keep the live order instead of sorting: a sorted list would
+    never match the file Codex wrote.
+    """
     if not isinstance(value, dict):
         return []
-    return sorted(
-        path
-        for path, project in value.items()
+    result: list[str] = []
+    for path, project in value.items():
         if (
             isinstance(path, str)
             and path
+            and path not in result
             and isinstance(project, dict)
             and project.get('trust_level') == 'trusted'
-        )
-    )
+        ):
+            result.append(path)
+    return result
+
+
+def normalize_project_list(value: object) -> list[str]:
+    """Normalize a trusted project path list, preserving its order."""
+    if not isinstance(value, list):
+        return []
+    result: list[str] = []
+    for item in value:
+        if isinstance(item, str) and item not in result:
+            result.append(item)
+    return result
 
 
 def sync_projects(table: tomlkit.items.Table, key: str, value: object) -> bool:
-    """Sync trusted Codex project paths into local.toml."""
+    """Sync trusted Codex project paths into local.toml in live order."""
     live = normalize_projects(value)
-    existing = normalize_trusted_workspaces(table.get(key, []))
+    existing = normalize_project_list(table.get(key, []))
     if existing == live:
         return False
     table[key] = live

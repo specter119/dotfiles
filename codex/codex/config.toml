@@ -27,7 +27,7 @@ supports_websockets = false
 
 [features]
 code_mode = true
-multi_agent = true
+multi_agent_v2 = true
 shell_snapshot = true
 hooks = true
 prevent_idle_sleep = true
@@ -110,4 +110,14 @@ disable_on_external_context = true
 hide_rate_limit_model_nudge = true
 
 [desktop]
-enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "persistent", "none", "minimal", "max"]
+enabled-reasoning-efforts = [
+  "low",
+  "medium",
+  "high",
+  "xhigh",
+  "ultra",
+  "persistent",
+  "none",
+  "minimal",
+  "max",
+]
