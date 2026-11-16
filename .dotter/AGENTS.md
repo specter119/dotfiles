@@ -33,7 +33,7 @@ Scope: `.dotter/`
 ## Deploy Scripts
 
 - `.dotter/pre_deploy.sh` and `.dotter/post_deploy.sh` are for deploy-time glue that should not live in static templates. Keep these entry scripts POSIX `sh` compatible because Dotter may execute the rendered cache scripts through `/bin/sh`; call Bash-only helpers explicitly with `bash ...`.
-- `.dotter/scripts/live_config_reverse_sync.py` runs from `pre_deploy.sh` and writes tool-modified live values back into `local.toml` before templates render.
+- `.dotter/scripts/live_config_reverse_sync.py` runs from `pre_deploy.sh` and writes tool-modified live values back into `local.toml`. Dotter loads `local.toml` before running the hook, so a value that changed since the last deploy is not visible to the current render: the first deploy reports `target contents were changed` and skips that file, and the next deploy converges. To converge in one pass, run `uv run .dotter/scripts/live_config_reverse_sync.py && dotter deploy`.
 - `republish_magpie_settings` renames the rendered `magpie/settings.json` into place: magpie reads that file while it runs and must never see a truncated one.
 - Do not add post-deploy commands that write secrets or tool-generated runtime state back into repo-managed config files.
 - Do not post-process rendered targets to strip template residue. Standalone control blocks stay on bare lines so Dotter drops them ([root `AGENTS.md`, Template Patterns](../AGENTS.md#template-patterns)); a `# `-prefixed control renders as a `# ` line, and deleting that line after deploy makes every later deploy see a diff.

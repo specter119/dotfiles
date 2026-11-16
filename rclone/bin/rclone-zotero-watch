@@ -1,0 +1,16 @@
+#!/bin/sh
+set -u
+
+remote="${1:-}"
+if [ -z "$remote" ]; then
+	echo "rclone-zotero-watch: remote path is empty" >&2
+	exit 1
+fi
+
+local_dir="${RCLONE_ZOTERO_LOCAL:-$HOME/Documents/Zotero/storage}"
+sync="$(dirname "$0")/rclone-zotero-sync"
+
+while inotifywait -qq -r -e close_write,create,delete,move "$local_dir"; do
+	sleep 15
+	"$sync" "$remote" || true
+done

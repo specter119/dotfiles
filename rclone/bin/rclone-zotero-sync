@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+
+remote="${1:-}"
+if [ -z "$remote" ]; then
+	echo "rclone-zotero-sync: remote path is empty" >&2
+	exit 1
+fi
+shift
+
+local_dir="${RCLONE_ZOTERO_LOCAL:-$HOME/Documents/Zotero/storage}"
+runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+
+exec flock -w 1800 "$runtime_dir/rclone-bisync-zotero.lock" \
+	rclone bisync "$local_dir" "dropbox:$remote" \
+	--max-delete 25 --resilient --max-lock 30m "$@"
