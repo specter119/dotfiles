@@ -152,6 +152,7 @@ paths = [
   "magpie/settings.json",
   "opencode/config/opencode.jsonc",
   "codex/codex/config.toml",
+  "rclone/config/rclone.conf",
   "antigravity/antigravity/settings.json",
   "glab/config.yml",
   "scoop/config.json",
@@ -176,10 +177,10 @@ keywords = ["enterprise", "CA", "TLS", "registry", "proxy", "netrc"]
 id = "deploy-operations-review"
 title = "Deploy scripts, cache, and artifacts review"
 trigger = ["deploy script", "deploy cache", "force deploy", "runtime artifact"]
-owner_documents = ["docs/maintenance/deploy.md"]
+owner_documents = ["docs/maintenance/deploy.md", "docs/maintenance/deploy.md#codex-worktrees"]
 skill = ".agents/skills/dotfiles-deploy-operations-review/SKILL.md"
 unopposed_stake = "S9"
-paths = [".dotter/pre_deploy.sh", ".dotter/post_deploy.sh", ".dotter/helpers/**", ".dotter/cache.toml"]
+paths = [".dotter/pre_deploy.sh", ".dotter/post_deploy.sh", ".dotter/helpers/**", ".dotter/cache.toml", "codex/codex/hooks.json", "codex/codex/scripts/**"]
 keywords = ["deploy", "--force", "cache", "post_deploy", "runtime artifact", "pre_deploy"]
 
 [[surface]]

@@ -1,0 +1,6 @@
+[Unit]
+Description=Zotero storage bisync with Dropbox
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/rclone-zotero-sync "{{rclone.dropbox.zotero_remote}}"

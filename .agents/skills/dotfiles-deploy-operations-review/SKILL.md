@@ -26,6 +26,9 @@ runtime artifacts.
 - A post-deploy patch is idempotent and does not rewrite an unrelated file.
 - A failed deploy exits non-zero, leaves the previous live file in place, and
   prints the file that conflicted.
+- A Codex `SessionStart` hook stays a no-op outside a managed worktree: it
+  exits unless the cwd is a linked Git worktree under
+  `${CODEX_HOME:-$HOME/.config/codex}/worktrees` and the source repo has `.jj`.
 
 ## Required evidence
 

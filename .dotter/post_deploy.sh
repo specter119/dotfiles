@@ -86,6 +86,12 @@ fix_glab_permissions() {
 	fi
 }
 
+fix_rclone_permissions() {
+	if [ -f "$HOME/.config/rclone/rclone.conf" ]; then
+		chmod 600 "$HOME/.config/rclone/rclone.conf" 2>/dev/null || true
+	fi
+}
+
 # Codex wants its model catalog as a file. The magpie gateway serves it in
 # Codex's own format on /v1/codex/models, so fetch it from there instead of
 # driving `magpie codex`, which rewrites config.toml and stash.json. The older
@@ -321,3 +327,4 @@ republish_magpie_settings
 audit_prek_parser_coverage
 fix_ssh_permissions
 fix_glab_permissions
+fix_rclone_permissions

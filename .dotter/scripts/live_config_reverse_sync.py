@@ -37,6 +37,7 @@ GLAB_CONFIG = XDG_CONFIG_HOME / 'glab-cli' / 'config.yml'
 SCOOP_CONFIG = XDG_CONFIG_HOME / 'scoop' / 'config.json'
 DSH_PATCH = agent_path('DSH_HOME', Path.home() / '.dsh', 'profiles', 'web', 'cordis.patch.yml')
 MAGPIE_SETTINGS = XDG_CONFIG_HOME / 'magpie' / 'settings.json'
+RCLONE_CONFIG = XDG_CONFIG_HOME / 'rclone' / 'rclone.conf'
 
 
 def _is_live_file(path: Path) -> bool:
@@ -80,6 +81,28 @@ def read_toml(path: Path) -> tomlkit.TOMLDocument | None:
         return tomlkit.parse(path.read_text())
     except (ParseError, OSError):
         return None
+
+
+def read_rclone_token(path: Path) -> str | None:
+    """Read the token value verbatim from the live rclone INI config."""
+    if not _is_live_file(path):
+        return None
+    try:
+        lines = path.read_text().splitlines()
+    except OSError:
+        return None
+    section = ''
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith('[') and stripped.endswith(']'):
+            section = stripped[1:-1]
+            continue
+        if section != 'dropbox':
+            continue
+        key, separator, value = line.partition('=')
+        if separator and key.strip() == 'token':
+            return value.strip()
+    return None
 
 
 def ensure_table(doc: tomlkit.TOMLDocument, *keys: str) -> tomlkit.items.Table:
@@ -615,6 +638,12 @@ def main() -> None:
     # glab: runtime state + host container_registry_domains
     glab_changed = sync_glab_config(doc)
     changed |= glab_changed
+
+    # rclone: Dropbox refresh token rotated by rclone itself
+    rclone_token = read_rclone_token(RCLONE_CONFIG)
+    if rclone_token:
+        rclone_table = ensure_table(doc, 'variables', 'rclone', 'dropbox')
+        changed |= sync_string(rclone_table, 'token', rclone_token)
 
     if changed:
         LOCAL_TOML.write_text(tomlkit.dumps(doc))

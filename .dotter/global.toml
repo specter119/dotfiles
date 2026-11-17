@@ -400,6 +400,17 @@ pdf2zh = '~/.config/pdf2zh'
 [cliamp.files]
 cliamp = '~/.config/cliamp'
 
+[rclone.files]
+'rclone/config' = '~/.config/rclone'
+'rclone/bin' = '~/.local/bin'
+'rclone/systemd/user' = '~/.config/systemd/user'
+
+[rclone.variables.rclone.dropbox]
+client_id = ''
+client_secret = ''
+token = ''
+zotero_remote = ''
+
 [cli]
 depends = ['fish', 'yazi', 'atuin', 'mihomo', 'aria2']
 

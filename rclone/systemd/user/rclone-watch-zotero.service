@@ -1,0 +1,12 @@
+[Unit]
+Description=Watch Zotero storage and trigger Dropbox bisync
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/rclone-zotero-watch "{{rclone.dropbox.zotero_remote}}"
+Restart=always
+RestartSec=30
+RuntimeMaxSec=1800
+
+[Install]
+WantedBy=default.target

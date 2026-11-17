@@ -15,9 +15,9 @@
   "missionOrchestratorReasoningEffort": "xhigh",
   "modelFavorites": [
     "glm-5.3",
-    "kimi-k3",
     "gpt-6-astra",
-    "gemini-4-argon"
+    "gemini-4-argon",
+    "kimi-k3.1-pro"
   ],
   "nerdFont": true,
   "sessionDefaultSettings": {
@@ -49,15 +49,20 @@
     }{{#unless @last}},{{/unless}}
 {{/each}}
   },
-  "enabledPlugins": { {{#each droid.enabled_plugins}}"{{this}}": true{{#unless @last}}, {{/unless}}{{/each}} },
+  "enabledPlugins": {
+{{#each droid.enabled_plugins}}
+    "{{this}}": true{{#unless @last}},{{/unless}}
+{{/each}}
+  },
   "subagentModelSettings": {
     "lightModel": "deepseek-v4.1-flash",
     "lightReasoningEffort": "max",
     "mediumModel": "deepseek-v4.1-flash",
     "mediumReasoningEffort": "max",
-    "heavyModel": "kimi-k3",
+    "heavyModel": "kimi-k3.1-pro",
     "heavyReasoningEffort": "high"
   },
   "subagentAutonomyLevel": "inherit",
-  "compactionTokenLimitPerModel": {}
+  "compactionTokenLimitPerModel": {},
+  "droidCoreModel": "kimi-k3.1-pro"
 }

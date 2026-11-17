@@ -65,6 +65,12 @@ must never make that choice automatically.
 4. Register the call in `main()` in the corresponding agent block.
 5. Run a dry-run deploy and confirm the render matches the live file.
 
+Dotter loads `local.toml` before running the hook, so a value that changed since
+the last deploy is not visible to the current render. The first deploy reports
+`target contents were changed` and skips that file; the next deploy converges.
+To converge in one pass, run
+`uv run .dotter/scripts/live_config_reverse_sync.py && dotter deploy`.
+
 Checks and evidence live in
 `.agents/skills/dotfiles-live-state-review/SKILL.md`.
 
