@@ -13,7 +13,7 @@ the state.
 | a template (`{{...}}`) or a variable | `docs/maintenance/templates.md` |
 | reverse sync or a tool that rewrites its config | `docs/maintenance/live-state.md` |
 | systemd units, session targets | `docs/maintenance/deploy.md#session-services` |
-| Codex worktree adoption (`codex/codex/hooks.json`, `jj-adopt-worktree.sh`) | `docs/maintenance/deploy.md#codex-worktrees` |
+| Codex worktree adoption (`codex/codex/hooks.json`, `jj-adopt-worktree.sh`) | `docs/maintenance/codex-worktrees.md` |
 | `AGENTS.md`, `README.md`, package docs | `AGENTS.md#documentation-ownership` |
 | agent packages (`agent`, `droid`, `pi`, ...) | `agent/AGENTS.md` |
 
