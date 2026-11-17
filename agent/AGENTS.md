@@ -4,7 +4,7 @@ Authoring guidance for the agent-layer packages (`agent`, `droid`, `pi`, and pee
 
 This file is **not** a live runtime prompt for end-user repos. It is maintenance guidance for this dotfiles tree. Tool-specific runtime policy stays in each tool's own `AGENTS.md` (e.g. `droid/config/AGENTS.md`, `pi/AGENTS.md`).
 
-Repo-wide package/template/variable rules remain in the root [`AGENTS.md`](../AGENTS.md). Dotter deploy internals remain in [`.dotter/AGENTS.md`](../.dotter/AGENTS.md).
+Repo-wide package/template/variable rules remain in the root [`AGENTS.md`](../AGENTS.md). Dotter deploy internals remain in [`docs/maintenance/deploy.md`](../docs/maintenance/deploy.md).
 
 ## Skill and Subagent Routing Contract
 

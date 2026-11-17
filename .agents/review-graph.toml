@@ -1,0 +1,440 @@
+version = 2
+project = "dotfiles"
+reviews_dir = ".agents/reviews"
+skills_dir = ".agents/skills"
+
+[[stake]]
+id = "S1"
+objective = "The same tracked config renders correctly on every selected machine."
+evidence = ["docs/maintenance/templates.md#override-order", "docs/maintenance/config.md#blackhole-mapping"]
+
+[[stake]]
+id = "S2"
+objective = "A tool's live config survives deploy and is carried back into local.toml."
+evidence = ["docs/maintenance/live-state.md", ".dotter/scripts/live_config_reverse_sync.py"]
+
+[[stake]]
+id = "S3"
+objective = "No secret enters the tracked tree."
+evidence = ["docs/maintenance/templates.md#source-rules", ".gitignore"]
+
+[[stake]]
+id = "S4"
+objective = "A template that a tool also writes renders byte-identical to the tool's serializer."
+evidence = ["docs/maintenance/live-state.md#match-the-tools-serialization", "magpie/settings.json"]
+
+[[stake]]
+id = "S5"
+objective = "Package selection, coupling, and mappings stay explicit and readable."
+evidence = ["docs/maintenance/config.md#package-composition", "docs/maintenance/config.md#files-mapping"]
+
+[[stake]]
+id = "S6"
+objective = "Graphical-session services start after the compositor environment and stop with it."
+evidence = ["docs/maintenance/deploy.md#session-services", "sway/sway/config.d/50-autostart.conf"]
+
+[[stake]]
+id = "S7"
+objective = "Enterprise credentials and trust settings never leak to a non-enterprise machine."
+evidence = ["docs/maintenance/config.md#enterprise-boundary", "docs/maintenance/templates.md#source-rules"]
+
+[[stake]]
+id = "S8"
+objective = "One fact has one owner, and a package README never lands in a shared target."
+evidence = ["AGENTS.md#documentation-ownership", "git/README.md"]
+
+[[stake]]
+id = "S9"
+objective = "Deploy scripts fail safe and never hide a live change behind a force deploy."
+evidence = ["docs/maintenance/deploy.md#deploy-workflow", ".dotter/pre_deploy.sh"]
+
+[[stake]]
+id = "S10"
+objective = "One package selection deploys a whole environment with few decisions."
+evidence = ["docs/maintenance/config.md#package-composition", ".dotter/global.toml"]
+
+[[stake]]
+id = "S11"
+objective = "One tracked config serves every machine class, including WSL and Windows."
+evidence = ["docs/maintenance/config.md#conditional-configuration", ".dotter/wsl.toml"]
+
+[[surface]]
+id = "config-composition-review"
+title = "Package composition and mapping review"
+trigger = [
+  "package selection, grouping, or naming",
+  "depends",
+  "a [pkg.files] mapping",
+  "a machine include remaps a target",
+  "a conditional source directory"
+]
+owner_documents = [
+  "docs/maintenance/config.md#package-composition",
+  "docs/maintenance/config.md#files-mapping",
+  "docs/maintenance/config.md#conditional-configuration"
+]
+skill = ".agents/skills/dotfiles-config-composition-review/SKILL.md"
+contends = ["explicit-vs-friction", "isolation-vs-sharing"]
+paths = [".dotter/global.toml", ".dotter/wsl.toml", ".dotter/windows.toml", ".dotter/*.toml"]
+exclude_paths = [".dotter/cache.toml", ".dotter/local.toml"]
+keywords = ["depends", "files", "mapping", "conditional", "enterprise-artifact", "blackhole"]
+
+[[surface]]
+id = "config-rendering-review"
+title = "Template, variable, and secret review"
+trigger = [
+  "a template edit",
+  "a variable is declared, renamed, or removed",
+  "a secret is injected or a credential is added",
+  "a tool's serializer changes"
+]
+owner_documents = [
+  "docs/maintenance/templates.md#template-rendering",
+  "docs/maintenance/templates.md#variable-schema",
+  "docs/maintenance/templates.md#source-rules",
+  "docs/maintenance/templates.md#secret-injection",
+  "docs/maintenance/templates.md#git-identities",
+  "docs/maintenance/templates.md#root-and-leaf"
+]
+skill = ".agents/skills/dotfiles-config-rendering-review/SKILL.md"
+unopposed_stake = "S3"
+paths = [
+  "**/*.toml",
+  "**/*.json",
+  "**/*.jsonc",
+  "**/*.yml",
+  "**/*.yaml",
+  "**/*.conf",
+  "**/*.ini",
+  "**/*.fish",
+  "**/*.kdl",
+  "**/*.rhai",
+  "**/*.netrc",
+  "**/*.desktop",
+  "**/*.ahk",
+  "**/*.npmrc",
+  "**/*.css",
+  "**/*.js",
+  "**/*.ts",
+  "condarc/condarc",
+  "go/go/env",
+  "ssh/config",
+  "yt-dlp/config"
+]
+exclude_paths = ["docs/**", ".agents/**", ".git/**", ".jj/**", "prek.toml", ".dotter/cache.toml", "**/node_modules/**"]
+keywords = ["{{", "#if", "#each", "@root", "rbw", "variables", "local.toml", "command_success", "secret", "token", "password", "api_key"]
+
+[[surface]]
+id = "live-state-review"
+title = "Live state and reverse-sync review"
+trigger = [
+  "reverse sync",
+  "a tool rewrites its config",
+  "a deploy conflict",
+  "serialization",
+  "a blackhole mapping"
+]
+owner_documents = [
+  "docs/maintenance/live-state.md",
+  "docs/maintenance/config.md#blackhole-mapping",
+  "docs/maintenance/deploy.md#deploy-workflow"
+]
+skill = ".agents/skills/dotfiles-live-state-review/SKILL.md"
+contends = ["portability-vs-live-state"]
+unopposed_stake = "S4"
+paths = [
+  ".dotter/scripts/live_config_reverse_sync.py",
+  ".dotter/pre_deploy.sh",
+  ".dotter/wsl.toml",
+  ".dotter/windows.toml",
+  "pi/settings.json",
+  "droid/config/settings.json",
+  "magpie/settings.json",
+  "opencode/config/opencode.jsonc",
+  "codex/codex/config.toml",
+  "antigravity/antigravity/settings.json",
+  "glab/config.yml",
+  "scoop/config.json",
+  "dsh/**"
+]
+keywords = ["reverse sync", "serialization", "local.toml", "drift", "reverse_sync", "byte-identical", "blackhole"]
+
+[[surface]]
+id = "enterprise-boundary-review"
+title = "Enterprise trust and credential boundary review"
+trigger = ["enterprise credential", "CA", "TLS", "registry", "proxy"]
+owner_documents = [
+  "docs/maintenance/config.md#enterprise-boundary",
+  "docs/maintenance/templates.md#source-rules"
+]
+skill = ".agents/skills/dotfiles-enterprise-boundary-review/SKILL.md"
+contends = ["isolation-vs-sharing"]
+paths = ["enterprise-artifact/**", "wsl-guest-enterprise/**", "condarc-enterprise/**"]
+keywords = ["enterprise", "CA", "TLS", "registry", "proxy", "netrc"]
+
+[[surface]]
+id = "deploy-operations-review"
+title = "Deploy scripts, cache, and artifacts review"
+trigger = ["deploy script", "deploy cache", "force deploy", "runtime artifact"]
+owner_documents = ["docs/maintenance/deploy.md"]
+skill = ".agents/skills/dotfiles-deploy-operations-review/SKILL.md"
+unopposed_stake = "S9"
+paths = [".dotter/pre_deploy.sh", ".dotter/post_deploy.sh", ".dotter/helpers/**", ".dotter/cache.toml"]
+keywords = ["deploy", "--force", "cache", "post_deploy", "runtime artifact", "pre_deploy"]
+
+[[surface]]
+id = "service-lifecycle-review"
+title = "Graphical-session service lifecycle review"
+trigger = ["systemd unit", "session target", "compositor autostart", "output hook"]
+owner_documents = [
+  "docs/maintenance/deploy.md#session-services",
+  "docs/maintenance/deploy.md#session-targets",
+  "docs/maintenance/deploy.md#service-defaults",
+  "docs/maintenance/deploy.md#extensions"
+]
+skill = ".agents/skills/dotfiles-service-lifecycle-review/SKILL.md"
+unopposed_stake = "S6"
+paths = ["*/systemd/user/**", "sway/sway/config.d/**", "sway/sway/session-stop", "voxtype/output-hook.d/**"]
+keywords = ["systemd", "graphical-session", "sway-session", "PartOf", "After", "Wants", "default.target", "sockets.target", "output-hook"]
+
+[[surface]]
+id = "doc-ownership-review"
+title = "Documentation ownership review"
+trigger = ["documentation edit", "README", "AGENTS.md", "review graph"]
+owner_documents = ["AGENTS.md#documentation-ownership"]
+skill = ".agents/skills/dotfiles-doc-ownership-review/SKILL.md"
+unopposed_stake = "S8"
+paths = ["AGENTS.md", "*/AGENTS.md", "*/README.md", "docs/**", ".agents/**"]
+keywords = ["README", "AGENTS.md", "documentation", "owner", "review-graph"]
+
+[[stance]]
+id = "dotfiles-portability-stance"
+title = "Dotfiles portability stance"
+objective = "A tracked config renders correctly on every selected machine without a manual rescue."
+skill = ".agents/skills/dotfiles-portability-stance/SKILL.md"
+surfaces = ["live-state-review"]
+stakes = ["S1"]
+
+[[stance.accepted_harm]]
+payer = "dotfiles-live-state-stance"
+payer_stance = "dotfiles-live-state-stance"
+cost = "a live value must be carried back into local.toml before it can render"
+resource = "whether the repo or the live tool state is the source of truth for a rendered value"
+
+[[stance]]
+id = "dotfiles-live-state-stance"
+title = "Dotfiles live-state stance"
+objective = "A tool's live config survives deploy and is not silently overwritten."
+skill = ".agents/skills/dotfiles-live-state-stance/SKILL.md"
+surfaces = ["live-state-review"]
+stakes = ["S2"]
+
+[[stance.accepted_harm]]
+payer = "dotfiles-portability-stance"
+payer_stance = "dotfiles-portability-stance"
+cost = "a fresh machine may render differently until local.toml is populated; deploy can block on a conflict"
+resource = "whether the repo or the live tool state is the source of truth for a rendered value"
+
+[[stance.accepted_harm]]
+payer = "the user who switched a setting in the tool UI"
+cost = "the switch is lost if reverse sync does not cover the key"
+resource = "whether the repo or the live tool state is the source of truth for a rendered value"
+
+[[stance]]
+id = "dotfiles-explicit-composition-stance"
+title = "Dotfiles explicit composition stance"
+objective = "Package selection, coupling, and mappings stay explicit and readable."
+skill = ".agents/skills/dotfiles-explicit-composition-stance/SKILL.md"
+surfaces = ["config-composition-review"]
+stakes = ["S5"]
+
+[[stance.accepted_harm]]
+payer = "dotfiles-low-friction-stance"
+payer_stance = "dotfiles-low-friction-stance"
+cost = "every new coupling or mapping is a visible edit; a variable cannot pull in a package"
+resource = "how many places a maintainer edits to add or change one deployed file"
+
+[[stance]]
+id = "dotfiles-low-friction-stance"
+title = "Dotfiles low-friction stance"
+objective = "One package selection deploys a whole environment with few decisions."
+skill = ".agents/skills/dotfiles-low-friction-stance/SKILL.md"
+surfaces = ["config-composition-review"]
+stakes = ["S10"]
+
+[[stance.accepted_harm]]
+payer = "the reader debugging a deployed file"
+payer_stance = "dotfiles-explicit-composition-stance"
+cost = "cannot tell which base package supplied a file; a grouping package hides the source"
+resource = "how many places a maintainer edits to add or change one deployed file"
+
+[[stance]]
+id = "dotfiles-enterprise-isolation-stance"
+title = "Dotfiles enterprise isolation stance"
+objective = "Enterprise credentials and trust settings never leak to a non-enterprise machine."
+skill = ".agents/skills/dotfiles-enterprise-isolation-stance/SKILL.md"
+surfaces = ["config-composition-review", "enterprise-boundary-review"]
+stakes = ["S7"]
+
+[[stance.accepted_harm]]
+payer = "dotfiles-shared-default-stance"
+payer_stance = "dotfiles-shared-default-stance"
+cost = "an enterprise machine needs separate conditional directories and variables"
+resource = "how many tracked variants one logical config needs"
+
+[[stance.accepted_harm]]
+payer = "the non-enterprise user"
+cost = "carries gating logic and must prove nothing deploys"
+resource = "how many tracked variants one logical config needs"
+
+[[stance]]
+id = "dotfiles-shared-default-stance"
+title = "Dotfiles shared-default stance"
+objective = "One tracked config serves every machine class, including WSL and Windows."
+skill = ".agents/skills/dotfiles-shared-default-stance/SKILL.md"
+surfaces = ["config-composition-review", "enterprise-boundary-review"]
+stakes = ["S11"]
+
+[[stance.accepted_harm]]
+payer = "dotfiles-enterprise-isolation-stance"
+payer_stance = "dotfiles-enterprise-isolation-stance"
+cost = "a non-enterprise machine carries the gating logic and must prove it deploys nothing"
+resource = "how many tracked variants one logical config needs"
+
+[[opposition]]
+id = "portability-vs-live-state"
+stances = ["dotfiles-portability-stance", "dotfiles-live-state-stance"]
+contended_resource = "whether the repo or the live tool state is the source of truth for a rendered value"
+
+[[opposition]]
+id = "explicit-vs-friction"
+stances = ["dotfiles-explicit-composition-stance", "dotfiles-low-friction-stance"]
+contended_resource = "how many places a maintainer edits to add or change one deployed file"
+
+[[opposition]]
+id = "isolation-vs-sharing"
+stances = ["dotfiles-enterprise-isolation-stance", "dotfiles-shared-default-stance"]
+contended_resource = "how many tracked variants one logical config needs"
+
+[[decision]]
+id = "D1-reverse-sync"
+kind = "sacrifice"
+summary = "Reverse-sync tool-written values into local.toml instead of forcing the template over them."
+owner_document = "docs/maintenance/live-state.md#when-to-reverse-sync"
+reopen_when = "a tool stops rewriting its config, or a new agent config has no stable serializer"
+axes = ["portability-vs-live-state"]
+stances = ["dotfiles-portability-stance", "dotfiles-live-state-stance"]
+surfaces = ["live-state-review"]
+sacrificed = "dotfiles-portability-stance"
+given_up = "the repo alone determines every rendered byte on a fresh machine"
+decided_by = "user"
+status = "implemented"
+
+[[decision]]
+id = "D2-serializer-fidelity"
+kind = "sacrifice"
+summary = "Render the tool's bytes: key order, indentation, omitempty, sorted maps; reverse-sync the values."
+owner_document = "docs/maintenance/live-state.md#match-the-tools-serialization"
+reopen_when = "a tool exposes a stable writer or formatter that makes both fidelity and readability achievable"
+surfaces = ["config-rendering-review", "live-state-review"]
+sacrificed = "U-template-readability"
+given_up = "comments, grouping, and a stable key order that a maintainer would choose"
+decided_by = "user"
+status = "implemented"
+
+[[decision]]
+id = "D3-conditional-deploy"
+kind = "joint"
+summary = "Put conditional config in a <package>-<condition> source directory and gate its mapping; use #if only when the target has no drop-in."
+owner_document = "docs/maintenance/config.md#conditional-configuration"
+reopen_when = "a target tool stops reading the drop-in or include location"
+axes = ["isolation-vs-sharing"]
+stances = ["dotfiles-enterprise-isolation-stance", "dotfiles-shared-default-stance"]
+surfaces = ["config-composition-review", "enterprise-boundary-review"]
+
+[[decision]]
+id = "D4-depends-restriction"
+kind = "sacrifice"
+summary = "Restrict depends to grouping or functional coupling; test package selection with dotter.packages.<name>."
+owner_document = "docs/maintenance/config.md#package-composition"
+reopen_when = "a variable-only coupling becomes necessary and the dependent has no working form without it"
+axes = ["explicit-vs-friction"]
+stances = ["dotfiles-explicit-composition-stance", "dotfiles-low-friction-stance"]
+surfaces = ["config-composition-review"]
+sacrificed = "dotfiles-low-friction-stance"
+given_up = "a variable reference that pulls in a package; every new coupling is a visible edit"
+decided_by = "user"
+status = "implemented"
+
+[[decision]]
+id = "D5-enterprise-gating"
+kind = "sacrifice"
+summary = "Gate every non-default CA, TLS relaxation, and enterprise credential behind enterprise-artifact or the variable that makes it meaningful."
+owner_document = "docs/maintenance/config.md#enterprise-boundary"
+reopen_when = "an enterprise trust setting becomes safe to ship unconditionally"
+axes = ["isolation-vs-sharing"]
+stances = ["dotfiles-enterprise-isolation-stance", "dotfiles-shared-default-stance"]
+surfaces = ["config-composition-review", "enterprise-boundary-review"]
+sacrificed = "dotfiles-shared-default-stance"
+given_up = "one unconditional base config that carries enterprise trust on every machine"
+decided_by = "user"
+status = "implemented"
+
+[[decision]]
+id = "D6-one-mapping-per-root"
+kind = "sacrifice"
+summary = "Give each target root one mapping; do not split a shared prefix into exact-file mappings."
+owner_document = "docs/maintenance/config.md#files-mapping"
+reopen_when = "a target root needs a different type or if condition that one mapping cannot express"
+axes = ["explicit-vs-friction"]
+stances = ["dotfiles-explicit-composition-stance", "dotfiles-low-friction-stance"]
+surfaces = ["config-composition-review"]
+sacrificed = "dotfiles-low-friction-stance"
+given_up = "per-file mapping control; a new file under the root deploys without a new mapping entry"
+decided_by = "user"
+status = "implemented"
+
+[[decision]]
+id = "D7-package-readme"
+kind = "sacrifice"
+summary = "Allow a package README only for an own-target or non-deployed package; document a shared-target package in the root AGENTS.md."
+owner_document = "AGENTS.md#documentation-ownership"
+reopen_when = "a shared-target package gains its own target mapping or stops being deployed"
+surfaces = ["doc-ownership-review"]
+sacrificed = "U-doc-locality"
+given_up = "a README next to the config for a package that maps into a shared target"
+decided_by = "user"
+status = "implemented"
+
+[[decision]]
+id = "D8-new-tool-serializer"
+kind = "open"
+summary = "A new agent tool rewrites its config without a stable serializer."
+owner_document = "docs/maintenance/live-state.md#match-the-tools-serialization"
+reopen_when = "the tool's writer is observed twice with the same bytes"
+axes = ["portability-vs-live-state"]
+stances = ["dotfiles-portability-stance", "dotfiles-live-state-stance"]
+surfaces = ["live-state-review"]
+owner = "maintainer"
+next_action = "add a sync function and a fixture before enabling reverse sync"
+
+[[unrepresented]]
+id = "U-template-readability"
+stake = "template readability"
+where = "docs/maintenance/live-state.md#match-the-tools-serialization"
+why = "no stance: every serializer conflict has been decided for fidelity; the cost is recorded as a sacrifice, not argued as a competing objective"
+forge_when = "a tool exposes a stable writer or formatter that makes both achievable"
+
+[[unrepresented]]
+id = "U-unattended-deploy"
+stake = "unattended deploy"
+where = "docs/maintenance/deploy.md#deploy-workflow"
+why = "no stance: safety gates always win; a conflict is surfaced to the user instead of auto-resolved"
+forge_when = "a deploy path can prove it never overwrites a live change"
+
+[[unrepresented]]
+id = "U-doc-locality"
+stake = "doc locality"
+where = "AGENTS.md#documentation-ownership"
+why = "no stance: a shared target must not receive a package README; the cost is paid by the maintainer who must edit the root doc"
+forge_when = "a shared-target package gains its own target mapping"
