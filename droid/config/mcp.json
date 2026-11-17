@@ -11,16 +11,30 @@
     "onenote": {
       "type": "stdio",
       "command": "deskhand",
-      "args": ["onenote"]
+      "args": [
+        "onenote"
+      ]
     },{{/if}}
     "fast-context": {
       "type": "stdio",
       "command": "bun",
-      "args": ["x", "fast-context-mcp"],
+      "args": [
+        "x",
+        "fast-context-mcp"
+      ],
       "env": {
         "WINDSURF_API_KEY": "{{replace (command_output "rbw get windsurf-api-key") "\n" ""}}"
       },
-      "tools": ["fast_context_search"]
-    }
+      "tools": [
+        "fast_context_search"
+      ]
+    }{{#if dotter.packages.wsl-guest}},
+    "ppt": {
+      "type": "stdio",
+      "command": "deskhand",
+      "args": [
+        "ppt"
+      ]
+    }{{/if}}
   }
 }
