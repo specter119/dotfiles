@@ -94,7 +94,8 @@ owner_documents = [
   "docs/maintenance/templates.md#source-rules",
   "docs/maintenance/templates.md#secret-injection",
   "docs/maintenance/templates.md#git-identities",
-  "docs/maintenance/templates.md#root-and-leaf"
+  "docs/maintenance/templates.md#root-and-leaf",
+  "rclone/README.md#variables"
 ]
 skill = ".agents/skills/dotfiles-config-rendering-review/SKILL.md"
 unopposed_stake = "S3"
@@ -137,7 +138,8 @@ trigger = [
 owner_documents = [
   "docs/maintenance/live-state.md",
   "docs/maintenance/config.md#blackhole-mapping",
-  "docs/maintenance/deploy.md#deploy-workflow"
+  "docs/maintenance/deploy.md#deploy-workflow",
+  "rclone/README.md#variables"
 ]
 skill = ".agents/skills/dotfiles-live-state-review/SKILL.md"
 contends = ["portability-vs-live-state"]

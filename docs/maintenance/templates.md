@@ -108,12 +108,9 @@ Keep these user-maintained, not reverse-synced: `agent.magpie_apikey`,
 `aria2.rpc_secret`, `container.enterprise_mirrors`, `fcitx5.theme`,
 `codex.model_provider`.
 
-`rclone.dropbox.client_id` and `rclone.dropbox.client_secret` are
-user-maintained, not reverse-synced. `rclone.dropbox.token` is reverse-synced
-from the live `~/.config/rclone/rclone.conf` because rclone rotates the refresh
-token itself; the template renders that line verbatim.
-`rclone.dropbox.zotero_remote` is user-maintained and not reverse-synced; it
-names a private Dropbox path, so it lives only in `local.toml`.
+Package-local variable contracts may live in the package README when the package
+has its own layout. The rclone Dropbox credentials are an example:
+[`rclone/README.md#variables`](../rclone/README.md#variables).
 
 `codex.local_mcp_servers` is user-maintained and not reverse-synced. Each entry
 needs a `name` plus either `url` or `command` + `args`; it renders one

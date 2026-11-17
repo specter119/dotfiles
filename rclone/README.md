@@ -5,6 +5,15 @@ Operational notes for the machine-local Zotero sync job. The job lives in the
 `~/.local/bin`, and `systemd/user/` maps to `~/.config/systemd/user`. The remote
 path lives in `local.toml`.
 
+## Variables
+
+`rclone.dropbox.client_id` and `rclone.dropbox.client_secret` are user-maintained
+and not reverse-synced. `rclone.dropbox.token` is reverse-synced from the live
+`~/.config/rclone/rclone.conf` because rclone rotates the refresh token itself;
+the template renders that line verbatim. `rclone.dropbox.zotero_remote` is
+user-maintained and not reverse-synced; it names a private Dropbox path, so it
+lives only in `local.toml`.
+
 ## Zotero storage
 
 `rclone-zotero-sync` runs `rclone bisync` between
