@@ -25,3 +25,8 @@ rev = "v0.26.0"
 hooks = [
   {id = "toml-sort-fix", args = ["--in-place", "--no-sort-tables"], exclude = '^(\.dotter/global\.toml|alacritty/alacritty\.toml|bun/bunfig\.toml|codex/codex/config\.toml|jj/config\.toml|pdf2zh/config\.v3\.toml|prek\.toml|uv/uv\.toml|voxtype/voxtype/config\.toml|yazi/yazi\.toml)$'}
 ]
+
+[[repos]]
+repo = "https://github.com/specter119/hydra-crux"
+rev = "0.1.1"
+hooks = [{id = "hydra-crux-lint"}]

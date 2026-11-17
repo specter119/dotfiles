@@ -29,7 +29,7 @@ In practice, this means:
 A concrete example is trusted-project state in coding tools such as Codex. That state is often changed by the tool itself during normal use, not by manually editing config files. Without reverse sync, a later deploy can erase those local trust decisions and force the user to re-approve them.
 
 For implementation details, see:
-- [Agent config paths](./AGENTS.md#agent-config-paths-xdg)
-- [Variable contract](./AGENTS.md#variable-contract)
-- [Template patterns](./AGENTS.md#template-patterns)
-- [Live config reverse sync pattern](./AGENTS.md#live-config-reverse-sync-pattern)
+- [Agent config paths](./AGENTS.md#resident-invariants)
+- [Variable contract](./docs/maintenance/templates.md#variable-schema)
+- [Template patterns](./docs/maintenance/templates.md#template-rendering)
+- [Live config reverse sync pattern](./docs/maintenance/live-state.md)
