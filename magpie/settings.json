@@ -6,7 +6,8 @@
   "dockNever": true,
   "dockSettled": true,{{#if enterprise_proxy.url}}
   "proxy": "{{url_userinfo_escape enterprise_proxy.url}}",
-  "proxyCustom": "{{url_userinfo_escape enterprise_proxy.url}}",{{/if}}
+  "proxyCustom": "{{url_userinfo_escape enterprise_proxy.url}}",{{/if}}{{#if magpie.plugin_proxy}}
+  "pluginProxy": "{{magpie.plugin_proxy}}",{{/if}}
   "otel": {},
   "redactPersonal": true,
   "gatewayConversations": true,
@@ -16,13 +17,14 @@
     "agents": {
       "grok": true
     }
-  },
+  },{{#if magpie.checkin_plugins}}
+  "pluginCheckins": { {{~#each magpie.checkin_plugins}}
+    "{{this}}": true{{#unless @last}},{{/unless}}{{/each}}
+  },{{/if}}{{#if magpie.checkin_at}}
+  "checkinAt": "{{magpie.checkin_at}}",{{/if}}
   "updateEvery": 360,
   "groupSink": true,
-  "trayUsageEvery": 3,{{#if magpie.plugin_proxy}}
-  "pluginProxy": "{{magpie.plugin_proxy}}",{{/if}}{{#if magpie.checkin_at}}
-  "checkinAt": "{{magpie.checkin_at}}",{{/if}}{{#if magpie.checkin_plugins}}
-  "pluginCheckins": { {{#each magpie.checkin_plugins}}"{{this}}": true{{#unless @last}}, {{/unless}}{{/each}} },{{/if}}
+  "trayUsageEvery": 3,
   "plainNames": true,
   "guideHidden": true,
   "textSize": 110{{#if magpie.model_wires}},
