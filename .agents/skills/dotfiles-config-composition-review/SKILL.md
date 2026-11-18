@@ -27,6 +27,8 @@ includes, blackhole mappings, and conditional source directories.
 - A conditional part lives in a `<package>-<condition>` source directory and is
   gated by `if`. `#if` is used only when the target has no drop-in or include
   location, or the conditional value is interleaved with unconditional keys.
+  A whole-leaf `#if` in a diff is evidence for this check; whether the target
+  can split its config decides, not the file extension.
 - A blackhole mapping points at
   `$XDG_RUNTIME_DIR/dotter/blackhole-<package>`, and the real live owner is
   documented next to the mapping.

@@ -66,7 +66,8 @@ trigger = [
   "depends",
   "a [pkg.files] mapping",
   "a machine include remaps a target",
-  "a conditional source directory"
+  "a conditional source directory",
+  "a whole-leaf #if that could be a conditional deploy or conditional context"
 ]
 owner_documents = [
   "docs/maintenance/config.md#package-composition",
@@ -77,7 +78,7 @@ skill = ".agents/skills/dotfiles-config-composition-review/SKILL.md"
 contends = ["explicit-vs-friction", "isolation-vs-sharing"]
 paths = [".dotter/global.toml", ".dotter/wsl.toml", ".dotter/windows.toml", ".dotter/*.toml"]
 exclude_paths = [".dotter/cache.toml", ".dotter/local.toml"]
-keywords = ["depends", "files", "mapping", "conditional", "enterprise-artifact", "blackhole"]
+keywords = ["depends", "files", "mapping", "conditional", "enterprise-artifact", "blackhole", "#if"]
 
 [[surface]]
 id = "config-rendering-review"

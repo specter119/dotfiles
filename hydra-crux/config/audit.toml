@@ -1,0 +1,4 @@
+[decision]
+url = "http://127.0.0.1:3425/v1/systemone"
+model = "typesafe/jev-latest"
+key_env = "MAGPIE_API_KEY"

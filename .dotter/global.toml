@@ -276,6 +276,9 @@ skm = '~/.config/skm'
 [skm.variables.skm]
 local_packages = []
 
+[hydra-crux.files]
+'hydra-crux/config' = '~/.config/hydra-crux'
+
 [qoder.files]
 qoder = '~/.config'
 
@@ -443,6 +446,7 @@ depends = ['agent-runtime', 'droid', 'pi', 'codex', 'chatgpt', 'multica', 'dsh']
 [agent.files]
 'agent/config' = '~/.config'
 'agent/share' = '~/.local/share'
+'agent-magpie/config' = { target = '~/.config', type = 'template', if = 'agent.magpie_apikey' }
 
 [agent.variables.agent]
 magpie_apikey = ''

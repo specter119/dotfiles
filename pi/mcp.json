@@ -3,7 +3,7 @@
     "magpie": {
       "url": "http://127.0.0.1:3425/mcp/magpie/hub",
       "headers": {
-        "Authorization": "Bearer {{agent.magpie_apikey}}"
+        "Authorization": "Bearer ${MAGPIE_API_KEY}"
       },
       "description": "Magpie's MCP hub: the servers its library keeps (context7 library docs, image vision) behind one endpoint."
     },

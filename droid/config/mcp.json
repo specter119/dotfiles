@@ -4,7 +4,7 @@
       "type": "http",
       "url": "http://127.0.0.1:3425/mcp/magpie/hub",
       "headers": {
-        "Authorization": "Bearer {{agent.magpie_apikey}}"
+        "Authorization": "Bearer ${MAGPIE_API_KEY}"
       },
       "oauth": false
     },{{#if dotter.packages.wsl-guest}}

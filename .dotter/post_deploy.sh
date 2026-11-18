@@ -92,6 +92,13 @@ fix_rclone_permissions() {
 	fi
 }
 
+fix_magpie_env_permissions() {
+	env_file="$HOME/.config/environment.d/magpie.conf"
+	if [ -f "$env_file" ]; then
+		chmod 600 "$env_file" 2>/dev/null || true
+	fi
+}
+
 # Codex wants its model catalog as a file. The magpie gateway serves it in
 # Codex's own format on /v1/codex/models, so fetch it from there instead of
 # driving `magpie codex`, which rewrites config.toml and stash.json. The older
@@ -108,6 +115,7 @@ refresh_magpie_codex_catalog() {
 	out=$(mktemp) || return 0
 	if python3 - "$config" "$version" "$out" <<'PY'
 import json
+import os
 import sys
 import tomllib
 import urllib.error
@@ -118,7 +126,8 @@ config, version, out = sys.argv[1:4]
 with open(config, "rb") as fh:
     provider = tomllib.load(fh).get("model_providers", {}).get("magpie", {})
 base = urllib.parse.urlsplit(provider.get("base_url", ""))
-token = provider.get("experimental_bearer_token", "")
+key_env = provider.get("env_key", "")
+token = os.environ.get(key_env, "") if key_env else provider.get("experimental_bearer_token", "")
 if not base.scheme or not token:
     raise SystemExit(1)
 url = f"{base.scheme}://{base.netloc}/v1/codex/models?client_version={version}"
@@ -328,3 +337,4 @@ audit_prek_parser_coverage
 fix_ssh_permissions
 fix_glab_permissions
 fix_rclone_permissions
+fix_magpie_env_permissions
