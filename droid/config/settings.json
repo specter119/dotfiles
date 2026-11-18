@@ -1,28 +1,28 @@
 {
-  "compactionModel": "deepseek-v4.1-flash",
+  "compactionModel": "deepseek-v4.1-flash-1017",
   "compactionTokenLimit": 250000,
   "includeCoAuthoredByDroid": false,
   "logoAnimation": "off",
   "missionModelSettings": {
     "skipScrutiny": true,
     "skipUserTesting": false,
-    "validationWorkerModel": "deepseek-v4.1-flash",
+    "validationWorkerModel": "deepseek-v4.1-flash-1017",
     "validationWorkerReasoningEffort": "max",
-    "workerModel": "deepseek-v4.1-flash",
+    "workerModel": "deepseek-v4.1-flash-1017",
     "workerReasoningEffort": "max"
   },
   "missionOrchestratorModel": "claude-opus-5-5",
   "missionOrchestratorReasoningEffort": "xhigh",
   "modelFavorites": [
     "glm-5.3",
-    "gpt-6-astra",
-    "gemini-4-argon",
-    "kimi-k3.1-pro"
+    "gpt-6.2-sol",
+    "gemini-4-hydrogen",
+    "kimi-k3.1-pro",
+    "deepseek-v4.1-flash-1017"
   ],
   "nerdFont": true,
   "sessionDefaultSettings": {
     "autonomyLevel": "medium",
-    "autonomyMode": "auto-medium",
     "interactionMode": "auto",
     "model": "claude-sonnet-5-5",
     "reasoningEffort": "high",
@@ -49,20 +49,16 @@
     }{{#unless @last}},{{/unless}}
 {{/each}}
   },
-  "enabledPlugins": {
-{{#each droid.enabled_plugins}}
-    "{{this}}": true{{#unless @last}},{{/unless}}
-{{/each}}
-  },
+  "enabledPlugins": { {{~#each droid.enabled_plugins}}"{{this}}": true{{#unless @last}}, {{/unless}}{{~/each}}},
   "subagentModelSettings": {
-    "lightModel": "deepseek-v4.1-flash",
-    "lightReasoningEffort": "max",
-    "mediumModel": "deepseek-v4.1-flash",
+    "lightModel": "deepseek-v4.1-flash-1017",
+    "lightReasoningEffort": "high",
+    "mediumModel": "deepseek-v4.1-flash-1017",
     "mediumReasoningEffort": "max",
     "heavyModel": "kimi-k3.1-pro",
     "heavyReasoningEffort": "high"
   },
   "subagentAutonomyLevel": "inherit",
   "compactionTokenLimitPerModel": {},
-  "droidCoreModel": "kimi-k3.1-pro"
+  "dismissedNewModels": ["gpt-6.2-astra", "gpt-6.2-sol"]
 }
