@@ -74,11 +74,7 @@ args = [{{#each args}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{
 
 [mcp_servers.onenote]
 command = "deskhand"
-args = ["onenote"]
-
-[mcp_servers.ppt]
-command = "deskhand"
-args = ["ppt"]{{/if}}
+args = ["onenote"]{{/if}}
 
 [mcp_servers.magpie]
 url = "http://127.0.0.1:3425/mcp/magpie/hub"

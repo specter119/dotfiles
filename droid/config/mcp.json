@@ -28,13 +28,6 @@
       "tools": [
         "fast_context_search"
       ]
-    }{{#if dotter.packages.wsl-guest}},
-    "ppt": {
-      "type": "stdio",
-      "command": "deskhand",
-      "args": [
-        "ppt"
-      ]
-    }{{/if}}
+    }
   }
 }

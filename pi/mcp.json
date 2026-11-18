@@ -24,13 +24,6 @@
         "onenote"
       ],
       "description": "Reads and edits the Windows OneNote desktop client from WSL. Writes are two steps: a dry run issues an applyToken, then the same call with dryRun=false applies it."
-    },
-    "ppt": {
-      "command": "deskhand",
-      "args": [
-        "ppt"
-      ],
-      "description": "Drives the Windows PowerPoint desktop client from WSL: read a deck, add slides/text/tables/charts/pictures/notes, render PNG or PDF, save .pptx. Writes are two steps: a dry run issues an applyToken, then the same call with dryRun=false applies it."
     }{{/if}}
   }
 }
