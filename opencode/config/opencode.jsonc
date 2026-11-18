@@ -9,7 +9,7 @@
       "type": "remote",
       "url": "http://127.0.0.1:3425/mcp/magpie/hub",
       "headers": {
-        "Authorization": "Bearer {{agent.magpie_apikey}}"
+        "Authorization": "Bearer {env:MAGPIE_API_KEY}"
       }
     },
 {{/if}}

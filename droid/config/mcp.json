@@ -4,7 +4,7 @@
       "type": "http",
       "url": "http://127.0.0.1:3425/mcp/magpie/hub",
       "headers": {
-        "Authorization": "Bearer {{agent.magpie_apikey}}"
+        "Authorization": "Bearer ${MAGPIE_API_KEY}"
       },
       "oauth": false
     },{{#if dotter.packages.wsl-guest}}
@@ -21,11 +21,6 @@
         "WINDSURF_API_KEY": "{{replace (command_output "rbw get windsurf-api-key") "\n" ""}}"
       },
       "tools": ["fast_context_search"]
-    }{{#if dotter.packages.wsl-guest}},
-    "ppt": {
-      "type": "stdio",
-      "command": "deskhand",
-      "args": ["ppt"]
-    }{{/if}}
+    }
   }
 }

@@ -21,7 +21,7 @@ set = { GIT_SSH_COMMAND = "ssh -F ~/.ssh/config" }
 [model_providers.magpie]
 name = "Magpie"
 base_url = "http://127.0.0.1:3425/v1"
-experimental_bearer_token = "{{agent.magpie_apikey}}"
+env_key = "MAGPIE_API_KEY"
 wire_api = "responses"
 supports_websockets = false
 
@@ -74,15 +74,11 @@ args = [{{#each args}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]{{/if}}{
 
 [mcp_servers.onenote]
 command = "deskhand"
-args = ["onenote"]
-
-[mcp_servers.ppt]
-command = "deskhand"
-args = ["ppt"]{{/if}}
+args = ["onenote"]{{/if}}
 
 [mcp_servers.magpie]
 url = "http://127.0.0.1:3425/mcp/magpie/hub"
-http_headers = { Authorization = "Bearer {{agent.magpie_apikey}}" }
+bearer_token_env_var = "MAGPIE_API_KEY"
 
 [mcp_servers.fast-context]
 command = "bunx"
