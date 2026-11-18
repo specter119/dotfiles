@@ -7,7 +7,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 # Ensure the GGUF is present (downloads via aria2c if missing/incomplete)
-ExecStartPre=%h/.local/lib/qwen38-model-sync.sh ensure
+ExecStartPre=%h/.local/share/llama-server/qwen38-model-sync.sh ensure
 # llama.cpp is installed in the user Nix profile; WSL provides libcuda.so.1.
 # Single GPU: no --split-mode / --tensor-split (they only apply to multi-GPU).
 ExecStart=llama-server \

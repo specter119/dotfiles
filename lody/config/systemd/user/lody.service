@@ -5,7 +5,7 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-WorkingDirectory=%h/.local/lib/lody
+WorkingDirectory=%h/.local/opt/lody
 Environment=LODY_DATA_DIR=%D/lody
 ExecStartPre=bun update --latest --production --force lody
 ExecStart=bun run lody start

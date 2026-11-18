@@ -45,7 +45,7 @@ that is the card working as designed; MTP is what pushes past it.
 | Path                                                          | What                                                         |
 | ------------------------------------------------------------- | ------------------------------------------------------------ |
 | `~/.config/systemd/user/llama-server.service`                 | systemd user unit                                            |
-| `~/.local/lib/qwen38-model-sync.sh`                           | model ensure/verify/update script                            |
+| `~/.local/share/llama-server/qwen38-model-sync.sh`            | model ensure/verify/update script                            |
 | `~/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/` | model cache (huggingface default dir, `hf`/`hfd` compatible) |
 
 ## Usage
@@ -68,11 +68,11 @@ model id as shown by `/v1/models` (typically the GGUF filename).
   network; a missing or truncated file is fetched with `aria2c` (8 connections,
   resumable) from `HF_ENDPOINT` (default `https://hf-mirror.com`) and checked
   against the sha256 the API reports.
-- **Verify**: `~/.local/lib/qwen38-model-sync.sh verify`
+- **Verify**: `~/.local/share/llama-server/qwen38-model-sync.sh verify`
 - **Force update** (e.g. upstream republished the quant):
-  `~/.local/lib/qwen38-model-sync.sh update && systemctl --user restart llama-server`
+  `~/.local/share/llama-server/qwen38-model-sync.sh update && systemctl --user restart llama-server`
 - **Vision projector** (optional, +0.9 GB VRAM):
-  `~/.local/lib/qwen38-model-sync.sh mmproj`, then add
+  `~/.local/share/llama-server/qwen38-model-sync.sh mmproj`, then add
   `--mmproj <same dir>/mmproj-F16.gguf` to the unit and restart. Without it,
   `--image-max-tokens` is inert.
 
