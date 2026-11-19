@@ -13,6 +13,17 @@
 [include]
 	path = ~/.config/git/platform.conf
 
+{{#if git.enterprise.remotes}}
+# Enterprise identity, selected by the remote URL instead of the path, so a
+# checkout, a worktree, or an agent workspace parked anywhere resolves the same
+# identity. The patterns match the stored URL, not an `insteadOf` rewrite, and
+# files included this way may not declare remotes (git rejects a config cycle).
+{{#each git.enterprise.remotes}}
+[includeIf "hasconfig:remote.*.url:{{this}}"]
+	path = ~/.config/git/enterprise.conf
+
+{{/each}}
+{{/if}}
 [init]
 	defaultBranch = master
 

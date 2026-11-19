@@ -103,7 +103,6 @@ git = '~/.config/git'
 'git/windows.conf' = { target = '~/.config/git/platform.conf', type = 'template', if = 'dotter.windows' }
 
 [git.variables.git]
-repo_identities = {}
 enterprise = {}
 
 [jj]
@@ -203,6 +202,11 @@ default_model = ''
 
 [codex.files]
 codex = '~/.config'
+
+# SessionStart hooks that adopt a worktree as a jj repo and seed its jj identity.
+# Deployed only while jj is selected, so the commands never point at an absent
+# script.
+'codex/codex/hooks.json' = { target = '~/.config/codex/hooks.json', type = 'symbolic', if = 'dotter.packages.jj' }
 
 [codex.variables.codex]
 model = ''

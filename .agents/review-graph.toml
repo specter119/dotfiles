@@ -183,7 +183,7 @@ trigger = ["deploy script", "deploy cache", "force deploy", "runtime artifact"]
 owner_documents = ["docs/maintenance/deploy.md", "docs/maintenance/codex-worktrees.md"]
 skill = ".agents/skills/dotfiles-deploy-operations-review/SKILL.md"
 unopposed_stake = "S9"
-paths = [".dotter/pre_deploy.sh", ".dotter/post_deploy.sh", ".dotter/helpers/**", ".dotter/cache.toml", "codex/codex/hooks.json", "codex/codex/scripts/**"]
+paths = [".dotter/pre_deploy.sh", ".dotter/post_deploy.sh", ".dotter/helpers/**", ".dotter/cache.toml", "codex/codex/hooks.json", "codex/codex/hooks/**"]
 keywords = ["deploy", "--force", "cache", "post_deploy", "runtime artifact", "pre_deploy"]
 
 [[surface]]

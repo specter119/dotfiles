@@ -124,14 +124,20 @@ An absent `pi.subagent_model` intentionally inherits the main agent model.
 
 ## Git identities
 
-The default identity is inline in `git/config`. The enterprise identity is one
-fixed leaf, `git/enterprise.conf` → `~/.config/git/enterprise.conf`, rendered
-from `variables.git.enterprise.name` / `email` and deployed only while that
-table is non-empty (`if = 'git.enterprise'`). `git/wsl.conf` and
-`git/windows.conf` emit one `includeIf` per entry in `enterprise.dirs_wsl` /
-`enterprise.dirs_windows`, because the same directory has a different path form
-on each platform. `jj/config.toml` renders `variables.git.repo_identities`
-inline and does not use the leaf.
+One identity per repository, chosen by the remote URL. The default identity is
+inline in `git/config`; the enterprise identity is one fixed leaf,
+`git/enterprise.conf` → `~/.config/git/enterprise.conf`, rendered from
+`variables.git.enterprise.name` / `email`, deployed only while that table is
+non-empty (`if = 'git.enterprise'`), and pulled in by one
+`includeIf "hasconfig:remote.*.url"` per entry in
+`variables.git.enterprise.remotes`. There is no directory scope: a path only
+says where a checkout happens to sit, which a `git worktree` or an agent
+workspace breaks. Pattern rules live in `git/README.md#enterprise-identity`;
+the included file may not declare remotes.
+
+`jj` never reads git's `user.name` / `user.email` and its conditional config
+matches paths, not remotes, so a jj commit receives that identity only through
+the Codex `SessionStart` hook in `codex-worktrees.md#jj-identity`.
 
 ## Root-and-leaf
 

@@ -4,7 +4,12 @@
       {
         "hooks": [
           {
-            "command": "sh \"$HOME/.config/codex/scripts/jj-adopt-worktree.sh\"",
+            "command": "sh \"$HOME/.config/codex/hooks/jj-adopt-worktree.sh\"",
+            "timeout": 30,
+            "type": "command"
+          },
+          {
+            "command": "sh \"$HOME/.config/codex/hooks/jj-sync-identity.sh\"",
             "timeout": 30,
             "type": "command"
           }

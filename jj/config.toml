@@ -6,14 +6,3 @@ email = "specter119@gmail.com"
 
 [aliases]
 push = ["util", "exec", "--", "jj-pre-push", "--checker", "prek", "push"]
-
-{{#each git.repo_identities}}
-
-[[--scope]]
---when.repositories = ["{{repo_dir}}"]
-
-[--scope.user]
-name = "{{name}}"
-email = "{{email}}"
-
-{{/each}}
