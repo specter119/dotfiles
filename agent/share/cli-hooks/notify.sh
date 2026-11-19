@@ -82,6 +82,10 @@ escape_powershell_string() {
 	printf "%s" "$1" | sed "s/'/''/g"
 }
 
+base64url() {
+	printf '%s' "$1" | base64 -w0 | tr '+/' '-_' | tr -d '='
+}
+
 # Function to send WSL notification
 send_wsl_notification() {
 	local message="$1"
@@ -97,6 +101,21 @@ send_wsl_notification() {
 	if ! command -v powershell.exe >/dev/null 2>&1; then
 		echo "PowerShell not available. Make sure you're running in WSL with Windows PowerShell accessible." >&2
 		return 1
+	fi
+
+	# Without a click action, use a WinRT toast so the notification lands in the
+	# notification center history. Clicking it copies NOTIFICATION_COPY (defaults
+	# to the message) and opens it when it is a URL.
+	local toast_script
+	toast_script="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/log-notify-toast.ps1"
+	if [ -z "$action_cmd" ] && [ -f "$toast_script" ] && command -v wslpath >/dev/null 2>&1; then
+		powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass \
+			-File "$(wslpath -w "$toast_script")" \
+			-TitleB64 "$(base64url "$NOTIFICATION_TITLE")" \
+			-BodyB64 "$(base64url "$message")" \
+			-CopyB64 "$(base64url "${NOTIFICATION_COPY:-$message}")" >/dev/null 2>&1 &
+		echo "WSL notification sent to Windows host"
+		return 0
 	fi
 
 	# Create PowerShell command for notification
@@ -236,6 +255,7 @@ Arguments:
 
 Environment Variables:
   NOTIFICATION_TITLE   Override auto-detected CLI name
+  NOTIFICATION_COPY    Text copied when the WSL toast is clicked (default: message)
   CLICK_ACTION         Command to run when notification is clicked
 
 Environment Support:
