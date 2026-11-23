@@ -334,9 +334,6 @@ LazyVim = '~/.config/nvim'
 [marimo.files]
 marimo = '~/.config'
 
-[bub.files]
-bub = '~/.config'
-
 [lody.files]
 'lody/lib' = '~/.local/opt/lody'
 'lody/config' = '~/.config'
@@ -459,7 +456,7 @@ magpie_apikey = ''
 otel_url = ''
 
 [agent-tunnel]
-depends = ['bub', 'lody', 'raft']
+depends = ['lody', 'raft']
 
 [browser-use]
 depends = ['playwright']
