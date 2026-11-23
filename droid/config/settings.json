@@ -7,12 +7,12 @@
     "skipScrutiny": true,
     "skipUserTesting": false,
     "validationWorkerModel": "deepseek-v4.1-flash-1017",
-    "validationWorkerReasoningEffort": "max",
+    "validationWorkerReasoningEffort": "high",
     "workerModel": "deepseek-v4.1-flash-1017",
     "workerReasoningEffort": "max"
   },
   "missionOrchestratorModel": "claude-opus-5-5",
-  "missionOrchestratorReasoningEffort": "xhigh",
+  "missionOrchestratorReasoningEffort": "medium",
   "modelFavorites": [
     "glm-5.3",
     "gpt-6.2-sol",
