@@ -1,12 +1,9 @@
-## override feature supported by my customed branch
-# uv tool install git+https://github.com/specter119/skm@feature/consolidate-agent-config-with-materialize-mode
-
 agents:
   default:
     - standard
   override:
     standard:
-      install_mode: symlink
+      install_mode: materialize
 packages:
   - repo: https://github.com/specter119/skills
   ## orchestration
