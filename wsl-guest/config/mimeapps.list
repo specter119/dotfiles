@@ -1,0 +1,11 @@
+[Default Applications]
+x-scheme-handler/ccswitch=cc-switch-handler.desktop
+x-scheme-handler/tldraw-offline=tldraw-offline.desktop
+x-scheme-handler/cindy=com.xd.cindy.user.hc0c472f4a287baf2.desktop
+x-scheme-handler/xdt-maker=com.xd.cindy.user.hc0c472f4a287baf2.desktop
+inode/directory=wsl-open-explorer.desktop
+application/x-directory=wsl-open-explorer.desktop
+x-scheme-handler/file=wsl-open-explorer.desktop
+
+[Added Associations]
+x-scheme-handler/tldraw-offline=tldraw-offline.desktop;

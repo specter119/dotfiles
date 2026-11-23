@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Open in Windows Explorer
+Comment=Open folders from WSL in Windows Explorer
+Exec=/home/liuky3/.local/bin/wsl-open-explorer %f
+Terminal=false
+NoDisplay=true
+Categories=System;
+MimeType=inode/directory;application/x-directory;x-scheme-handler/file;

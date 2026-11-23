@@ -5,7 +5,9 @@ url_userinfo_escape = '.dotter/helpers/url_userinfo_escape.rhai'
 depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge', 'fcitx5-wslg', 'wsl-keyring-unlock']
 
 [wsl-guest.files]
-'wsl-guest' = '~/.config'
+'wsl-guest/config' = '~/.config'
+'wsl-guest/bin' = '~/.local/bin'
+'wsl-guest/share' = '~/.local/share'
 'wsl-guest-enterprise' = { target = '~/.config', type = 'symbolic', if = 'dotter.packages.enterprise-artifact' }
 
 [wsl-ssh-agent.files]

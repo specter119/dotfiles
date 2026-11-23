@@ -1,0 +1,14 @@
+#!/bin/sh
+# Show a path (usually a directory) in Windows Explorer from WSL.
+#
+# xdg-open's desktop-file launcher word-splits the Exec line without any quote
+# parsing ("set -- $(get_key "$file" Exec | last_word)"), so the shell command
+# cannot be inlined into the .desktop file: keep it here.
+#
+# The .desktop file passes %f, so the argument is a plain path, not a URI.
+path=$1
+case $path in
+	'file://'*) path=${path#'file://'} ;;
+esac
+[ -d "$path" ] || path=$(dirname -- "$path")
+exec explorer.exe "$(wslpath -w -- "$path")"
