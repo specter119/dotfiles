@@ -422,7 +422,7 @@ token = ''
 zotero_remote = ''
 
 [cli]
-depends = ['fish', 'yazi', 'atuin', 'mihomo', 'aria2']
+depends = ['fish', 'yazi', 'atuin', 'aria2']
 
 [cli.files]
 cli = '~/.config'
@@ -448,7 +448,7 @@ depends = [
 depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
 
 [agent]
-depends = ['agent-runtime', 'droid', 'pi', 'bub', 'codex', 'chatgpt', 'multica', 'dsh']
+depends = ['agent-runtime', 'droid', 'pi', 'bub', 'codex', 'chatgpt', 'multica', 'dsh', 'antigravity']
 
 [agent.files]
 'agent/config' = '~/.config'

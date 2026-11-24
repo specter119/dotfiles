@@ -172,14 +172,15 @@ PY
 	fi
 }
 
-# magpie labels each model with its upstream's native wire, so models.json mixes
-# openai-completions and openai-responses. The gateway accepts /v1/responses for
-# every model and converts it for chat-only upstreams (Codex relies on this), so
-# make the whole magpie provider use openai-responses. Host `magpie pi` also
-# discovers editor Copilot logins the container gateway does not serve; keep
-# only ids from the live /v1/models list. magpie rewrites the file on every
-# `magpie pi` run, hence this runs after each refresh.
-force_pi_models_responses() {
+# Pi reads its model list from ~/.config/pi/models.json. Build it straight from
+# the gateway's /v1/models, the way the Codex catalog is built, instead of
+# driving `magpie pi`: the host CLI's catalog lags the container gateway, so it
+# drops models the gateway already serves. The gateway owns the model facts;
+# cost, promptCache and compat survive from the previous file when the id is
+# unchanged. The gateway accepts /v1/responses for every model and converts it
+# for chat-only upstreams (Codex relies on this), so the whole magpie provider
+# uses openai-responses.
+refresh_magpie_pi_models() {
 	models="$HOME/.config/pi/models.json"
 	[ -f "$models" ] || return 0
 	if python3 - "$models" "$models.tmp" <<'PY'
@@ -196,12 +197,12 @@ provider = data.get("providers", {}).get("magpie")
 if provider is None:
     sys.exit(1)
 
-def gateway_ids():
+def gateway_catalog():
     auth_path = Path.home() / ".config/pi/auth.json"
     token = ""
     if auth_path.is_file():
-        mag = json.loads(auth_path.read_text(encoding="utf-8")).get("magpie") or {}
-        token = mag.get("key") or mag.get("apiKey") or ""
+        magpie = json.loads(auth_path.read_text(encoding="utf-8")).get("magpie") or {}
+        token = magpie.get("key") or magpie.get("apiKey") or ""
     base = provider.get("baseUrl") or "http://127.0.0.1:3425/v1"
     if not token:
         raise RuntimeError("no magpie key")
@@ -209,25 +210,65 @@ def gateway_ids():
     request = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
     with urllib.request.urlopen(request, timeout=10) as response:
         catalog = json.load(response)
-    ids = [item.get("id") for item in catalog.get("data") or [] if isinstance(item, dict) and item.get("id")]
-    if not ids:
+    entries = [
+        item
+        for item in catalog.get("data") or []
+        if isinstance(item, dict) and item.get("id")
+    ]
+    if not entries:
         raise RuntimeError("empty catalog")
-    return ids
+    return entries
 
-try:
-    served = set(gateway_ids())
-except (RuntimeError, OSError, ValueError, urllib.error.URLError):
-    served = None
+LEVELS = ("minimal", "low", "medium", "high", "xhigh", "max", "off")
+
+def thinking_level_map(entry):
+    levels = []
+    for item in entry.get("reasoning_levels") or []:
+        effort = item.get("effort") if isinstance(item, dict) else item
+        if effort:
+            levels.append(str(effort))
+    if not levels:
+        return None
+    return {level: level if level in levels else None for level in LEVELS}
+
+previous = {
+    model.get("id"): model
+    for model in provider.get("models", [])
+    if isinstance(model, dict)
+}
+built = []
+for entry in gateway_catalog():
+    model_id = entry["id"]
+    model = dict(previous.get(model_id) or {})
+    model["id"] = model_id
+    model["name"] = (
+        entry.get("magpie_label")
+        or entry.get("display_name")
+        or model.get("name")
+        or model_id
+    )
+    window = entry.get("context_window") or entry.get("context_length")
+    if window:
+        model["contextWindow"] = window
+    if entry.get("max_output_tokens"):
+        model["maxTokens"] = entry["max_output_tokens"]
+    inputs = [
+        modality
+        for modality in (entry.get("modalities") or {}).get("input") or []
+        if modality in ("text", "image")
+    ]
+    if inputs:
+        model["input"] = inputs
+    model["reasoning"] = bool(entry.get("reasoning"))
+    level_map = thinking_level_map(entry)
+    if model["reasoning"] and level_map:
+        model["thinkingLevelMap"] = level_map
+    model.pop("api", None)
+    model.setdefault("compat", {"supportsStrictMode": True})
+    built.append(model)
 
 provider["api"] = "openai-responses"
-kept = []
-for model in provider.get("models", []):
-    model.pop("api", None)
-    if served is not None and model.get("id") not in served:
-        continue
-    kept.append(model)
-if served is not None:
-    provider["models"] = kept
+provider["models"] = built
 
 with open(out, "w", encoding="utf-8") as fh:
     json.dump(data, fh, ensure_ascii=False, indent=2, sort_keys=True)
@@ -237,32 +278,7 @@ PY
 		mv "$models.tmp" "$models"
 	else
 		rm -f "$models.tmp"
-		echo "[WARN] forcing pi models.json to openai-responses failed; keeping the magpie-generated file"
-	fi
-}
-# Pi reads its model list from ~/.config/pi/models.json, which only
-# `magpie pi <model>` writes. Re-apply the model Dotter just rendered into
-# settings.json: the values are identical, so settings.json stays byte-equal to
-# the Dotter cache and only models.json is refreshed.
-refresh_magpie_pi_models() {
-	command -v magpie >/dev/null 2>&1 || return 0
-	[ -f .dotter/local.toml ] || return 0
-
-	model=$(python3 - <<'PY'
-import tomllib
-
-with open(".dotter/local.toml", "rb") as fh:
-    pi = tomllib.load(fh).get("variables", {}).get("pi", {})
-if pi.get("default_provider") == "magpie":
-    print(pi.get("default_model", ""))
-PY
-	)
-	[ -n "$model" ] || return 0
-
-	if magpie pi "$model" >/dev/null 2>&1; then
-		force_pi_models_responses
-	else
-		echo "[WARN] magpie pi $model failed; keeping the existing pi models.json"
+		echo "[WARN] magpie pi models.json refresh failed; keeping the existing file"
 	fi
 }
 
