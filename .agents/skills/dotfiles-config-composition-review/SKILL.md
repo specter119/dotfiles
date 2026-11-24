@@ -2,8 +2,7 @@
 name: dotfiles-config-composition-review
 description: >-
   Use when reviewing package selection, grouping, depends, a [pkg.files]
-  mapping, a machine include, a blackhole mapping, or a conditional source
-  directory. Do not use for template rendering, reverse sync, or enterprise
+  mapping, a machine include, or a conditional source directory. Do not use for template rendering, reverse sync, or enterprise
   trust scope.
 ---
 
@@ -12,7 +11,7 @@ description: >-
 ## Scope
 
 Package selection, grouping, `depends`, `[pkg.files]` mappings, machine
-includes, blackhole mappings, and conditional source directories.
+includes, and conditional source directories.
 
 ## Checks
 
@@ -29,9 +28,6 @@ includes, blackhole mappings, and conditional source directories.
   location, or the conditional value is interleaved with unconditional keys.
   A whole-leaf `#if` in a diff is evidence for this check; whether the target
   can split its config decides, not the file extension.
-- A blackhole mapping points at
-  `$XDG_RUNTIME_DIR/dotter/blackhole-<package>`, and the real live owner is
-  documented next to the mapping.
 - `enterprise-artifact` is not a hard dependency. Consumers test
   `dotter.packages.enterprise-artifact` and stay valid without it.
 - A package README follows the own-target or non-deployed rule; a shared-target
@@ -47,7 +43,6 @@ the target tool's drop-in or include documentation.
 - `docs/maintenance/config.md#package-composition`
 - `docs/maintenance/config.md#files-mapping`
 - `docs/maintenance/config.md#conditional-configuration`
-- `docs/maintenance/config.md#blackhole-mapping`
 
 ## Does not own
 

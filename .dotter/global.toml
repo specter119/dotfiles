@@ -194,7 +194,7 @@ julia = '~/.julia'
 stylua = '~/.config/stylua'
 
 [claude-code.files]
-'claude-code' = '~/.config/claude'
+'claude-code' = '~/.config'
 
 [dsh.files]
 dsh = '~/.config'
@@ -231,12 +231,11 @@ last_update_check_timestamp = ''
 last_seen_version = ''
 
 [pi.files]
-'pi/config' = '~/.config/pi'
-'pi/environment.d' = '~/.config/environment.d'
+pi = '~/.config'
 
 [bub.files]
-'bub/config' = '~/.local/share/bub'
-'bub/environment.d' = '~/.config/environment.d'
+'bub/share' = '~/.local/share/bub'
+'bub/config' = '~/.config'
 
 [pi.variables.pi]
 default_model = ''
@@ -247,7 +246,7 @@ last_changelog_version = ''
 subagent_model = {}
 
 [copilot.files]
-copilot = '~/.config/copilot'
+copilot = '~/.config'
 
 [droid]
 depends = ['agent-tunnel']

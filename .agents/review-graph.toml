@@ -6,7 +6,7 @@ skills_dir = ".agents/skills"
 [[stake]]
 id = "S1"
 objective = "The same tracked config renders correctly on every selected machine."
-evidence = ["docs/maintenance/templates.md#override-order", "docs/maintenance/config.md#blackhole-mapping"]
+evidence = ["docs/maintenance/templates.md#override-order", "docs/maintenance/config.md#conditional-configuration"]
 
 [[stake]]
 id = "S2"
@@ -78,7 +78,7 @@ skill = ".agents/skills/dotfiles-config-composition-review/SKILL.md"
 contends = ["explicit-vs-friction", "isolation-vs-sharing"]
 paths = [".dotter/global.toml", ".dotter/wsl.toml", ".dotter/windows.toml", ".dotter/*.toml"]
 exclude_paths = [".dotter/cache.toml", ".dotter/local.toml"]
-keywords = ["depends", "files", "mapping", "conditional", "enterprise-artifact", "blackhole", "#if"]
+keywords = ["depends", "files", "mapping", "conditional", "enterprise-artifact", "#if"]
 
 [[surface]]
 id = "config-rendering-review"
@@ -133,12 +133,10 @@ trigger = [
   "reverse sync",
   "a tool rewrites its config",
   "a deploy conflict",
-  "serialization",
-  "a blackhole mapping"
+  "serialization"
 ]
 owner_documents = [
   "docs/maintenance/live-state.md",
-  "docs/maintenance/config.md#blackhole-mapping",
   "docs/maintenance/deploy.md#deploy-workflow",
   "rclone/README.md#variables"
 ]
@@ -150,8 +148,8 @@ paths = [
   ".dotter/pre_deploy.sh",
   ".dotter/wsl.toml",
   ".dotter/windows.toml",
-  "pi/config/settings.json",
-  "bub/config/mcp.json",
+  "pi/pi/settings.json",
+  "bub/share/mcp.json",
   "droid/config/settings.json",
   "magpie/settings.json",
   "opencode/config/opencode.jsonc",
@@ -162,7 +160,7 @@ paths = [
   "scoop/config.json",
   "dsh/**"
 ]
-keywords = ["reverse sync", "serialization", "local.toml", "drift", "reverse_sync", "byte-identical", "blackhole"]
+keywords = ["reverse sync", "serialization", "local.toml", "drift", "reverse_sync", "byte-identical"]
 
 [[surface]]
 id = "enterprise-boundary-review"

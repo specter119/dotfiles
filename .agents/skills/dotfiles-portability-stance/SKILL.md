@@ -56,5 +56,5 @@ The surface's required evidence: `docs/maintenance/templates.md#required-evidenc
 ## Stable core and changing contract
 
 The stable value is: **a tracked config renders on every selected machine**.
-`global.toml`, `local.toml`, conditional mappings, and the blackhole target are
-contract expressions, not the value itself.
+`global.toml`, `local.toml`, and conditional mappings are contract
+expressions, not the value itself.

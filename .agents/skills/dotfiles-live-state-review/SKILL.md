@@ -10,9 +10,8 @@ description: >-
 
 ## Scope
 
-Reverse sync, byte-identical serialization, local schema differences, the
-deploy conflict path for tool-written config, and a blackhole mapping that
-keeps a package from overwriting a locally managed live path.
+Reverse sync, byte-identical serialization, local schema differences, and the
+deploy conflict path for tool-written config.
 
 ## Checks
 
@@ -25,8 +24,6 @@ keeps a package from overwriting a locally managed live path.
 - A renamed or removed variable does not silently migrate, copy, or delete a
   legacy key; the difference is surfaced to the user.
 - A dry-run after the sync shows no drift.
-- A blackhole target is `$XDG_RUNTIME_DIR/dotter/blackhole-<package>`, and the
-  real live owner is documented next to the mapping.
 
 ## Required evidence
 
@@ -36,7 +33,6 @@ path, and a dry-run that shows no drift.
 ## Owner documents
 
 - `docs/maintenance/live-state.md`
-- `docs/maintenance/config.md#blackhole-mapping`
 - `docs/maintenance/deploy.md#deploy-workflow`
 
 ## Does not own

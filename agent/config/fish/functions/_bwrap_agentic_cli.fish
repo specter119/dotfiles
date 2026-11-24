@@ -70,7 +70,7 @@ function _bwrap_agentic_cli --description 'Run a CLI tool inside a bwrap sandbox
         --symlink /usr/bin /sbin \
         --ro-bind-try /mnt/wslg /mnt/wslg \
         --ro-bind-try /mnt/c/Windows/Fonts /mnt/c/Windows/Fonts \
-        --ro-bind-try $WSL_WIN_HOME/scoop/apps/mingit $WSL_WIN_HOME/scoop/apps/mingit \
+        --ro-bind-try $WSL_SCOOP_PATH/apps/mingit $WSL_SCOOP_PATH/apps/mingit \
         --tmpfs $HOME \
         --dir $HOME/.config \
         --bind-try $HOME/.config $HOME/.config \

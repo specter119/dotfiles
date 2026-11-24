@@ -42,7 +42,7 @@ into templates or reverse-sync the provider list.
   from the gateway, not from `magpie codex`: that command rewrites the
   Dotter-owned `config.toml`.
 - `refresh_magpie_pi_models` runs `magpie pi` with the model Dotter just
-  rendered, so magpie leaves `pi/config/settings.json` byte-equal; any other model
+  rendered, so magpie leaves `pi/pi/settings.json` byte-equal; any other model
   makes it rewrite the file and the next deploy refuses it. The responses
   normalization must follow every `magpie pi` run, because magpie rewrites
   `models.json` each time.
@@ -64,6 +64,13 @@ half-written file that the next deploy will treat as source state.
 
 Rhai helpers live in `.dotter/helpers/` and are registered under `[helpers]` in
 `global.toml`. `url_userinfo_escape` escapes credentials embedded in a URL.
+
+## Environment fragments
+
+`environment.d` fragments deploy to `~/.config/environment.d`, and the user
+manager reads them in filename order: a later file wins. `agentic-xdg.conf`
+sorts before every `<pkg>.conf`, so a package fragment silently overrides it.
+Define a variable in exactly one fragment.
 
 ## Session services
 

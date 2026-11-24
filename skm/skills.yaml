@@ -3,7 +3,7 @@ agents:
     - standard
   override:
     standard:
-      install_mode: materialize
+      install_mode: symlink
 packages:
   - repo: https://github.com/specter119/skills
   ## orchestration

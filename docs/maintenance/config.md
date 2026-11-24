@@ -63,21 +63,6 @@ To retire a file, delete its source and run a dry-run deploy. Dotter reports the
 target it would remove; confirm the target is not a live file another tool owns
 before accepting the removal.
 
-## Blackhole mapping
-
-When a package must stay in the default groups but must not overwrite the real
-live config on one machine, remap its target to a disposable directory in a
-machine-specific include such as `.dotter/wsl.toml`:
-
-```toml
-[package.files]
-package = '$XDG_RUNTIME_DIR/dotter/blackhole-package'
-```
-
-Use this over removing the package from global groups: dependency structure,
-variables, and repo defaults stay intact. Keep the target obviously non-live,
-and document the real owner of the live path nearby.
-
 ## Conditional configuration
 
 Configuration that must exist only when a package is selected or a variable is
