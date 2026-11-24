@@ -1,0 +1,7 @@
+{
+  "mcpServers": {{#if dotter.packages.wsl-guest}}{
+    "kaze": {
+      "command": "kaze-mcp"
+    }
+  }{{else}}{}{{/if}}
+}

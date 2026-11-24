@@ -1,0 +1,9 @@
+#!/bin/sh
+# Expose Kaze's BrowserMCP bridge to Linux clients. Kaze is a Windows process,
+# so ELECTRON_RUN_AS_NODE and KAZE_APP cross the WSL boundary through WSLENV.
+cd /mnt/c || exit 1
+export WSLENV="ELECTRON_RUN_AS_NODE:KAZE_APP/p${WSLENV:+:$WSLENV}"
+export ELECTRON_RUN_AS_NODE=1
+export KAZE_APP='C:\Users\liuky3\scoop\apps\kaze\current\Kaze.exe'
+exec '/mnt/c/Users/liuky3/scoop/apps/kaze/current/Kaze.exe' \
+	'C:\Users\liuky3\AppData\Roaming\Kite\browsermcp\bridge.mjs' "$@"

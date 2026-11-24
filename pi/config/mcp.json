@@ -19,6 +19,10 @@
       "command": "deskhand",
       "args": ["onenote"],
       "description": "Reads and edits the Windows OneNote desktop client from WSL. Writes are two steps: a dry run issues an applyToken, then the same call with dryRun=false applies it."
+    },
+    "kaze": {
+      "command": "kaze-mcp",
+      "description": "Controls the Kaze browser on Windows from WSL: tabs, navigation, page observation and site adapters."
     }{{/if}}
   }
 }

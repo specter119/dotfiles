@@ -27,8 +27,8 @@ These hold without reading further; a change that breaks one is wrong even if
 every surface check passes.
 
 - Agent configs deploy under XDG (`~/.config/<name>`), not `~/.<name>`. Resolve
-  paths from `.dotter/global.toml` and
-  `agent/config/environment.d/agentic-xdg.conf`.
+  paths from `.dotter/global.toml` and the owning `environment.d` fragment:
+  package-local when one exists, otherwise `agent/config/environment.d/agentic-xdg.conf`.
 - Never commit a secret. Use inline `rbw get`; keep `local.toml` out of git.
 - Enterprise CA/TLS settings are gated by `dotter.packages.enterprise-artifact`
   or the variable that makes them meaningful. A non-enterprise machine deploys

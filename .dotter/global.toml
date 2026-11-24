@@ -231,7 +231,12 @@ last_update_check_timestamp = ''
 last_seen_version = ''
 
 [pi.files]
-pi = '~/.config/pi'
+'pi/config' = '~/.config/pi'
+'pi/environment.d' = '~/.config/environment.d'
+
+[bub.files]
+'bub/config' = '~/.local/share/bub'
+'bub/environment.d' = '~/.config/environment.d'
 
 [pi.variables.pi]
 default_model = ''
@@ -444,7 +449,7 @@ depends = [
 depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
 
 [agent]
-depends = ['agent-runtime', 'droid', 'pi', 'codex', 'chatgpt', 'multica', 'dsh']
+depends = ['agent-runtime', 'droid', 'pi', 'bub', 'codex', 'chatgpt', 'multica', 'dsh']
 
 [agent.files]
 'agent/config' = '~/.config'
@@ -462,10 +467,13 @@ depends = ['lody', 'raft']
 depends = ['playwright']
 
 [agent-runtime]
-depends = ['browser-use', 'skm', 'zellij', 'nmem', 'magpie', 'voxtype', 'llama.cpp']
+depends = ['browser-use', 'skm', 'zellij', 'nmem', 'magpie', 'voxtype', 'llama.cpp', 'kaze']
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'
+
+[kaze.files]
+'kaze/bin' = { target = '~/.local/bin', type = 'symbolic', if = 'dotter.packages.wsl-guest' }
 
 [python]
 depends = ['uv']

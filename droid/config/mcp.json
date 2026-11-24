@@ -12,6 +12,10 @@
       "type": "stdio",
       "command": "deskhand",
       "args": ["onenote"]
+    },
+    "kaze": {
+      "type": "stdio",
+      "command": "kaze-mcp"
     },{{/if}}
     "fast-context": {
       "type": "stdio",

@@ -42,7 +42,7 @@ into templates or reverse-sync the provider list.
   from the gateway, not from `magpie codex`: that command rewrites the
   Dotter-owned `config.toml`.
 - `refresh_magpie_pi_models` runs `magpie pi` with the model Dotter just
-  rendered, so magpie leaves `pi/settings.json` byte-equal; any other model
+  rendered, so magpie leaves `pi/config/settings.json` byte-equal; any other model
   makes it rewrite the file and the next deploy refuses it. The responses
   normalization must follow every `magpie pi` run, because magpie rewrites
   `models.json` each time.
