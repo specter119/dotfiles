@@ -1,56 +1,189 @@
-# llama-server — Qwen3.8-27B UD-Q4_K_XL (RTX PRO 4500 Blackwell, 32 GB)
+# llama-server — Inkling-2-Mini UD-Q4_K_XL (RTX PRO 4500 Blackwell, 32 GB)
 
-Local OpenAI-compatible API server for Qwen3.8-27B, quantized with
-unsloth Dynamic V3.0 (UD-Q4_K_XL, 17.6 GB), running on a single
-RTX PRO 4500 Blackwell via llama.cpp CUDA. All agents/tools point at
+Local OpenAI-compatible API server for Thinking Machines Lab's
+Inkling-2-Mini, unsloth Dynamic V3 quantised (UD-Q4_K_XL), served by the
+Unsloth llama.cpp CUDA build. All agents and tools point at
 `http://127.0.0.1:8080/v1`.
 
-## Hardware and why this config looks like this
+Replaced the previous Qwen3.8-27B service on this machine — that model's
+weights were deleted, this one is 17.6 GB against 27B's larger footprint.
 
-|                    | Old box (retired)            | This box                                   |
-| ------------------ | ---------------------------- | ------------------------------------------ |
-| GPU                | 2× RTX 2080 Ti, 22 GB each   | 1× RTX PRO 4500 Blackwell (GB203), 32 GB   |
-| Compute capability | sm_75 (Turing)               | sm_120 (Blackwell)                         |
-| Memory bandwidth   | ~616 GB/s each, NVLink       | 896 GB/s (GDDR7, 256-bit)                  |
-| Tensor cores / TDP | 2× 544 / 2× 250 W            | 328 / 200 W                                |
-| Interconnect       | NVLink, `--split-mode layer` | single GPU, no split flags                 |
-| Host               | native Linux                 | WSL2 guest, driver from `/usr/lib/wsl/lib` |
+## What the model is
 
-The old unit was tuned for two bandwidth-starved cards: layer split, 2 slots ×
-16K, `--spec-draft-p-min 0.75` to keep MTP verification cheap. None of that
-transfers. What changed:
+`inkling2_loop`: 24 blocks, hidden 2304, **128 experts with 8 active**
+(`general.size_label = 128x1.8B`), native context 1,048,576. It is a sparse
+MoE, which is the whole reason this config looks the way it does: per-token
+compute is that of a ~2B dense model while resident weights are those of a
+26B-class one, so memory is the binding constraint and throughput is not.
 
-- **Multi-GPU flags are gone.** `--split-mode` / `--tensor-split` / `--main-gpu`
-  only apply with more than one device; on one GPU they are noise.
-- **Context went from 32K to 256K.** One card holds the whole model plus a big
-  KV pool, so the 2×16K split is no longer a VRAM constraint.
-- **Quant moved IQ4_XS → UD-Q4_K_XL.** 32 GB buys a higher-quality quant at the
-  same context; the old file name (`Qwen3.8-27B-IQ4_XS.gguf`) no longer exists
-  upstream, which is why the sync script is pinned to the current name.
-- **KV cache is `q8_0` for both K and V.** 256K of f16 KV does not fit next to
-  17.6 GB of weights; `q8_0` halves it at negligible quality cost.
-- **MTP stays on, but ungated.** `p-min 0.75` was tuned for a card where every
-  verification pass cost a full weight read. This GPU has ~1.5× the bandwidth of
-  one 2080 Ti, so the gate is pure loss here: measured 51.5 t/s gated vs 70 t/s
-  ungated on the same prompt. See [Measured](#measured-on-this-card).
-- **`--fit on`** lets llama.cpp place what is left after the explicit
-  `-c` / `-ngl` and warn instead of OOM-killing the service.
+Three consequences follow, and every flag below traces to one of them:
 
-Bandwidth ceiling for this card: 896 GB/s ÷ 17.6 GB of weights ≈ **51 tok/s** of
-pure single-stream decode before any batching or speculation. Anything close to
-that is the card working as designed; MTP is what pushes past it.
+1. **Weights are the memory floor.** 17.6 GB of UD-Q4_K_XL + 639 MB vision
+   projector. On a 32 GB card that leaves ~13 GB for KV cache and compute
+   buffers — enough for a large context, but not for anything generous on top.
+2. **It is a reasoning model.** The chat template emits a
+   `Thinking effort level: <num>` system message and defaults to **0.9** when
+   the client sends no `reasoning_effort`. That default is expensive (see
+   [Reasoning effort](#reasoning-effort)), so the server sets a lower default.
+3. **Native context is 1M, the card supports 256K here.** KV size, not model
+   capability, decides `--ctx-size`.
 
-## Layout
+## Hardware
 
-| Path                                                          | What                                                         |
-| ------------------------------------------------------------- | ------------------------------------------------------------ |
-| `~/.config/systemd/user/llama-server.service`                 | systemd user unit                                            |
-| `~/.local/share/llama-server/qwen38-model-sync.sh`            | model ensure/verify/update script                            |
-| `~/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/` | model cache (huggingface default dir, `hf`/`hfd` compatible) |
+|          | Value                                                        |
+| -------- | ------------------------------------------------------------ |
+| GPU      | RTX PRO 4500 Blackwell, 32 623 MiB VRAM                       |
+| Driver   | 597.16, WSL2 (Windows driver only — no CUDA toolkit in Linux) |
+| System   | 78 GB RAM, 20 threads                                        |
+| Compute  | sm_120 (Blackwell), CUDA 13.3 runtime from the unsloth bundle |
 
-## Usage
+WSL2 supplies `libcuda.so.1` through `/usr/lib/wsl/lib`; the CUDA *runtime*
+libraries (`libcudart`, `libcublas`, `libcublasLt`, `libnvJitLink`) are not
+present and cannot be apt-installed without root, so the install script unpacks
+the pinned NVIDIA redistributables next to the binary. `llama-server` finds them
+through the bundle's `$ORIGIN` rpath.
 
-```bash
+## Install layout
+
+| Path                                                          | What                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------ |
+| `~/.local/opt/llama.cpp/<tag>/`                                | one unpacked Unsloth bundle per release tag            |
+| `~/.local/opt/llama.cpp/current`                               | symlink the unit resolves through                      |
+| `~/.cache/huggingface/hub/models--unsloth--Inkling-2-Mini-GGUF` | the two GGUFs (weights + mmproj) and `.hf-meta.json`   |
+| `~/.local/share/llama-server/llama-cpp-install.sh`             | `ensure` / `verify` / `reinstall` / `check` / `path`     |
+| `~/.local/share/llama-server/model-sync.sh`                    | `ensure` / `model` / `mmproj` / `verify` / `update`     |
+| `~/.config/systemd/user/llama-server.service`                  | the unit                                               |
+
+Both scripts are idempotent and offline-safe: a matching size (and sha256 where
+the HF API gives one) short-circuits to exit 0, so a boot with no network still
+starts an already-populated directory. Bundle tags are never mutated in place —
+`reinstall` stages the new tag beside the target and swaps it atomically.
+
+The two scripts use deliberately different verbs, because the things they
+version are different:
+
+| | binary (`llama-cpp-install.sh`) | weights (`model-sync.sh`) |
+| --- | --- | --- |
+| `ensure` | install the pin if missing | fetch any missing file |
+| `verify` | re-check the bundle, print version | re-check all three sha256 |
+| `check` | ask GitHub for a newer release, change nothing | — |
+| `reinstall` / `update` | re-download the **same** pin | re-fetch **only changed** files |
+| `path` | print the binary path | — |
+
+There is no `update <tag>`: a tag typed on the command line would have no pinned
+sha256 to verify against. Moving versions is an edit of `TAG` and
+`ASSET_SHA256`, then `reinstall`. `model-sync.sh update` is incremental — it
+refreshes the HF metadata table and re-downloads only files whose size or sha256
+changed, so an unchanged 17.6 GB file costs one API call, not a download.
+
+The Unsloth bundle is **not** self-contained. `tar tzf` of the released
+`cuda13-portable` archive lists 61 members, all ggml/llama objects — no
+`libcudart`, `libcublas` or `libcublasLt`. `libggml-cuda.so` NEEDs
+`libcudart.so.13`, `libcublas.so.13` and `libcublasLt.so.13`, so the runtime
+redist downloads are required, not defensive.
+
+## Measured on this card
+
+Every number below comes from this machine, this GPU, this build
+(b12649-mix-c7059d6). Raw logs: `/tmp/inkling-work/bench*.jsonl`.
+
+### Context size vs. the VRAM cliff
+
+Prefill is the sensitive signal. A 26 K-token prompt prefills at ~2 100 tok/s
+while there is headroom, and collapses when the driver starts oversubscribing
+VRAM into host RAM. The cliff is sharp and it is what picks `--ctx-size` and
+`--cache-type` (no drafter loaded, ubatch 512 unless noted):
+
+| ctx     | KV   | ubatch | VRAM peak (MiB) | headroom | 26K prefill  |
+| ------- | ---- | ------ | --------------- | -------- | ------------ |
+| 131 072 | f16  | 512    | 27 628          | 4 995    | 2 090 tok/s  |
+| 196 608 | f16  | 512    | 28 257          | 4 366    | 2 139 tok/s  |
+| 262 144 | q8_0 | 512    | 27 631          | 4 992    | 2 074 tok/s  |
+| **262 144** | **q8_0** | **1024** | **30 084** | **2 539** | **2 175 tok/s** |
+| 262 144 | f16  | 512    | 31 642          | 981      | 2 133 tok/s  |
+| 262 144 | q8_0 | 512 + drafter | 30 008 | 2 615  | 2 091 tok/s  |
+| 262 144 | f16  | 512 + drafter | 32 282 | 341    | **timeout**  |
+
+Three things this table settles:
+
+- **q8_0 KV is worth ~4 GB at 256K**, not a marginal amount: 31 642 → 27 631 MiB,
+  for a decode difference inside noise (92.9 vs 90.6 tok/s). That is the whole
+  reason it is in the unit.
+- **256K with f16 KV technically fits** (981 MiB spare) but sits one allocation
+  away from the cliff — adding a drafter at the same context pushed it to
+  32 282 MiB and the identical prompt timed out instead of prefilling.
+- **ubatch 1024 costs 2.5 GB and buys 10 % prefill** (2 175 vs 2 074 tok/s).
+  That is affordable only because q8_0 freed 4 GB first. ubatch 2048 does not
+  fit at all and collapses prefill to **78 tok/s**.
+
+### Speculation: DSpark is a regression here, ngram-mod is free
+
+Cold, distinct prompts, 8 samples, A/B/A server order to rule out drift
+(256K / q8_0 / ubatch 512):
+
+| variant                 | median decode | at depth | VRAM peak |
+| ----------------------- | ------------- | -------- | --------- |
+| no speculation          | **91.7** tok/s | 79.3     | 27 628    |
+| `ngram-mod` 8–16        | 90.7          | **89.7** | 27 644    |
+| DSpark, `n-max 2`       | 71.6          | 76.5     | 30 117    |
+| no speculation (repeat) | 91.2          | 78.2     | 27 628    |
+
+DSpark's drafter reports 0.90 acceptance yet **still loses 20 t/s** — its
+per-step cost exceeds what the accepted tokens buy back, which is consistent
+with a 128-expert MoE where a draft batch re-reads all expert weights. It also
+costs 2.4 GB. `ngram-mod` drafts from the token history, so it has no weights
+and no buffers: it ties at cold start (within noise of the repeat pair) and is
+13 % faster at depth, where prompts repeat structure. Hence the unit drops
+`--model-draft` entirely.
+
+An earlier pass appeared to show the opposite because it repeated the same
+prompt three times inside one server; ngram-mod drafts from the context it has
+already seen, so repeats inflate it. Cold, distinct prompts are the honest
+measurement and are what the table above uses.
+
+### Reasoning effort
+
+The template default (0.9) versus the levels, same prompt, temperature 0:
+
+| `reasoning_effort` | agent question | light coding |
+| ------------------ | -------------- | ------------ |
+| template default (0.9) | 1 068 tok / 12.1 s | 338 tok / 4.2 s |
+| `medium`               | 435 tok / 4.9 s   | 328 tok / 3.4 s |
+| `low` (unit default)   | **354 tok / 3.7 s** | 219 tok / 2.3 s |
+| `minimal`              | 305 tok / 3.6 s   | 282 tok / 3.3 s |
+
+`low` is not a quality sacrifice — on the agent question it produced the
+better-targeted answer (it asked for the journal output instead of speculating),
+for a third of the tokens and time. It is set as a **server default, not a cap**:
+a client that sends `reasoning_effort` (or `chat_template_kwargs`) still
+overrides it per request, verified up to `high`.
+
+### Throughput summary
+
+| Scenario                          | Result                    |
+| --------------------------------- | ------------------------- |
+| decode, short cold prompt         | ~91 tok/s                 |
+| decode, at depth (~26K context)   | ~80–90 tok/s              |
+| prefill, 26K prompt               | ~2 075 tok/s              |
+| 2 concurrent requests (unified KV)| 407 tok in 3.4 s → 120 tok/s aggregate |
+| time to first token, warm         | < 1 s                     |
+| start (load 17.6 GB + 256K KV)    | ~4 s with weights in the page cache; minutes on the first cold read from disk |
+
+## End-to-end checks (this unit, verbatim flags)
+
+- text completion, `finish_reason: stop`, reasoning split into
+  `message.reasoning_content` with the answer in `message.content`
+- vision: 1600×1000 PNG sent as a data URL → `prompt_n` 1 030, correct
+  description. `--image-max-tokens 4000` bounds what one image can consume.
+- tool calling: `finish_reason: tool_calls` with
+  `{"city":"Shanghai"}` — so agent frameworks can drive it directly
+- `--parallel 2 --kv-unified`: two simultaneous requests, no slot errors
+- `/metrics` 2 587 B, `/v1/models`, `/props` all healthy
+- reasoning default verified live: 354 tokens, not 1 068
+
+## Operations
+
+```sh
 systemctl --user daemon-reload
 systemctl --user enable --now llama-server   # start + autostart on login
 systemctl --user status llama-server          # logs via: journalctl --user -u llama-server -f
@@ -58,196 +191,45 @@ curl http://127.0.0.1:8080/v1/models          # health / model check
 curl http://127.0.0.1:8080/metrics            # prometheus metrics (--metrics)
 ```
 
-Point any OpenAI-compatible client at `http://127.0.0.1:8080/v1`,
-model id as shown by `/v1/models` (typically the GGUF filename).
+Checking for a newer binary: `llama-cpp-install.sh check` (read-only). To move,
+edit `TAG` + `ASSET_SHA256`, run `reinstall`, then restart the unit.
+Updating weights: `model-sync.sh update`, which re-reads the HF API and
+re-downloads only files whose size or sha256 changed.
 
-## Model management
+## Flags, and why each is there
 
-- **Auto-download**: on every start, `ExecStartPre` runs the sync script. A
-  complete file (size matches the HF API for this revision) exits 0 without
-  network; a missing or truncated file is fetched with `aria2c` (8 connections,
-  resumable) from `HF_ENDPOINT` (default `https://hf-mirror.com`) and checked
-  against the sha256 the API reports.
-- **Verify**: `~/.local/share/llama-server/qwen38-model-sync.sh verify`
-- **Force update** (e.g. upstream republished the quant):
-  `~/.local/share/llama-server/qwen38-model-sync.sh update && systemctl --user restart llama-server`
-- **Vision projector** (optional, +0.9 GB VRAM):
-  `~/.local/share/llama-server/qwen38-model-sync.sh mmproj`, then add
-  `--mmproj <same dir>/mmproj-F16.gguf` to the unit and restart. Without it,
-  `--image-max-tokens` is inert.
+| Flag | Reason |
+| ---- | ------ |
+| `--n-gpu-layers all` | 17.6 GB fits; nothing belongs on the CPU |
+| `--ctx-size 262144` | largest context with usable headroom (see cliff table) |
+| `--parallel 2` + `--kv-unified` | two agent sessions share one 256K pool instead of splitting it 128K each |
+| `--flash-attn on` | required for quantised KV; sm_120 supports it |
+| `--cache-type-k/v q8_0` | the fit decision: 1.6 GB cheaper than f16, −0.4 % decode |
+| `--ubatch-size 1024` | +10 % prefill over 512; 2048 collapses prefill to 78 tok/s |
+| `--spec-type ngram-mod` | free speculation; ties cold, +13 % at depth |
+| `--cache-ram -1` | prompt cache unbounded in host RAM (78 GB available) |
+| `--ctx-checkpoints 16` | cheap rewind points for long agent turns |
+| `--metrics` | the table above is reproducible from `/metrics` |
+| `--jinja` | the model's chat template needs it (tools, effort, thinking) |
+| `--reasoning-effort low` | server default only; per-request override still works |
+| `--image-max-tokens 4000` | bounds vision cost on a 32 GB card |
+| `--temp/--top-p/--top-k/--min-p` | sampling defaults for OpenAI-compatible clients (clients override) |
 
-## Serving config
+No `--fit`: the defaults are already measured to fit, and `--fit` would silently
+retune them per boot.
 
-The unit runs:
+## Known limits
 
-```
---n-gpu-layers all                     # single GPU, everything resident
---ctx-size 262144 --parallel 2 --kv-unified
---flash-attn on --cache-type-k q8_0 --cache-type-v q8_0
---batch-size 2048 --ubatch-size 1024
---fit on --fit-target 2048
---spec-type draft-mtp --spec-draft-n-max 4 --spec-draft-p-min 0
---cache-ram -1 --ctx-checkpoints 16
---metrics --jinja --reasoning-preserve --reasoning-budget 2000
---chat-template-kwargs '{"reasoning_effort": "low"}' --image-max-tokens 4000
-```
-
-| Flag                                               | Why                                                                                                                                                                            |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--n-gpu-layers all`                               | One 32 GB card holds all 64 layers; no offload, no PCIe traffic per token.                                                                                                     |
-| `--ctx-size 262144`                                | The model's native window. KV cost is small because only 16 of 64 layers are full attention (every 4th; the rest are Gated-DeltaNet linear attention with a fixed-size state). |
-| `--parallel 2 --kv-unified`                        | Two agent requests in flight share one 256K pool instead of reserving 128K each. A single long session can still use the whole window.                                         |
-| `--flash-attn on`                                  | Required for the MTP numbers below and for long context without a quadratic attention buffer.                                                                                  |
-| `--cache-type-k/v q8_0`                            | 256K of f16 KV is ~16 GB; `q8_0` is ~8.7 GB. Measured cost elsewhere is ~0–3%.                                                                                                 |
-| `--batch-size 2048 --ubatch-size 1024`             | Prefill is compute-bound and Blackwell has the headroom; a bigger micro-batch buys prompt-processing speed. Drop `-ub` to 512 if VRAM gets tight.                              |
-| `--fit on --fit-target 2048`                       | Safety net, not an active knob: `--fit` only adjusts *unset* arguments, so with explicit `-ngl all` it logs `failed to fit params ... abort` (harmless) and does nothing. It is kept so that dropping `-c` later still gets a placement that leaves 2 GB free. |
-| `--spec-type draft-mtp`                            | Qwen3.8 ships MTP heads; the unsloth GGUF carries the `nextn` tensors. Biggest single decode win.                                                                              |
-| `--spec-draft-n-max 4 --spec-draft-p-min 0` | Ungated n4. Measured below: the `p-min` gate costs 26% here, and n6 is slower than n4. |
-| `--cache-ram -1`                                   | 78 GB of host RAM: keep every idle slot's prompt cached so resuming an agent session skips prefill.                                                                            |
-| `--ctx-checkpoints 16`                             | Lets a client rewind/truncate context without re-prefilling from zero.                                                                                                         |
-| `--reasoning-budget 2000` + `reasoning_effort low` | Soft + hard cap on thinking so short answers don't burn the token budget (client-side `enable_thinking` is not forwarded by llama.cpp's OpenAI layer).                         |
-
-### VRAM budget (262144 tokens, q8_0 KV)
-
-`nvidia-smi` reports **29968 MiB used of 32623 MiB** once the server is up with
-this unit — 2.6 GB of headroom, which is why `--ubatch-size 2048` was rejected
-(it pushed usage to 31414 MiB for no prefill gain).
-
-| Item                                                           | Size          |
-| -------------------------------------------------------------- | ------------- |
-| Weights (UD-Q4_K_XL)                                           | 17.6 GB       |
-| KV, 16 full-attention layers × 4 kv heads × 256 head_dim, q8_0 | ~8.7 GB       |
-| Linear-attention state (48 layers, f32)                        | ~0.2 GB       |
-| Compute buffers (ubatch 1024) + CUDA context                   | ~1.5–2 GB     |
-| **Measured total**                                             | **29.3 GB** |
-
-Quant/context alternatives that also fit:
-
-| Weights            | Context | KV   | Note                                     |
-| ------------------ | ------- | ---- | ---------------------------------------- |
-| UD-Q4_K_XL 17.6 GB | 262144  | q8_0 | default, best context/quality balance    |
-| UD-Q5_K_M 19.8 GB  | 131072  | q8_0 | ~+1 GB weights, half the window          |
-| UD-IQ4_XS 14.3 GB  | 262144  | f16  | max KV precision, lower weight precision |
-
-## Measured on this card
-
-Measured 2026-11-10, llama.cpp 0.9.0 (b12110, `sm_120a`), UD-Q4_K_XL, 262144
-ctx / 2 slots / q8_0 KV, 2671-token chat prompt, 600 generated tokens,
-temperature 0. `tg` is decode, `pp` is prefill.
-
-| Speculative setting | tg t/s | draft acceptance |
-| ------------------- | -----: | ---------------: |
-| none | 39.5 | — |
-| MTP n4, `p-min 0.75` (gated) | 51.5 | 0.88 |
-| MTP n6, `p-min 0.75` (gated) | 47.7 | 0.82 |
-| MTP n6, `p-min 0` (ungated) | 62.3 | 0.33 |
-| **MTP n4, `p-min 0` (ungated)** | **88–89** | 0.71 |
-
-Other numbers from the same run:
-
-| Scenario | Result |
-| --- | --- |
-| prefill, cold 2.7K prompt | ~1286 t/s |
-| prefill, 101K-token prompt | 1034 t/s (99 s), 30016 MiB VRAM |
-| 2 concurrent requests | 63 + 61 t/s (~124 t/s aggregate) |
-| `llama-bench` pp2048 / tg256, no spec | 2077 / 41.8 t/s |
-
-Two things this card taught us that the old 2080 Ti numbers did not:
-
-- **The `p-min` gate is a loss here.** Gating at 0.75 cut acceptance-free drafting
-  and cost 26% (51.5 vs 70 t/s on the same prompt). Drafting is one extra 1-layer
-  forward; on a card with 896 GB/s it is cheaper than the verification it saves.
-- **n6 is worse than n4.** More drafts per step means more rejected tokens to
-  verify; acceptance fell from 0.71 to 0.33 and throughput with it.
-
-The 200 W board power limit is the ceiling: sustained decode sits at 199 W, so
-numbers drift a few percent with ambient temperature, not with the flags.
-
-## Tuning: what to A/B
-
-Measure before believing any of it — the table above is one prompt, one quant.
-
-```bash
-# decode + prefill for the exact file/quant, no server needed
-llama-bench -m ~/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/Qwen3.8-27B-UD-Q4_K_XL.gguf \
-  -ngl 99 -fa on -ctk q8_0 -ctv q8_0 -p 2048 -n 256 -r 3
-
-# end-to-end: real prefill/decode timings from the API
-curl -s http://127.0.0.1:8080/v1/completions -H 'content-type: application/json' \
-  -d '{"prompt":"<20k-token prompt>","max_tokens":1}' | jq '.timings'
-
-# MTP acceptance rate (the number that decides n-max / p-min)
-journalctl --user -u llama-server -f | grep -i "draft acceptance"
-```
-
-Knobs, in order of expected payoff:
-
-1. **`--spec-draft-n-max` / `--spec-draft-p-min`.** Already swept: n4 ungated is
-   the winner on this card. Re-sweep if you change quant or run a different
-   workload — acceptance is content-dependent (0.50 on plain prose, 0.71 on the
-   unit's chat template, 0.88 on repetitive text).
-2. **`--ubatch-size`.** 512 → 1024 → 2048 against a realistic 20K prompt.
-   Measured: 1024 and 2048 are within 0.5% on prefill (1690 vs 1684 t/s) while
-   2048 costs 1.4 GB of VRAM. Stay at 1024.
-3. **`--parallel`.** `1` for honest single-stream numbers, `2` for agent use
-   (measured 124 t/s aggregate), `4` only if you actually run four requests at
-   once — MTP's advantage fades as slots batch up.
-4. **`--cache-type-k/v`.** `q8_0` is the default here. `f16` if you drop to
-   ≤128K context and want maximum fidelity; `q4_0` only if you need more window
-   than 256K.
-5. **`--cache-ram`.** `-1` keeps all idle prompts in host RAM. Lower it only if
-   the host starts swapping.
-
-## Build (nix-packages flake)
-
-The binary comes from `~/Documents/github.repos/nix-packages#llama-cpp`, a
-`llama-cpp` override with `cudaSupport = true`.
-
-- **Architecture must be `sm_120`.** The previous build used
-  `cudaCapabilities = [ "7.5" ]`, i.e. `CMAKE_CUDA_ARCHITECTURES=75`. On
-  Blackwell that binary has no compatible SASS and only runs through PTX JIT
-  from `compute_75`, which is both slower to start and slower per token. The
-  flake now sets `cudaCapabilities = [ "12.0" ]`; ggml rewrites a plain `12X`
-  to `12Xa` (Blackwell FP4 tensor cores are arch-specific), so `"12.0"` is the
-  whole story.
-- **It cannot be auto-detected.** Nix builds are sandboxed without
-  `/dev/nvidia*`: the configure log of this very build says
-  `CMAKE_CUDA_ARCHITECTURES_NATIVE=No CUDA devices found`. `native` would probe
-  the build host (or fail), not the machine that runs the result. The capability
-  list is a per-machine declaration; a Turing host would set `[ "7.5" ]`, a
-  mixed fleet would list both (at the cost of a longer build).
-- **WSL driver.** The CUDA libraries carry `RUNPATH /run/opengl-driver/lib`,
-  which only exists on NixOS. The flake wraps every binary with
-  `LD_LIBRARY_PATH=/usr/lib/wsl/lib` so ggml finds the Windows driver's
-  `libcuda.so.1`. Do not install a Linux display driver in WSL.
-
-```bash
-cd ~/Documents/github.repos/nix-packages
-nix flake update          # llama.cpp 0.4.1 (b10964) -> 0.9.0 (b12110)
-nix build .#llama-cpp     # ~20-40 min, local build: sm_120 is not in the cache
-nix profile upgrade llama-cpp
-```
-
-The profile entry is installed from the *unlocked* flake reference (`git+file://`
-without a rev), so `nix profile upgrade llama-cpp` re-evaluates the working tree
-and picks up both the arch change and any later `nix flake update`.
-
-Verify the arch actually landed (the CMake line is echoed during configure):
-
-```bash
-nix log ~/Documents/github.repos/nix-packages#llama-cpp 2>/dev/null \
-  | grep -m1 "Using CMAKE_CUDA_ARCHITECTURES"
-# expect ...=120a, not 75
-```
-
-## Known trade-offs
-
-- **MTP is single-stream.** The gain shrinks as `--parallel` batches more slots;
-  it is worth it at 1–2 slots, marginal at 4.
-- **Hybrid attention keeps long context cheap.** Only 16/64 layers grow a KV
-  cache, which is why 256K fits in 32 GB at all. Do not copy this budget to a
-  dense model.
-- **`q8_0` KV is a fit decision, not a speed decision.** It exists to make 256K
-  possible; at ≤128K, f16 is within noise.
-- **`--reasoning-budget 2000`** is a hard cap. Long reasoning tasks will be cut;
-  raise it per client with `max_tokens` or edit the unit.
+- **Do not copy this KV budget to a dense model.** q8_0 KV here is sized for a
+  24-block MoE; a dense 27B needs far more KV per token.
+- **q8_0 KV is a fit decision, not a speed decision.** At ≤128K, f16 is within
+  noise — use f16 if you lower `--ctx-size`.
+- **Headroom is 2.5 GB.** Raising `--ctx-size` past 256K, or adding another
+  draft model, will cross the cliff and make prefill pathological rather than
+  merely slower.
+- **`--reasoning-effort low` is a default, not a cap.** Long reasoning tasks
+  that need `high` must ask for it per request.
+- **The first start after a reboot is slow** — the 17.6 GB of weights have to
+  come off disk before anything answers, and the very first boot on a clean
+  machine also downloads ~18 GB. Later starts are ~4 s while the page cache is
+  warm.
