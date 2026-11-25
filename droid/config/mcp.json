@@ -7,6 +7,10 @@
         "Authorization": "Bearer ${MAGPIE_API_KEY}"
       },
       "oauth": false
+    },
+    "trello": {
+      "type": "http",
+      "url": "https://mcp.trello.com/v1"
     },{{#if dotter.packages.wsl-guest}}
     "onenote": {
       "type": "stdio",
