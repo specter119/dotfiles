@@ -466,13 +466,13 @@ depends = ['lody', 'raft']
 depends = ['playwright']
 
 [agent-runtime]
-depends = ['browser-use', 'skm', 'zellij', 'nmem', 'magpie', 'voxtype', 'llama.cpp', 'kaze']
+depends = ['browser-use', 'skm', 'zellij', 'nmem', 'magpie', 'voxtype', 'llama.cpp', 'kaze-mcp']
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'
 
-[kaze.files]
-'kaze/bin' = { target = '~/.local/bin', type = 'symbolic', if = 'dotter.packages.wsl-guest' }
+[kaze-mcp.files]
+'kaze-mcp/bin' = { target = '~/.local/bin', type = 'template', if = 'dotter.packages.wsl-guest' }
 
 [python]
 depends = ['uv']
