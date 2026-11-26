@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "lody": "^0.116.0"
+    "lody": "^0.116.1"
   },
   "name": "lody-service",
   "private": true,
