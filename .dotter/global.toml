@@ -2,7 +2,12 @@
 url_userinfo_escape = '.dotter/helpers/url_userinfo_escape.rhai'
 
 [wsl-guest]
-depends = ['wsl-ssh-agent', 'voxtype-wsl-bridge', 'fcitx5-wslg', 'wsl-keyring-unlock']
+depends = [
+  'wsl-ssh-agent',
+  'voxtype-wsl-bridge',
+  'fcitx5-wslg',
+  'wsl-keyring-unlock',
+]
 
 [wsl-guest.files]
 'wsl-guest/config' = '~/.config'
@@ -204,10 +209,6 @@ default_model = ''
 
 [codex.files]
 codex = '~/.config'
-
-# SessionStart hooks that adopt a worktree as a jj repo and seed its jj identity.
-# Deployed only while jj is selected, so the commands never point at an absent
-# script.
 'codex/codex/hooks.json' = { target = '~/.config/codex/hooks.json', type = 'symbolic', if = 'dotter.packages.jj' }
 
 [codex.variables.codex]
@@ -445,10 +446,20 @@ depends = [
 ]
 
 [dev]
-depends = ['git', 'ssh', 'container', 'LazyVim', 'jj']
+depends = ['nix', 'git', 'ssh', 'container', 'LazyVim', 'jj']
 
 [agent]
-depends = ['agent-runtime', 'droid', 'pi', 'bub', 'codex', 'chatgpt', 'multica', 'dsh', 'antigravity']
+depends = [
+  'agent-runtime',
+  'droid',
+  'pi',
+  'bub',
+  'codex',
+  'chatgpt',
+  'multica',
+  'dsh',
+  'antigravity',
+]
 
 [agent.files]
 'agent/config' = '~/.config'
@@ -463,10 +474,19 @@ otel_url = ''
 depends = ['lody', 'raft']
 
 [browser-use]
-depends = ['playwright']
+depends = ['playwright', 'kaze-mcp']
 
 [agent-runtime]
-depends = ['browser-use', 'skm', 'zellij', 'nmem', 'magpie', 'voxtype', 'llama.cpp', 'kaze-mcp']
+depends = [
+  'browser-use',
+  'skm',
+  'zellij',
+  'nmem',
+  'magpie',
+  'voxtype',
+  'llama.cpp',
+  'kaze-mcp',
+]
 
 [agent-runtime.files]
 'agent-runtime' = '~/.config'
